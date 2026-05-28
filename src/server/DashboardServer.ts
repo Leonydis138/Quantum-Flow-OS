@@ -151,7 +151,7 @@ export class DashboardServer {
 
         // --- STATIC FILES SERVING ---
         if (method === 'GET') {
-          let filePath = path.join(this.dashboardPath, url === '/' ? 'index.html' : url);
+          const filePath = path.join(this.dashboardPath, url === '/' ? 'index.html' : url);
           
           // Basic directory traversal protection
           if (!filePath.startsWith(this.dashboardPath)) {

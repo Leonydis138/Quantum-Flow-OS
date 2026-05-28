@@ -127,7 +127,7 @@ export class EthicalLedger {
    * Attempt to modify a block (to test integrity verification)
    * This is explicitly added for demonstration and testing of integrity controls
    */
-  public tamperWithEntry(index: number, modifiedData: any): boolean {
+  public tamperWithEntry(index: number, modifiedData: unknown): boolean {
     if (index <= 0 || index >= this.chain.length) {
       return false; // Cannot tamper with genesis block easily or out of bounds indices
     }

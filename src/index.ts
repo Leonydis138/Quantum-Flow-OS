@@ -79,9 +79,9 @@ export {
 /**
  * Create a fully configured Quantum Flow OS instance
  */
-import { SelfConstrainingEngine, Action } from './core/SelfConstrainingEngine';
+import { SelfConstrainingEngine, Action, ComplianceSummary } from './core/SelfConstrainingEngine';
 import { ObserverProtector } from './protection/ObserverProtector';
-import { ReversibilityEngine } from './reversibility/ReversibilityEngine';
+import { ReversibilityEngine, ReversibilityStatus } from './reversibility/ReversibilityEngine';
 import { EthicalLedger } from './core/EthicalLedger';
 import { QuantumSupervisionEngine, QuantumSupervisionResult } from './quantum/QuantumSupervisionEngine';
 import { TemporalForkingEngine } from './reversibility/TemporalForkingEngine';
@@ -217,8 +217,8 @@ export class QuantumFlowOS {
    * Determine overall system status
    */
   private determineSystemStatus(
-    compliance: any,
-    reversibility: any,
+    compliance: ComplianceSummary,
+    reversibility: ReversibilityStatus,
     ledgerVerified: boolean
   ): 'healthy' | 'warning' | 'critical' {
     if (compliance.criticalViolations > 0 || !ledgerVerified) {
