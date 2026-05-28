@@ -128,11 +128,12 @@ export class QuantumFlowOS {
   }
 
   /**
-   * Get overall system health
+   * Get overall system health including cryptographic ledger integrity
    */
   public getSystemHealth(): SystemHealth {
     const compliance = this.constraintEngine.getComplianceSummary();
     const reversibility = this.reversibilityEngine.getReversibilityStatus();
+    const ledgerVerified = this.ethicalLedger.verifyIntegrity();
 
     return {
       ethicalCompliance: compliance.complianceRate,
@@ -140,7 +141,8 @@ export class QuantumFlowOS {
       activeConstraints: compliance.totalConstraints,
       criticalViolations: compliance.criticalViolations,
       reversibilityEnabled: reversibility.hasSnapshots,
-      systemStatus: this.determineSystemStatus(compliance, reversibility),
+      ledgerIntegrityVerified: ledgerVerified,
+      systemStatus: this.determineSystemStatus(compliance, reversibility, ledgerVerified),
     };
   }
 
@@ -149,9 +151,10 @@ export class QuantumFlowOS {
    */
   private determineSystemStatus(
     compliance: any,
-    reversibility: any
+    reversibility: any,
+    ledgerVerified: boolean
   ): 'healthy' | 'warning' | 'critical' {
-    if (compliance.criticalViolations > 0) {
+    if (compliance.criticalViolations > 0 || !ledgerVerified) {
       return 'critical';
     }
 
@@ -163,6 +166,13 @@ export class QuantumFlowOS {
     }
 
     return 'healthy';
+  }
+
+  /**
+   * Verify the cryptographic integrity of the entire ethical ledger chain
+   */
+  public verifyLedgerIntegrity(): boolean {
+    return this.ethicalLedger.verifyIntegrity();
   }
 
   /**
@@ -185,6 +195,7 @@ export interface SystemHealth {
   activeConstraints: number;
   criticalViolations: number;
   reversibilityEnabled: boolean;
+  ledgerIntegrityVerified: boolean;
   systemStatus: 'healthy' | 'warning' | 'critical';
 }
 
