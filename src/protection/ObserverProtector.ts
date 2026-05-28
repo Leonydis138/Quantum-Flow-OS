@@ -7,6 +7,7 @@
 
 import { EventEmitter } from 'eventemitter3';
 import { v4 as uuidv4 } from 'uuid';
+import { KantianObserverProtection } from './KantianObserverProtection';
 
 export interface Observer {
   id: string;
@@ -180,6 +181,32 @@ export class ObserverProtector extends EventEmitter {
           allowed: !affectsNarrative,
           violations,
           warnings: affectsNarrative ? ['Narrative alteration blocked'] : [],
+        };
+      },
+    });
+
+    // Layer 4: Kantian Autonomy Protection
+    const kantian = new KantianObserverProtection();
+    this.addProtectionLayer({
+      id: uuidv4(),
+      name: 'Kantian Autonomy',
+      priority: 7,
+      apply: async (observerId: string, action: string): Promise<ProtectionResult> => {
+        const kViolations = kantian.evaluate({ intent: action });
+        const violations: RightsViolation[] = kViolations.map(kv => ({
+          id: uuidv4(),
+          observerId,
+          violatedRight: 'rightToSelfDetermination',
+          action,
+          severity: kv.critical ? 8 : 5,
+          timestamp: new Date(),
+          prevented: true,
+        }));
+
+        return {
+          allowed: violations.length === 0,
+          violations,
+          warnings: violations.length > 0 ? ['Kantian categorical imperative violation: observer treated as means only'] : [],
         };
       },
     });

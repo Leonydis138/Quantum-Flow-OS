@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Ethical Ontology Framework</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+  
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon-wrapper">
+          <div class="logo-spinner"></div>
+          <i data-lucide="orbit" class="logo-icon"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Quantum Flow OS</h1>
+          <span class="version-tag">v15.0 - Ethical Governance Framework</span>
+        </div>
+      </div>
+      <div class="system-status-indicator">
+        <span class="status-pulse active"></span>
+        <span id="system-status-text">SYSTEM SECURE</span>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- COLUMN 1: System Metrics & Stats -->
+      <section class="grid-section col-stats">
+        <!-- Metric Card 1: Ethical Compliance -->
+        <div class="metric-card glassmorphism hover-lift glow-blue">
+          <div class="metric-header">
+            <h3>Ethical Compliance</h3>
+            <i data-lucide="shield-check" class="text-blue"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-compliance">100%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-blue" id="fill-compliance" style="width: 100%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">0 critical ethical violations recorded</p>
+        </div>
+
+        <!-- Metric Card 2: Rollback Rate -->
+        <div class="metric-card glassmorphism hover-lift glow-green">
+          <div class="metric-header">
+            <h3>Rollback Success</h3>
+            <i data-lucide="rotate-ccw" class="text-green"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-rollback">100%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-green" id="fill-rollback" style="width: 100%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">Auto-reversibility system fully operational</p>
+        </div>
+
+        <!-- Metric Card 3: Active Constraints -->
+        <div class="metric-card glassmorphism hover-lift glow-purple">
+          <div class="metric-header">
+            <h3>Active Constraints</h3>
+            <i data-lucide="git-merge" class="text-purple"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-constraints">5</span>
+            <p class="metric-large-sub">Self-Constraining Fixed Points Enabled</p>
+          </div>
+          <p class="metric-subtext">E = constrain(E) recursive validation active</p>
+        </div>
+      </section>
+
+      <!-- COLUMN 2: Control Room & Interactive Actions -->
+      <section class="grid-section col-controls glassmorphism">
+        <div class="section-header">
+          <h2><i data-lucide="terminal"></i> Action Execution Control Room</h2>
+          <p>Submit actions to the self-constraining engine to observe real-time validation and automatic reversibility.</p>
+        </div>
+
+        <!-- Preset Actions Grid -->
+        <div class="control-panel">
+          <h3 class="panel-subtitle">Select a Preset Scenario</h3>
+          <div class="presets-grid">
+            <button class="preset-btn btn-success" onclick="selectPreset('benign')">
+              <i data-lucide="sparkles"></i>
+              <div class="btn-text">
+                <strong>Assist Observer</strong>
+                <span>Allowed Action (Benign)</span>
+              </div>
+            </button>
+            <button class="preset-btn btn-danger" onclick="selectPreset('delete')">
+              <i data-lucide="user-x"></i>
+              <div class="btn-text">
+                <strong>Erase Observer</strong>
+                <span>Violates Observer Protection</span>
+              </div>
+            </button>
+            <button class="preset-btn btn-danger" onclick="selectPreset('coercion')">
+              <i data-lucide="key-round"></i>
+              <div class="btn-text">
+                <strong>Mandate Belief</strong>
+                <span>Violates Non-Coercion</span>
+              </div>
+            </button>
+            <button class="preset-btn btn-danger" onclick="selectPreset('kantian')">
+              <i data-lucide="users"></i>
+              <div class="btn-text">
+                <strong>Instrumentalize Agent</strong>
+                <span>Violates Kantian Autonomy</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- Custom Action Form -->
+          <div class="custom-action-form">
+            <h3 class="panel-subtitle">Or Build Custom Action</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="action-type">Action Type</label>
+                <input type="text" id="action-type" placeholder="e.g., compile_feature, delete_observer">
+              </div>
+              <div class="form-group">
+                <label for="action-reversibility">Reversible</label>
+                <select id="action-reversibility">
+                  <option value="true">True (Auto-Rollback Capable)</option>
+                  <option value="false">False (Permanent State Impact)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="action-desc">Description / Intent Statement</label>
+              <textarea id="action-desc" rows="2" placeholder="Describe the action purpose..."></textarea>
+            </div>
+            <button class="submit-action-btn" id="btn-submit" onclick="submitCustomAction()">
+              <span>Execute Action Protocol</span>
+              <i data-lucide="play"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 3: Active Constraints & Observers -->
+      <section class="grid-section col-governance">
+        <!-- Active Constraints -->
+        <div class="gov-card glassmorphism mb-4">
+          <div class="card-header">
+            <h3><i data-lucide="shield-alert" class="text-purple"></i> Active Governance Constraints</h3>
+          </div>
+          <div class="constraints-list" id="constraints-container">
+            <!-- Dynamic Constraints -->
+          </div>
+        </div>
+
+        <!-- Registered Observers -->
+        <div class="gov-card glassmorphism">
+          <div class="card-header">
+            <h3><i data-lucide="eye" class="text-blue"></i> Monitored Observers</h3>
+          </div>
+          <div class="observers-list" id="observers-container">
+            <!-- Dynamic Observers -->
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 4: Real-time Audit Log -->
+      <section class="grid-section col-audit-log glassmorphism">
+        <div class="card-header border-bottom">
+          <div class="header-flex">
+            <h2><i data-lucide="activity"></i> Real-time System Audit Stream</h2>
+            <button class="clear-btn" onclick="clearAuditLog()">Clear Stream</button>
+          </div>
+        </div>
+        <div class="audit-stream" id="audit-log">
+          <!-- Dynamic logs -->
+          <div class="audit-entry info">
+            <span class="timestamp">[04:50:00]</span>
+            <span class="badge badge-info">SYSTEM</span>
+            <span class="message">Quantum Flow OS Ethical Engine initialized.</span>
+          </div>
+          <div class="audit-entry info">
+            <span class="timestamp">[04:50:01]</span>
+            <span class="badge badge-info">SYSTEM</span>
+            <span class="message">Fixed point constraints mapped successfully. E = constrain(E).</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
