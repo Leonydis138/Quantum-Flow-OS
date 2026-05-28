@@ -48,6 +48,13 @@ export {
   type ReversibilityStatus,
 } from './reversibility/ReversibilityEngine';
 
+// Temporal Forking / Sandbox Multiverses
+export {
+  TemporalForkingEngine,
+  type SandboxTimeline,
+  type ForkEvaluationResult,
+} from './reversibility/TemporalForkingEngine';
+
 // Quantum States and Supervision
 export {
   QuantumEthicalState,
@@ -70,6 +77,7 @@ import { ObserverProtector } from './protection/ObserverProtector';
 import { ReversibilityEngine } from './reversibility/ReversibilityEngine';
 import { EthicalLedger } from './core/EthicalLedger';
 import { QuantumSupervisionEngine, QuantumSupervisionResult } from './quantum/QuantumSupervisionEngine';
+import { TemporalForkingEngine } from './reversibility/TemporalForkingEngine';
 
 export interface QuantumFlowConfig {
   autoRollback?: boolean;
@@ -83,6 +91,7 @@ export class QuantumFlowOS {
   public readonly reversibilityEngine: ReversibilityEngine;
   public readonly ethicalLedger: EthicalLedger;
   public readonly quantumSupervisionEngine: QuantumSupervisionEngine;
+  public readonly temporalForkingEngine: TemporalForkingEngine;
   public readonly strictMode: boolean;
 
   constructor(config: QuantumFlowConfig = {}) {
@@ -100,6 +109,7 @@ export class QuantumFlowOS {
 
     this.ethicalLedger = new EthicalLedger();
     this.quantumSupervisionEngine = new QuantumSupervisionEngine();
+    this.temporalForkingEngine = new TemporalForkingEngine();
 
     this.setupIntegrations();
   }
