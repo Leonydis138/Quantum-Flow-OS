@@ -87,6 +87,7 @@ export class DashboardServer {
             desc: c.description,
             severity: c.severity,
           }));
+          const timelines = this.qfos.temporalForkingEngine.getAllTimelines();
 
           res.writeHead(200);
           res.end(JSON.stringify({
@@ -95,6 +96,7 @@ export class DashboardServer {
             totalViolations: compliance.totalViolations,
             constraints,
             observers,
+            timelines,
           }));
           return;
         }
@@ -102,6 +104,100 @@ export class DashboardServer {
         if (url === '/api/health' && method === 'GET') {
           res.writeHead(200);
           res.end(JSON.stringify(this.qfos.getSystemHealth()));
+          return;
+        }
+
+        if (url === '/api/fork/create' && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const payload = JSON.parse(body);
+              const { name, parentId } = payload;
+              if (!name) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Missing name parameter.' }));
+                return;
+              }
+              const forkId = this.qfos.temporalForkingEngine.createFork(name, parentId);
+              res.writeHead(200);
+              res.end(JSON.stringify({
+                forkId,
+                timelines: this.qfos.temporalForkingEngine.getAllTimelines(),
+              }));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to create fork.' }));
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/fork/simulate' && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const payload = JSON.parse(body);
+              const { timelineId, type, description, reversible } = payload;
+              if (!timelineId || !type || !description) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Missing timelineId, type or description.' }));
+                return;
+              }
+              const action = {
+                id: `sim-${Date.now()}`,
+                type,
+                description,
+                reversible: reversible !== false,
+                timestamp: new Date(),
+                metadata: {},
+              };
+              const constraints = this.qfos.constraintEngine.getConstraints();
+              const simulationResult = this.qfos.temporalForkingEngine.simulateAction(
+                timelineId,
+                action,
+                constraints
+              );
+              res.writeHead(200);
+              res.end(JSON.stringify({
+                simulationResult,
+                timelines: this.qfos.temporalForkingEngine.getAllTimelines(),
+              }));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to simulate action.' }));
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/fork/merge' && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const payload = JSON.parse(body);
+              const { forkId } = payload;
+              if (!forkId) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Missing forkId.' }));
+                return;
+              }
+              const mergedIntoId = this.qfos.temporalForkingEngine.mergeFork(forkId);
+              res.writeHead(200);
+              res.end(JSON.stringify({
+                mergedIntoId,
+                timelines: this.qfos.temporalForkingEngine.getAllTimelines(),
+              }));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to merge fork.' }));
+            }
+          });
           return;
         }
 

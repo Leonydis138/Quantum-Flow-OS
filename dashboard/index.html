@@ -152,6 +152,25 @@
         </div>
       </section>
 
+      <!-- COLUMN 2 (Middle, Row 2): Multiverse Sandbox (Interactive Visualizer) -->
+      <section class="grid-section col-multiverse glassmorphism">
+        <div class="section-header">
+          <h2><i data-lucide="split"></i> Temporal Multiverse Sandbox</h2>
+          <p>Simulate counterfactual ethical paths in sandboxed forks of the primary timeline before committing changes.</p>
+        </div>
+        <div class="multiverse-wrapper">
+          <div class="multiverse-creation-form">
+            <input type="text" id="fork-name-input" placeholder="Enter Fork Name (e.g. Experiment-Beta)...">
+            <button class="create-fork-btn" onclick="createSandboxFork()">
+              <i data-lucide="git-branch"></i> Create Fork
+            </button>
+          </div>
+          <div class="timelines-grid" id="timelines-container">
+            <!-- Dynamic Timelines -->
+          </div>
+        </div>
+      </section>
+
       <!-- COLUMN 3: Active Constraints & Observers -->
       <section class="grid-section col-governance">
         <!-- Active Constraints -->

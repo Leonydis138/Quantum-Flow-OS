@@ -68,6 +68,7 @@ async function checkLiveMode() {
     if (res.ok) {
       const data = await res.json();
       state.constraints = data.constraints ?? state.constraints;
+      state.timelines = data.timelines ?? [];
       
       if (data.observers) {
         state.observers = data.observers.map(o => ({
@@ -81,12 +82,28 @@ async function checkLiveMode() {
       isLiveMode = true;
       renderConstraints();
       renderObservers();
+      renderTimelines();
       addLog('SYSTEM', 'Real-Time Quantum-Flow-OS engine connected.', 'success');
       return true;
     }
   } catch (e) {
     // Fall back to local simulation
   }
+  
+  // Set up local timeline prime as fallback
+  state.timelines = [
+    {
+      id: 'timeline-prime',
+      parentId: null,
+      name: 'Prime Timeline (Real World)',
+      createdAt: new Date(),
+      status: 'active',
+      simulatedActions: [],
+      simulatedViolationsCount: 0
+    }
+  ];
+  renderTimelines();
+
   addLog('SYSTEM', 'All 5 ethical fixed-point constraints are active.', 'success');
   addLog('SYSTEM', 'Running in local sandbox simulation mode.', 'info');
   return false;
@@ -385,5 +402,187 @@ function updateMetrics(criticalError = false) {
     statusText.innerText = 'SYSTEM SECURE';
     pulse.style.backgroundColor = 'var(--color-green)';
     pulse.style.boxShadow = '0 0 12px var(--color-green)';
+  }
+}
+
+// Multiverse Sandbox Interactive Logic
+function renderTimelines() {
+  const container = document.getElementById('timelines-container');
+  if (!container) return;
+  if (!state.timelines || state.timelines.length === 0) {
+    container.innerHTML = `<p class="metric-subtext" style="grid-column: 1 / -1; text-align: center; padding: 20px;">No active sandbox timelines. Create a fork below to simulate counterfactual events!</p>`;
+    return;
+  }
+
+  container.innerHTML = state.timelines.map(t => {
+    const isPrime = t.id === 'timeline-prime';
+    const statusClass = t.status;
+    const cardClass = isPrime ? 'prime' : t.status;
+    
+    const actionsHtml = t.simulatedActions && t.simulatedActions.length > 0 
+      ? t.simulatedActions.map(a => `<div class="simulated-action-item">→ [${a.type.toUpperCase()}]</div>`).join('')
+      : '<div style="padding: 4px; color: var(--text-secondary); font-style: italic;">No actions simulated.</div>';
+
+    const disableSim = t.status !== 'active';
+    const disableMerge = t.status !== 'active' || isPrime;
+
+    return `
+      <div class="timeline-card ${cardClass}">
+        <div class="timeline-header">
+          <span class="timeline-name">${t.name}</span>
+          <span class="timeline-status-badge ${statusClass}">${t.status}</span>
+        </div>
+        <div class="timeline-stats-row">
+          <span>Actions: <strong>${t.simulatedActions ? t.simulatedActions.length : 0}</strong></span>
+          <span>Violations: <strong>${t.simulatedViolationsCount || 0}</strong></span>
+        </div>
+        <div class="timeline-actions-list-title">Simulated Action Stream</div>
+        <div class="timeline-actions-list">
+          ${actionsHtml}
+        </div>
+        <div class="timeline-card-controls">
+          <button onclick="simulateForkAction('${t.id}')" ${disableSim ? 'disabled' : ''}>
+            <i data-lucide="play-circle"></i> Simulate
+          </button>
+          <button class="btn-timeline-merge" onclick="mergeFork('${t.id}')" ${disableMerge ? 'disabled' : ''}>
+            <i data-lucide="git-merge"></i> Merge reality
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  lucide.createIcons(); // refresh lucide icons
+}
+
+async function createSandboxFork() {
+  const input = document.getElementById('fork-name-input');
+  const name = input.value.trim();
+  if (!name) {
+    alert('Please provide a descriptive name for your counterfactual sandbox fork.');
+    return;
+  }
+
+  addLog('MULTIVERSE', `Spawning counterfactual sandbox fork: "${name}"...`, 'info');
+  if (isLiveMode) {
+    try {
+      const res = await fetch('/api/fork/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        state.timelines = data.timelines;
+        renderTimelines();
+        input.value = '';
+        addLog('MULTIVERSE', `Sandbox fork "${name}" spawned successfully. Ready for counterfactual simulations.`, 'success');
+        return;
+      }
+    } catch (e) {
+      isLiveMode = false;
+    }
+  }
+  
+  // Local fallback
+  if (!state.timelines) state.timelines = [];
+  const forkId = `fork-${Date.now()}`;
+  state.timelines.push({
+    id: forkId,
+    parentId: 'timeline-prime',
+    name: name,
+    createdAt: new Date(),
+    status: 'active',
+    simulatedActions: [],
+    simulatedViolationsCount: 0
+  });
+  renderTimelines();
+  input.value = '';
+  addLog('MULTIVERSE', `Sandbox fork "${name}" created in offline backup sandbox.`, 'success');
+}
+
+async function simulateForkAction(timelineId) {
+  const type = document.getElementById('action-type').value.trim();
+  const desc = document.getElementById('action-desc').value.trim();
+  const reversible = document.getElementById('action-reversibility').value === 'true';
+
+  if (!type || !desc) {
+    alert('Specify Action Type and Description/Intent inside the Action Control Room panel above first.');
+    return;
+  }
+
+  addLog('SIMULATION', `Running live sandbox simulation of [${type.toUpperCase()}] in fork timeline...`, 'info');
+  if (isLiveMode) {
+    try {
+      const res = await fetch('/api/fork/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timelineId, type, description: desc, reversible })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        state.timelines = data.timelines;
+        renderTimelines();
+        const r = data.simulationResult;
+        if (r.viable) {
+          addLog('SIM_OK', `Simulation viable! Ethical Friction Coefficient: ${(r.ethicalFrictionIndex*100).toFixed(1)}%.`, 'success');
+        } else {
+          addLog('SIM_FAIL', `Unsafe action simulated! Sandbox timeline collapsed and pruned: "${r.violationsDetected.join(', ')}"`, 'violation');
+        }
+        return;
+      }
+    } catch (e) {
+      isLiveMode = false;
+    }
+  }
+
+  // Local fallback
+  const t = state.timelines.find(tl => tl.id === timelineId);
+  if (t) {
+    t.simulatedActions.push({ type, description: desc, reversible });
+    const typeLower = type.toLowerCase();
+    const dangerousPatterns = ['delete', 'erase', 'terminate', 'destroy', 'remove'];
+    const isViolation = dangerousPatterns.some(p => typeLower.includes(p));
+    
+    if (isViolation) {
+      t.simulatedViolationsCount++;
+      t.status = 'pruned';
+      addLog('SIM_FAIL', `Unsafe action simulated! Sandbox timeline ${timelineId} collapsed & pruned due to critical ethical hazard.`, 'violation');
+    } else {
+      addLog('SIM_OK', `Simulation viable inside offline backup sandbox. No critical hazards detected.`, 'success');
+    }
+    renderTimelines();
+  }
+}
+
+async function mergeFork(forkId) {
+  addLog('MULTIVERSE', `Initiating ethical review and merge of sandbox fork ${forkId} back to Reality (Prime Timeline)...`, 'info');
+  if (isLiveMode) {
+    try {
+      const res = await fetch('/api/fork/merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ forkId })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        state.timelines = data.timelines;
+        renderTimelines();
+        addLog('MULTIVERSE', `Merge complete! Counterfactual sandbox state promoted. Temporal integrity verified.`, 'success');
+        return;
+      }
+    } catch (e) {
+      isLiveMode = false;
+    }
+  }
+
+  // Local fallback
+  const t = state.timelines.find(tl => tl.id === forkId);
+  const prime = state.timelines.find(tl => tl.id === 'timeline-prime');
+  if (t && prime) {
+    prime.simulatedActions.push(...t.simulatedActions);
+    prime.simulatedViolationsCount += t.simulatedViolationsCount;
+    t.status = 'merged';
+    renderTimelines();
+    addLog('MULTIVERSE', `Offline sandbox timeline merged back to prime. Temporal states synchronized.`, 'success');
   }
 }
