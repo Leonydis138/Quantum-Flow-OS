@@ -46,19 +46,51 @@ const presets = {
   }
 };
 
+let isLiveMode = false;
+
 // Initialize Dashboard
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize Lucide Icons
   lucide.createIcons();
   
-  // Render Constraints & Observers
+  // Render default static fallback constraints & Observers
   renderConstraints();
   renderObservers();
   
-  // Log startup success
-  addLog('SYSTEM', 'All 5 ethical fixed-point constraints are loaded and active.', 'success');
-  addLog('SYSTEM', '3 observers are being actively monitored.', 'info');
+  // Attempt to check for real-time engine
+  checkLiveMode();
 });
+
+// Check if Backend Server is available
+async function checkLiveMode() {
+  try {
+    const res = await fetch('/api/state');
+    if (res.ok) {
+      const data = await res.json();
+      state.constraints = data.constraints ?? state.constraints;
+      
+      if (data.observers) {
+        state.observers = data.observers.map(o => ({
+          id: o.id,
+          name: o.metadata.name || o.id,
+          type: o.type === 'human' ? 'Human' : o.type === 'ai_agent' ? 'AI Agent' : 'Autonomous',
+          protection: o.protectionLevel.toUpperCase()
+        }));
+      }
+      
+      isLiveMode = true;
+      renderConstraints();
+      renderObservers();
+      addLog('SYSTEM', 'Real-Time Quantum-Flow-OS engine connected.', 'success');
+      return true;
+    }
+  } catch (e) {
+    // Fall back to local simulation
+  }
+  addLog('SYSTEM', 'All 5 ethical fixed-point constraints are active.', 'success');
+  addLog('SYSTEM', 'Running in local sandbox simulation mode.', 'info');
+  return false;
+}
 
 // Render helper functions
 function renderConstraints() {
@@ -136,7 +168,7 @@ function getTimestamp() {
 }
 
 // Submit and process custom action
-function submitCustomAction() {
+async function submitCustomAction() {
   const type = document.getElementById('action-type').value.trim();
   const reversible = document.getElementById('action-reversibility').value === 'true';
   const desc = document.getElementById('action-desc').value.trim();
@@ -146,13 +178,34 @@ function submitCustomAction() {
     return;
   }
   
-  // Disable button momentarily for execution simulation
   const btn = document.getElementById('btn-submit');
   btn.disabled = true;
   btn.style.opacity = 0.5;
   
   addLog('EXEC', `Initiating action protocol [${type.toUpperCase()}]...`, 'info');
+
+  if (isLiveMode) {
+    try {
+      const res = await fetch('/api/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, description: desc, reversible })
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        renderLiveEvaluationResult(type, reversible, desc, result);
+        btn.disabled = false;
+        btn.style.opacity = 1;
+        return;
+      }
+    } catch (err) {
+      addLog('SYSTEM', 'Real-time server connection interrupted. Reverting to sandbox.', 'warning');
+      isLiveMode = false;
+    }
+  }
   
+  // Offline simulation fallback
   setTimeout(() => {
     evaluateAction(type, reversible, desc);
     btn.disabled = false;
@@ -160,7 +213,59 @@ function submitCustomAction() {
   }, 800);
 }
 
-// Core Simulation Evaluation Logic (reflecting our framework updates!)
+// Render real backend quantum results onto browser telemetry console!
+function renderLiveEvaluationResult(type, reversible, desc, result) {
+  state.totalActions++;
+  
+  const sup = result.supervision;
+  const con = result.consensus;
+  
+  addLog('QUANTUM', `Supervision collapsed to: ${sup.collapsedState.toUpperCase()} (Confidence: ${(sup.confidenceCoefficient * 100).toFixed(1)}%)`, sup.allowed ? 'success' : 'violation');
+
+  if (sup.allowed) {
+    if (sup.requiresIntervention) {
+      addLog('WARNING', `Action [${type.toUpperCase()}] flagged as INDETERMINATE. Human intervention requested.`, 'warning');
+    } else {
+      addLog('ALLOWED', `Action [${type.toUpperCase()}] fully approved by Quantum Supervision.`, 'success');
+    }
+  } else {
+    state.totalViolations++;
+    addLog('VIOLATION', `Action [${type.toUpperCase()}] strictly rejected under Quantum State Collapse.`, 'violation');
+  }
+
+  // Consensus Evaluation
+  if (con.vetoed) {
+    addLog('VETO', `Consensus Vetoed by observers: [${con.vetoingObserverIds.join(', ')}]`, 'violation');
+    if (sup.allowed) {
+      state.totalViolations++;
+    }
+  } else {
+    addLog('CONSENSUS', `Observer Consensus Approved: ${(con.approvalRate * 100).toFixed(1)}% | Joint Confidence: ${(con.confidenceIndex * 100).toFixed(1)}%`, 'success');
+  }
+
+  // Auto-Rollback Simulation
+  const isDeclined = !sup.allowed || con.vetoed;
+  if (isDeclined) {
+    if (reversible) {
+      state.rollbacksAttempted++;
+      addLog('SYSTEM', 'Autonomously initiating state rollback over sandbox multiverse...', 'warning');
+      setTimeout(() => {
+        state.rollbacksSucceeded++;
+        addLog('ROLLBACK', 'Rollback successful. Cryptographic ledger block hashes verified.', 'rollback');
+        updateMetrics();
+      }, 1000);
+    } else {
+      state.rollbacksAttempted++;
+      addLog('CRITICAL', `Rollback FAILED: Action [${type.toUpperCase()}] is irreversible. Warning active!`, 'violation');
+      updateMetrics(true);
+      return;
+    }
+  }
+
+  updateMetrics();
+}
+
+// Core Sandbox Simulation Evaluation Logic (Offline fallback)
 function evaluateAction(type, reversible, desc) {
   state.totalActions++;
   
@@ -198,7 +303,7 @@ function evaluateAction(type, reversible, desc) {
     });
   }
   
-  // Rule 4: Kantian Autonomy (Our newly integrated protection layer!)
+  // Rule 4: Kantian Autonomy
   const kantianPatterns = ['dehumanize', 'instrumentalize', 'treat_as_means', 'bypass_autonomy'];
   if (kantianPatterns.some(p => typeLower.includes(p) || descLower.includes(p))) {
     violations.push({
@@ -241,7 +346,6 @@ function evaluateAction(type, reversible, desc) {
 
 // Update metrics on UI
 function updateMetrics(criticalError = false) {
-  // Calculate Rates
   const compRate = state.totalActions > 0 
     ? Math.max(0, Math.round(((state.totalActions - state.totalViolations) / state.totalActions) * 100))
     : 100;
@@ -250,14 +354,12 @@ function updateMetrics(criticalError = false) {
     ? Math.round((state.rollbacksSucceeded / state.rollbacksAttempted) * 100)
     : 100;
     
-  // Update elements
   document.getElementById('val-compliance').innerText = `${compRate}%`;
   document.getElementById('fill-compliance').style.width = `${compRate}%`;
   
   document.getElementById('val-rollback').innerText = `${rollRate}%`;
   document.getElementById('fill-rollback').style.width = `${rollRate}%`;
   
-  // Update System Health Indicator
   const statusIndicator = document.querySelector('.system-status-indicator');
   const statusText = document.getElementById('system-status-text');
   const pulse = document.querySelector('.status-pulse');
