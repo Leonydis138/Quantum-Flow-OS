@@ -17,6 +17,12 @@ export {
   type ComplianceSummary,
 } from './core/SelfConstrainingEngine';
 
+// Ethical Ledger
+export {
+  EthicalLedger,
+  type LedgerEntry,
+} from './core/EthicalLedger';
+
 // Observer Protection
 export {
   ObserverProtector,
@@ -58,6 +64,7 @@ export type {
 import { SelfConstrainingEngine } from './core/SelfConstrainingEngine';
 import { ObserverProtector } from './protection/ObserverProtector';
 import { ReversibilityEngine } from './reversibility/ReversibilityEngine';
+import { EthicalLedger } from './core/EthicalLedger';
 
 export interface QuantumFlowConfig {
   autoRollback?: boolean;
@@ -69,6 +76,7 @@ export class QuantumFlowOS {
   public readonly constraintEngine: SelfConstrainingEngine;
   public readonly observerProtector: ObserverProtector;
   public readonly reversibilityEngine: ReversibilityEngine;
+  public readonly ethicalLedger: EthicalLedger;
   public readonly strictMode: boolean;
 
   constructor(config: QuantumFlowConfig = {}) {
@@ -84,6 +92,8 @@ export class QuantumFlowOS {
       maxHistorySize: config.maxHistorySize ?? 1000,
     });
 
+    this.ethicalLedger = new EthicalLedger();
+
     this.setupIntegrations();
   }
 
@@ -93,12 +103,22 @@ export class QuantumFlowOS {
   private setupIntegrations(): void {
     // Link constraint engine violations to observer protector
     this.constraintEngine.on('violation_recorded', (violation) => {
+      this.ethicalLedger.append('violation', violation);
       if (violation.action.targetObservers) {
         this.observerProtector.checkAction(
           violation.action.type,
           violation.action.targetObservers
         );
       }
+    });
+
+    // Record actions and constraints onto ledger
+    this.constraintEngine.on('action_validated', (action) => {
+      this.ethicalLedger.append('action', action);
+    });
+
+    this.constraintEngine.on('constraint_added', (constraint) => {
+      this.ethicalLedger.append('constraint', constraint);
     });
 
     // Link rollback failures to constraint engine
