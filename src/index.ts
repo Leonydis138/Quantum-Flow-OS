@@ -48,7 +48,7 @@ export {
   type ReversibilityStatus,
 } from './reversibility/ReversibilityEngine';
 
-// Quantum States
+// Quantum States and Supervision
 export {
   QuantumEthicalState,
   EthicalBasisState,
@@ -57,14 +57,19 @@ export type {
   QuantumStateVector,
   EntanglementLink,
 } from './quantum/QuantumEthicalState';
+export {
+  QuantumSupervisionEngine,
+  type QuantumSupervisionResult,
+} from './quantum/QuantumSupervisionEngine';
 
 /**
  * Create a fully configured Quantum Flow OS instance
  */
-import { SelfConstrainingEngine } from './core/SelfConstrainingEngine';
+import { SelfConstrainingEngine, Action } from './core/SelfConstrainingEngine';
 import { ObserverProtector } from './protection/ObserverProtector';
 import { ReversibilityEngine } from './reversibility/ReversibilityEngine';
 import { EthicalLedger } from './core/EthicalLedger';
+import { QuantumSupervisionEngine, QuantumSupervisionResult } from './quantum/QuantumSupervisionEngine';
 
 export interface QuantumFlowConfig {
   autoRollback?: boolean;
@@ -77,6 +82,7 @@ export class QuantumFlowOS {
   public readonly observerProtector: ObserverProtector;
   public readonly reversibilityEngine: ReversibilityEngine;
   public readonly ethicalLedger: EthicalLedger;
+  public readonly quantumSupervisionEngine: QuantumSupervisionEngine;
   public readonly strictMode: boolean;
 
   constructor(config: QuantumFlowConfig = {}) {
@@ -93,8 +99,28 @@ export class QuantumFlowOS {
     });
 
     this.ethicalLedger = new EthicalLedger();
+    this.quantumSupervisionEngine = new QuantumSupervisionEngine();
 
     this.setupIntegrations();
+  }
+
+  /**
+   * Evaluate an AI action using Quantum Supervised Ethical Superpositions
+   */
+  public superviseAction(action: Action): QuantumSupervisionResult {
+    const constraints = this.constraintEngine.getConstraints();
+    const supervisionResult = this.quantumSupervisionEngine.supervise(action, constraints);
+
+    // Record supervision event onto cryptographic ledger
+    this.ethicalLedger.append('action', {
+      actionId: action.id,
+      supervisionType: 'quantum',
+      allowed: supervisionResult.allowed,
+      collapsedState: supervisionResult.collapsedState,
+      confidence: supervisionResult.confidenceCoefficient,
+    });
+
+    return supervisionResult;
   }
 
   /**
