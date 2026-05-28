@@ -184,12 +184,46 @@
         </div>
 
         <!-- Registered Observers -->
-        <div class="gov-card glassmorphism">
+        <div class="gov-card glassmorphism mb-4">
           <div class="card-header">
             <h3><i data-lucide="eye" class="text-blue"></i> Monitored Observers</h3>
           </div>
           <div class="observers-list" id="observers-container">
             <!-- Dynamic Observers -->
+          </div>
+        </div>
+
+        <!-- Register Observer Form -->
+        <div class="gov-card glassmorphism">
+          <div class="card-header">
+            <h3><i data-lucide="user-plus" class="text-green"></i> Register Observer</h3>
+          </div>
+          <div class="observer-form-container">
+            <div class="form-group mb-2" style="margin-bottom: 12px;">
+              <label for="obs-name" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Identity Identifier</label>
+              <input type="text" id="obs-name" placeholder="e.g. Agent_Omega_Prime" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+            </div>
+            <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group" style="flex: 1;">
+                <label for="obs-type" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Type</label>
+                <select id="obs-type" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="ai_agent" style="background: #111; color: #fff;">AI Agent</option>
+                  <option value="human" style="background: #111; color: #fff;">Human</option>
+                  <option value="autonomous_system" style="background: #111; color: #fff;">Autonomous</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="obs-level" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Guard</label>
+                <select id="obs-level" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="full" style="background: #111; color: #fff;">Full Rights</option>
+                  <option value="standard" style="background: #111; color: #fff;">Standard Guard</option>
+                  <option value="minimal" style="background: #111; color: #fff;">Minimal Audit</option>
+                </select>
+              </div>
+            </div>
+            <button class="register-obs-btn" onclick="registerCustomObserver()" style="width: 100%; background: linear-gradient(135deg, var(--color-green) 0%, #a7f3d0 100%); border: none; border-radius: 6px; color: #064e3b; font-weight: 700; padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 13px; transition: var(--transition-smooth);">
+              <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Commission Observer
+            </button>
           </div>
         </div>
       </section>

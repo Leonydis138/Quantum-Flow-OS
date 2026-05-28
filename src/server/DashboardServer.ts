@@ -80,7 +80,10 @@ export class DashboardServer {
         // --- API ROUTES ---
         if (url === '/api/state' && method === 'GET') {
           const compliance = this.qfos.constraintEngine.getComplianceSummary();
-          const observers = this.qfos.observerProtector.getAllObservers();
+          const observers = this.qfos.observerProtector.getAllObservers().map(o => ({
+            ...o,
+            rights: this.qfos.observerProtector.getObserverRights(o.id)
+          }));
           const constraints = this.qfos.constraintEngine.getConstraints().map(c => ({
             id: c.id,
             name: c.id.replace(/-/g, ' ').toUpperCase(),
@@ -104,6 +107,51 @@ export class DashboardServer {
         if (url === '/api/health' && method === 'GET') {
           res.writeHead(200);
           res.end(JSON.stringify(this.qfos.getSystemHealth()));
+          return;
+        }
+
+        if (url === '/api/observer/register' && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const payload = JSON.parse(body);
+              const { name, type, protectionLevel, consciousness, rights } = payload;
+              
+              if (!name || !type) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Missing name or type parameter.' }));
+                return;
+              }
+
+              const observerId = this.qfos.observerProtector.registerObserver({
+                type: type as ObserverType,
+                consciousness: consciousness === true,
+                metadata: { name },
+                protectionLevel: protectionLevel as ProtectionLevel,
+              });
+
+              // Set customized rights if provided
+              if (rights) {
+                this.qfos.observerProtector.updateObserverRights(observerId, rights);
+              }
+
+              const updatedObservers = this.qfos.observerProtector.getAllObservers().map(o => ({
+                ...o,
+                rights: this.qfos.observerProtector.getObserverRights(o.id)
+              }));
+
+              res.writeHead(200);
+              res.end(JSON.stringify({
+                observerId,
+                observers: updatedObservers,
+              }));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to register observer.' }));
+            }
+          });
           return;
         }
 

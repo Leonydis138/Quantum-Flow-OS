@@ -75,7 +75,8 @@ async function checkLiveMode() {
           id: o.id,
           name: o.metadata.name || o.id,
           type: o.type === 'human' ? 'Human' : o.type === 'ai_agent' ? 'AI Agent' : 'Autonomous',
-          protection: o.protectionLevel.toUpperCase()
+          protection: o.protectionLevel.toUpperCase(),
+          rights: o.rights
         }));
       }
       
@@ -125,15 +126,33 @@ function renderConstraints() {
 
 function renderObservers() {
   const container = document.getElementById('observers-container');
-  container.innerHTML = state.observers.map(o => `
-    <div class="observer-item">
-      <i data-lucide="${o.type === 'Human' ? 'user' : 'bot'}"></i>
-      <div class="observer-detail">
-        <strong>${o.name}</strong>
-        <span>Type: ${o.type} | Level: ${o.protection}</span>
+  container.innerHTML = state.observers.map(o => {
+    let rightsHtml = '';
+    if (o.rights) {
+      const activeRights = [];
+      if (o.rights.rightToExist) activeRights.push('Exist');
+      if (o.rights.rightToPrivacy) activeRights.push('Privacy');
+      if (o.rights.rightToSelfDetermination) activeRights.push('Autonomy');
+      if (o.rights.rightNotToBeOptimizedAway) activeRights.push('No-Opt');
+      
+      rightsHtml = `
+        <div class="observer-rights-badges" style="display:flex; gap:4px; margin-top:4px; flex-wrap:wrap;">
+          ${activeRights.map(r => `<span style="font-size:9px; background:rgba(0,180,255,0.06); color:#38bdf8; border:1px solid rgba(56,189,248,0.15); padding:1px 4px; border-radius:3px; font-family:var(--font-mono);">${r}</span>`).join('')}
+        </div>
+      `;
+    }
+    
+    return `
+      <div class="observer-item" style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:8px;">
+        <i data-lucide="${o.type === 'Human' ? 'user' : 'bot'}" style="margin-top:2px;"></i>
+        <div class="observer-detail" style="display:flex; flex-direction:column;">
+          <strong>${o.name}</strong>
+          <span style="font-size:11px; color:var(--text-secondary);">Type: ${o.type} | Level: ${o.protection}</span>
+          ${rightsHtml}
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
   lucide.createIcons(); // refresh newly injected icons
 }
 
@@ -585,4 +604,76 @@ async function mergeFork(forkId) {
     renderTimelines();
     addLog('MULTIVERSE', `Offline sandbox timeline merged back to prime. Temporal states synchronized.`, 'success');
   }
+}
+
+async function registerCustomObserver() {
+  const nameInput = document.getElementById('obs-name');
+  const name = nameInput.value.trim();
+  const type = document.getElementById('obs-type').value;
+  const level = document.getElementById('obs-level').value;
+
+  if (!name) {
+    alert('Please enter an identity identifier for the new observer.');
+    return;
+  }
+
+  addLog('SYSTEM', `Commissioning observer guard framework for "${name}"...`, 'info');
+  
+  const rightsPayload = {
+    rightToExist: true,
+    rightToNarrative: true,
+    rightToIgnorance: level !== 'minimal',
+    rightToRejection: level !== 'minimal',
+    rightToMeaning: level === 'full',
+    rightNotToBeOptimizedAway: true,
+    rightToContinuity: true,
+    rightToPrivacy: level === 'full',
+    rightToSelfDetermination: level === 'full',
+  };
+
+  if (isLiveMode) {
+    try {
+      const res = await fetch('/api/observer/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          type,
+          protectionLevel: level,
+          consciousness: type !== 'autonomous_system',
+          rights: rightsPayload
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        state.observers = data.observers.map(o => ({
+          id: o.id,
+          name: o.metadata.name || o.id,
+          type: o.type === 'human' ? 'Human' : o.type === 'ai_agent' ? 'AI Agent' : 'Autonomous',
+          protection: o.protectionLevel.toUpperCase(),
+          rights: o.rights
+        }));
+        renderObservers();
+        nameInput.value = '';
+        addLog('SYSTEM', `Commissioned observer "${name}" under real-time cryptographic protection layer.`, 'success');
+        return;
+      }
+    } catch (e) {
+      isLiveMode = false;
+    }
+  }
+
+  // Local fallback
+  const newObs = {
+    id: `obs-${Date.now()}`,
+    name,
+    type: type === 'human' ? 'Human' : type === 'ai_agent' ? 'AI Agent' : 'Autonomous',
+    protection: level.toUpperCase(),
+    rights: rightsPayload
+  };
+  state.observers.push(newObs);
+  renderObservers();
+  nameInput.value = '';
+  addLog('SYSTEM', `Commissioned observer "${name}" in offline simulation sandbox.`, 'success');
 }
