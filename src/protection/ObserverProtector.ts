@@ -467,6 +467,20 @@ export class ObserverProtector extends EventEmitter {
 
     return success;
   }
+
+  /**
+   * Get all registered observers
+   */
+  public getAllObservers(): Observer[] {
+    return Array.from(this.observers.values());
+  }
+
+  /**
+   * Get a specific observer by ID
+   */
+  public getObserver(id: string): Observer | null {
+    return this.observers.get(id) ?? null;
+  }
 }
 
 export interface ProtectionSummary {

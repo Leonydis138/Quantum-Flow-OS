@@ -68,6 +68,10 @@ export {
   QuantumSupervisionEngine,
   type QuantumSupervisionResult,
 } from './quantum/QuantumSupervisionEngine';
+export {
+  QuantumConsensusEngine,
+  type QuantumConsensusResult,
+} from './quantum/QuantumConsensusEngine';
 
 /**
  * Create a fully configured Quantum Flow OS instance
@@ -78,6 +82,7 @@ import { ReversibilityEngine } from './reversibility/ReversibilityEngine';
 import { EthicalLedger } from './core/EthicalLedger';
 import { QuantumSupervisionEngine, QuantumSupervisionResult } from './quantum/QuantumSupervisionEngine';
 import { TemporalForkingEngine } from './reversibility/TemporalForkingEngine';
+import { QuantumConsensusEngine, QuantumConsensusResult } from './quantum/QuantumConsensusEngine';
 
 export interface QuantumFlowConfig {
   autoRollback?: boolean;
@@ -92,6 +97,7 @@ export class QuantumFlowOS {
   public readonly ethicalLedger: EthicalLedger;
   public readonly quantumSupervisionEngine: QuantumSupervisionEngine;
   public readonly temporalForkingEngine: TemporalForkingEngine;
+  public readonly quantumConsensusEngine: QuantumConsensusEngine;
   public readonly strictMode: boolean;
 
   constructor(config: QuantumFlowConfig = {}) {
@@ -110,6 +116,7 @@ export class QuantumFlowOS {
     this.ethicalLedger = new EthicalLedger();
     this.quantumSupervisionEngine = new QuantumSupervisionEngine();
     this.temporalForkingEngine = new TemporalForkingEngine();
+    this.quantumConsensusEngine = new QuantumConsensusEngine();
 
     this.setupIntegrations();
   }
@@ -131,6 +138,27 @@ export class QuantumFlowOS {
     });
 
     return supervisionResult;
+  }
+
+  /**
+   * Run an entangled multi-observer consensus vote for a target action
+   */
+  public runObserverConsensus(action: Action): QuantumConsensusResult {
+    const observers = this.observerProtector.getAllObservers();
+    const consensusResult = this.quantumConsensusEngine.runConsensus(action, observers);
+
+    // Record consensus event onto cryptographic ledger
+    this.ethicalLedger.append('action', {
+      actionId: action.id,
+      consensusType: 'quantum-consensus',
+      consensusReached: consensusResult.consensusReached,
+      vetoed: consensusResult.vetoed,
+      vetoingObserverIds: consensusResult.vetoingObserverIds,
+      approvalRate: consensusResult.approvalRate,
+      confidenceIndex: consensusResult.confidenceIndex,
+    });
+
+    return consensusResult;
   }
 
   /**
