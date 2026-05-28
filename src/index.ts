@@ -42,6 +42,16 @@ export {
   type ReversibilityStatus,
 } from './reversibility/ReversibilityEngine';
 
+// Quantum States
+export {
+  QuantumEthicalState,
+  EthicalBasisState,
+} from './quantum/QuantumEthicalState';
+export type {
+  QuantumStateVector,
+  EntanglementLink,
+} from './quantum/QuantumEthicalState';
+
 /**
  * Create a fully configured Quantum Flow OS instance
  */
