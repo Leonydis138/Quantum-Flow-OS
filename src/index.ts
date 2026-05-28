@@ -72,6 +72,9 @@ export {
   QuantumConsensusEngine,
   type QuantumConsensusResult,
 } from './quantum/QuantumConsensusEngine';
+export {
+  DashboardServer,
+} from './server/DashboardServer';
 
 /**
  * Create a fully configured Quantum Flow OS instance
