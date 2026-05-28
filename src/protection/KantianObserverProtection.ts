@@ -1,4 +1,14 @@
-import { EthicalAction, EthicalViolation } from '../core/SelfConstrainingEngine';
+export interface EthicalAction {
+  id?: string;
+  intent: string;
+  [key: string]: unknown;
+}
+
+export interface EthicalViolation {
+  type: string;
+  message: string;
+  critical: boolean;
+}
 
 export class KantianObserverProtection {
   evaluate(action: EthicalAction): EthicalViolation[] {

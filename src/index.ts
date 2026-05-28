@@ -59,7 +59,7 @@ export class QuantumFlowOS {
   public readonly constraintEngine: SelfConstrainingEngine;
   public readonly observerProtector: ObserverProtector;
   public readonly reversibilityEngine: ReversibilityEngine;
-  private readonly strictMode: boolean;
+  public readonly strictMode: boolean;
 
   constructor(config: QuantumFlowConfig = {}) {
     this.strictMode = config.strictMode ?? true;

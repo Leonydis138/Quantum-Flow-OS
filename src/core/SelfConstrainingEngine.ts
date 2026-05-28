@@ -136,7 +136,7 @@ export class SelfConstrainingEngine extends EventEmitter {
    */
   public applyConstraint(constraint: EthicalConstraint): void {
     // Validate all existing actions against this new constraint
-    for (const [actionId, action] of this.actions) {
+    for (const [, action] of this.actions) {
       if (!this.validateAgainstConstraint(action, constraint)) {
         this.recordViolation(action, constraint);
       }
@@ -294,16 +294,18 @@ export class SelfConstrainingEngine extends EventEmitter {
   }): Violation[] {
     let filtered = [...this.violations];
 
-    if (filter?.minSeverity) {
-      filtered = filtered.filter(v => v.severity >= filter.minSeverity);
+    if (filter?.minSeverity !== undefined) {
+      const minSeverity = filter.minSeverity;
+      filtered = filtered.filter(v => v.severity >= minSeverity);
     }
 
     if (filter?.constraintType) {
       filtered = filtered.filter(v => v.constraint.type === filter.constraintType);
     }
 
-    if (filter?.since) {
-      filtered = filtered.filter(v => v.timestamp >= filter.since);
+    if (filter?.since !== undefined) {
+      const since = filter.since;
+      filtered = filtered.filter(v => v.timestamp >= since);
     }
 
     return filtered;

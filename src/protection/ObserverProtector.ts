@@ -382,11 +382,13 @@ export class ObserverProtector extends EventEmitter {
     }
 
     if (filter?.minSeverity !== undefined) {
-      filtered = filtered.filter(v => v.severity >= filter.minSeverity);
+      const minSeverity = filter.minSeverity;
+      filtered = filtered.filter(v => v.severity >= minSeverity);
     }
 
     if (filter?.since) {
-      filtered = filtered.filter(v => v.timestamp >= filter.since);
+      const since = filter.since;
+      filtered = filtered.filter(v => v.timestamp >= since);
     }
 
     return filtered;

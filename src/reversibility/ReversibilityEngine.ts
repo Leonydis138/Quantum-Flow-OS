@@ -103,13 +103,21 @@ export class ReversibilityEngine extends EventEmitter {
 
         // Attempt rollback if not the last attempt
         if (attempt < maxAttempts) {
-          await this.rollbackAction(actionId, { validateBeforeRollback });
+          const rollbackOpts: Pick<RollbackOptions, 'validateBeforeRollback'> = {};
+          if (validateBeforeRollback !== undefined) {
+            rollbackOpts.validateBeforeRollback = validateBeforeRollback;
+          }
+          await this.rollbackAction(actionId, rollbackOpts);
         }
       }
     }
 
     // All attempts failed - perform final rollback
-    await this.rollbackAction(actionId, { validateBeforeRollback });
+    const rollbackOpts: Pick<RollbackOptions, 'validateBeforeRollback'> = {};
+    if (validateBeforeRollback !== undefined) {
+      rollbackOpts.validateBeforeRollback = validateBeforeRollback;
+    }
+    await this.rollbackAction(actionId, rollbackOpts);
 
     return {
       success: false,
