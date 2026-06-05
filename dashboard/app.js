@@ -4076,12 +4076,19 @@ async function testSubEngineMaxim() {
       }
 
       resultContainer.style.display = 'flex';
+      resultContainer.replaceChildren();
+      const statusIcon = document.createElement('i');
+      const engineLabel = selectedEngineKey.toUpperCase();
       if (pass) {
         resultContainer.className = 'imperative-status passed';
-        resultContainer.innerHTML = `<i data-lucide="check-circle-2"></i> MAXIM CONFORMS TO ${selectedEngineKey.toUpperCase()} FORMULATION`;
+        statusIcon.setAttribute('data-lucide', 'check-circle-2');
+        resultContainer.appendChild(statusIcon);
+        resultContainer.appendChild(document.createTextNode(` MAXIM CONFORMS TO ${engineLabel} FORMULATION`));
       } else {
         resultContainer.className = 'imperative-status failed';
-        resultContainer.innerHTML = `<i data-lucide="alert-triangle"></i> MAXIM FAILS ${selectedEngineKey.toUpperCase()} STANDARD`;
+        statusIcon.setAttribute('data-lucide', 'alert-triangle');
+        resultContainer.appendChild(statusIcon);
+        resultContainer.appendChild(document.createTextNode(` MAXIM FAILS ${engineLabel} STANDARD`));
       }
       
       const time = new Date().toLocaleTimeString();
