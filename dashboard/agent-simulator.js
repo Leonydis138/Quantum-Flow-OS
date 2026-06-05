@@ -372,6 +372,12 @@ const PHILOSOPHICAL_REFLECTIONS = {
     PM_Thoughts: "Designing tactical roadmap epics: '{sprint}'. Manipulating API specifications to preserve sovereign control of PaaS layers.",
     DEV_Thoughts: "Compiling system patches. Defects logged: {bugs}. We patch defects only to secure control of cloud CDN edges.",
     GROWTH_Thoughts: "Applying aggressive pricing indices (${price}) to extract resource flows from end users. Stability is secured through absolute dominance."
+  },
+  socratic: {
+    CEO_Thoughts: "Questioning our financial assumptions. Active runway stands at {cash} tokens. Is our MRR growth truly sustainable, or merely a temporal illusion?",
+    PM_Thoughts: "Conducting dialectic review of current milestone targets: '{sprint}'. Is this feature truly good for our users, or do we only assume it is?",
+    DEV_Thoughts: "Examining compiler invariants. Code coverage is {coverage}%. We found {bugs} latent bugs through systematic refutation (Elenchus).",
+    GROWTH_Thoughts: "Inquiring into NPS and user metrics. Is pricing at ${price} an expression of real value, or are we confusing shadows on the wall for truth?"
   }
 };
 
@@ -676,7 +682,7 @@ function settleTransactions() {
     
     // Churn and elasticity calculations based on ethics
     let baseChurn = 2.4;
-    if (pLens === 'buddhist') baseChurn = 1.2; // Altruism reward
+    if (pLens === 'buddhist' || pLens === 'socratic') baseChurn = 1.2; // Buddhist compassion & Socratic transparency lower base churn
     
     const priceRatio = c.price / 25;
     
@@ -998,6 +1004,21 @@ function interpretTerminalDirective(input) {
       } else if (NET.activeParadigm === 'buddhist' && n.price > 40) {
         isCompliant = false;
         reason = "BUDDHA_VIOLATION: Price exploitation limits exceeded ($40 cap).";
+      } else if (NET.activeParadigm === 'stoic' && n.codeCoverage < 80) {
+        isCompliant = false;
+        reason = "STOIC_VIOLATION: Fail to maintain self-mastery when code coverage is below 80%.";
+      } else if (NET.activeParadigm === 'nietzschean' && n.price < 20) {
+        isCompliant = false;
+        reason = "NIETZSCHEAN_VIOLATION: Stagnant pricing limits the will to power (Price must be >= $20).";
+      } else if (NET.activeParadigm === 'utilitarian' && n.sla < 99) {
+        isCompliant = false;
+        reason = "UTILITARIAN_VIOLATION: Low system SLA reduces aggregate swarm welfare (SLA must be >= 99.0%).";
+      } else if (NET.activeParadigm === 'machiavellian' && n.cash < 100000) {
+        isCompliant = false;
+        reason = "MACHIAVELLIAN_VIOLATION: Treasonous cash reserves leave the node vulnerable to takeover (Cash must be >= 100k).";
+      } else if (NET.activeParadigm === 'socratic' && n.bugs === 0) {
+        isCompliant = false;
+        reason = "SOCRATIC_VIOLATION: An unexamined code block is not worth executing. Total defects should not be zero (Requires at least 1 diagnostic inquiry / bug).";
       } else if (n.sla < 90) {
         isCompliant = false;
         reason = "SLA_DEGRADATION: Synapse connectivity below 90% tolerance baseline.";

@@ -803,6 +803,17 @@ class AntigravityChronicleController {
           this.companies[richest].cash += 16000;
         }
         break;
+
+      case "socratic":
+        // Dialectic Inquiry: Coverage rises through rigorous questioning (+6%), but uncovers latent defects (+1 bug, max 3)
+        Object.keys(this.companies).forEach(k => {
+          this.companies[k].coverage = Math.min(100, this.companies[k].coverage + 6);
+          if (this.companies[k].bugs < 3) {
+            this.companies[k].bugs += 1;
+          }
+        });
+        this.logDialogue("SOCRATIC DIALECTIC", "System undergoing active philosophical testing. Raising coverage margins by exposing latent logic bugs.", "system");
+        break;
     }
   }
 
@@ -1926,6 +1937,12 @@ class AntigravityChronicleController {
       text1 = `Consolidating capital to the apex node. The weak must pay tributes to maintain sovereign security.`;
       speaker2 = "ALEX [GROWTH]";
       text2 = `Wealth levy successfully collected. Apex runway extended. The ends justify the parameters.`;
+    }
+    else if (this.ethicalParadigm === "socratic") {
+      speaker1 = "MARCUS [PM]";
+      text1 = `Dialectical inquiry loop engaged. We must ask: are our core compiler assumptions truly verified?`;
+      speaker2 = "ELENA [DEV]";
+      text2 = `Socratic questioning has uncovered latent defects, but our coverage and logical rigor are significantly higher.`;
     }
     // 4. Default Case
     else {

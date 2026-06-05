@@ -12,6 +12,16 @@ describe('ChatAICognitiveEngine & API Endpoints Integration', () => {
   const PORT = 18081;
 
   beforeAll(async () => {
+    // Clean up any stale temporary test data ledger before starting
+    const ledgerPath = path.join(__dirname, '..', 'data', 'chat-real-data-ledger.json');
+    if (fs.existsSync(ledgerPath)) {
+      try {
+        fs.unlinkSync(ledgerPath);
+      } catch (err) {
+        console.warn("Failed to remove stale test ledger file:", err);
+      }
+    }
+
     // Start server on separate port
     server = new DashboardServer(PORT);
     await server.start();
