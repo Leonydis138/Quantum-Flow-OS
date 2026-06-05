@@ -772,6 +772,74 @@ export class DashboardServer {
           return;
         }
 
+        if (url === '/api/simulator/agents' && method === 'GET') {
+          try {
+            const agents = this.qfos.agentSimulator.getAgents();
+            res.writeHead(200);
+            res.end(JSON.stringify({ agents }));
+          } catch (err) {
+            const error = err as Error;
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: error.message || 'Failed to get agents.' }));
+          }
+          return;
+        }
+
+        if (url === '/api/simulator/agent/register' && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const payload = JSON.parse(body);
+              const { name, paradigm, sociability, aggression } = payload;
+              if (!name || !paradigm) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Missing name or paradigm.' }));
+                return;
+              }
+              const id = this.qfos.agentSimulator.registerAgent({
+                name,
+                paradigm: paradigm.toUpperCase(),
+                sociability: parseFloat(sociability || '0.5'),
+                aggression: parseFloat(aggression || '0.2')
+              });
+              res.writeHead(201);
+              res.end(JSON.stringify({ id, success: true }));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to register agent.' }));
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/simulator/tick' && method === 'POST') {
+          try {
+            const report = this.qfos.agentSimulator.tick(this.qfos);
+            res.writeHead(200);
+            res.end(JSON.stringify({ report }));
+          } catch (err) {
+            const error = err as Error;
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: error.message || 'Failed to execute simulation tick.' }));
+          }
+          return;
+        }
+
+        if (url === '/api/simulator/reset' && method === 'POST') {
+          try {
+            this.qfos.agentSimulator.reset();
+            res.writeHead(200);
+            res.end(JSON.stringify({ success: true }));
+          } catch (err) {
+            const error = err as Error;
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: error.message || 'Failed to reset simulator.' }));
+          }
+          return;
+        }
+
         if (url === '/api/chat/config' && method === 'GET') {
           res.writeHead(200);
           res.end(JSON.stringify({

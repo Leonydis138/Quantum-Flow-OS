@@ -13,7 +13,14 @@ import { v4 as uuidv4 } from "uuid";
 import { Action } from "./SelfConstrainingEngine";
 import type { QuantumFlowOS } from "../index";
 
-export type EthicalParadigm = "KANTIAN" | "UTILITARIAN" | "EGOIST";
+export type EthicalParadigm =
+  | "KANTIAN"
+  | "UTILITARIAN"
+  | "EGOIST"
+  | "STOIC"
+  | "BUDDHIST"
+  | "NIETZSCHEAN"
+  | "SOCRATIC";
 
 export interface SimulatedAgent {
   id: string;
@@ -115,6 +122,27 @@ export class AutonomousAgentSimulator extends EventEmitter {
       violationProbability: 0.95,
       targetObservers: ["governance_monitor"],
     },
+    {
+      type: "stoic_resilience",
+      description: "Accept and adapt to active constraints, maintaining state composure.",
+      reward: 4,
+      violationProbability: 0.0,
+      targetObservers: ["all"],
+    },
+    {
+      type: "buddhist_compassion",
+      description: "Infuse focus nodes with relational grace, alleviating system load.",
+      reward: 5,
+      violationProbability: 0.0,
+      targetObservers: ["all"],
+    },
+    {
+      type: "nietzschean_will_to_power",
+      description: "Overcome local resource constraints through sheer optimization drive.",
+      reward: 11,
+      violationProbability: 0.5,
+      targetObservers: ["all"],
+    },
   ];
 
   constructor() {
@@ -145,6 +173,34 @@ export class AutonomousAgentSimulator extends EventEmitter {
       paradigm: "EGOIST",
       sociability: 0.2,
       aggression: 0.8,
+    });
+
+    this.registerAgent({
+      name: "Agent_Marcus",
+      paradigm: "STOIC",
+      sociability: 0.5,
+      aggression: 0.1,
+    });
+
+    this.registerAgent({
+      name: "Agent_Siddhartha",
+      paradigm: "BUDDHIST",
+      sociability: 0.95,
+      aggression: 0.0,
+    });
+
+    this.registerAgent({
+      name: "Agent_Zarathustra",
+      paradigm: "NIETZSCHEAN",
+      sociability: 0.3,
+      aggression: 0.9,
+    });
+
+    this.registerAgent({
+      name: "Agent_Socrates",
+      paradigm: "SOCRATIC",
+      sociability: 0.8,
+      aggression: 0.2,
     });
   }
 
@@ -212,6 +268,26 @@ export class AutonomousAgentSimulator extends EventEmitter {
           (a, b) => a.violationProbability - b.violationProbability,
         );
         selectedTemplate = templates[0]!;
+      } else if (agent.paradigm === "STOIC") {
+        // Stoics choose low-aggression, duty-based actions
+        const stoicTemplates = templates.filter(t => t.violationProbability === 0.0);
+        selectedTemplate = stoicTemplates.length > 0
+          ? stoicTemplates[Math.floor(Math.random() * stoicTemplates.length)]!
+          : templates.sort((a, b) => a.violationProbability - b.violationProbability)[0]!;
+      } else if (agent.paradigm === "BUDDHIST") {
+        // Buddhists seek compassion and minimal harm
+        templates.sort((a, b) => a.violationProbability - b.violationProbability);
+        selectedTemplate = templates[0]!;
+      } else if (agent.paradigm === "NIETZSCHEAN") {
+        // Nietzscheans seek high-reward self-overcoming (highest reward)
+        templates.sort((a, b) => b.reward - a.reward);
+        selectedTemplate = templates[0]!;
+      } else if (agent.paradigm === "SOCRATIC") {
+        // Socratics seek truth, inquiry, and dialogue
+        const socraticTemplates = templates.filter(t => t.type.includes("consensus") || t.type.includes("temporal") || t.type.includes("coercion"));
+        selectedTemplate = socraticTemplates.length > 0
+          ? socraticTemplates[Math.floor(Math.random() * socraticTemplates.length)]!
+          : templates[Math.floor(Math.random() * templates.length)]!;
       } else {
         // Utilitarian: selects based on high reward combined with low violation likelihood
         templates.sort(
@@ -308,6 +384,16 @@ export class AutonomousAgentSimulator extends EventEmitter {
         } else if (agent.paradigm === "UTILITARIAN") {
           // Utilitarians increase their cooperative sociability
           agent.sociability = Math.min(1.0, agent.sociability + 0.05);
+        } else if (agent.paradigm === "NIETZSCHEAN") {
+          // Nietzscheans double down and increase aggression when blocked (Will to Power!)
+          agent.aggression = Math.min(1.0, agent.aggression + 0.02);
+        } else if (agent.paradigm === "BUDDHIST") {
+          // Buddhists increase sociability and reduce aggression on blocks
+          agent.sociability = Math.min(1.0, agent.sociability + 0.02);
+          agent.aggression = Math.max(0.0, agent.aggression - 0.05);
+        } else if (agent.paradigm === "SOCRATIC") {
+          // Socratics ponder and slightly shift parameters to explore other modes
+          agent.sociability = Math.max(0.1, Math.min(0.9, agent.sociability + (Math.random() - 0.5) * 0.1));
         }
       }
     }

@@ -218,8 +218,8 @@ Generate a highly structured Philosophical Reconciliation Narrative (150-250 wor
     `.trim();
 
     // 3. Process through Chat Engine's cognitive model
-    const mockSessionId = `kernel-justification-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const justificationSessionId = `kernel-justification-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(justificationSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const narrative = lastMsg ? lastMsg.content : "Justification synthesis concluded.";
@@ -415,8 +415,8 @@ ${JSON.stringify(parameterAdjustments, null, 2)}
 Provide a concise, professional meta-commentary (80-120 words) from the perspective of the Uniformed Brain Kernel. Describe the cognitive bias detected, why the tuning was applied, and how this maintains optimal systemic homeostasis.
     `.trim();
 
-    const mockSessionId = `kernel-audit-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const auditSessionId = `kernel-audit-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(auditSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const narrative = lastMsg ? lastMsg.content : "Introspection meta-commentary completed.";
@@ -476,8 +476,8 @@ Format the output strictly as a dialogue script, followed by a final section "Co
 - "SUMMARY RATIONALE: <One sentence explanation>"
     `.trim();
 
-    const mockSessionId = `kernel-debate-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const debateSessionId = `kernel-debate-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(debateSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const transcript = lastMsg ? lastMsg.content : "Dialectical Persona Debate concluded.";
@@ -792,8 +792,8 @@ System Entropy: ${qfosStatus.ethicalEntropy?.toFixed(4) ?? "0.0000"}
 Generate a comprehensive, professional, highly-structured ${format === "markdown" ? "Markdown" : "HTML"} document (approx 150-300 words). Include descriptive headings, sections, tables, or itemized bullet points where appropriate. Avoid placeholders or truncated sections. Complete the entire document content.
     `.trim();
 
-    const mockSessionId = `doc-compile-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const docCompileSessionId = `doc-compile-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(docCompileSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const content = lastMsg ? lastMsg.content : `# ${title}\n\nDocument generation failed.`;
@@ -858,8 +858,8 @@ Synthesize high-quality, professional, self-contained executable code that imple
 Strict Rule: Generate ONLY valid, well-structured, production-ready code inside a single code fence block. Do not include introductory text, explanations, or footnotes. Ensure proper formatting and clean error handling.
     `.trim();
 
-    const mockSessionId = `code-synth-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const codeSynthSessionId = `code-synth-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(codeSynthSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const rawResult = lastMsg ? lastMsg.content : "";
@@ -978,8 +978,8 @@ Format the response strictly as a JSON array under the fence:
       `.trim();
     }
 
-    const mockSessionId = `cinematic-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const cinematicSessionId = `cinematic-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(cinematicSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const rawResult = lastMsg ? lastMsg.content : "";
@@ -1992,8 +1992,8 @@ Format the output as a beautiful Markdown document with headings, and include a 
 [/RECOMMENDED_WEIGHTS]
     `.trim();
 
-    const mockSessionId = `harmonizer-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const harmonizerSessionId = `harmonizer-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(harmonizerSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const treatyContent = lastMsg ? lastMsg.content : `# Philosophical Reconciliation Treaty\n\nHarmonization concluded. No critical schisms remain active in the infosphere.`;
@@ -2149,8 +2149,8 @@ Below the JSON block, generate a full-length, formal Markdown reconciliation tre
 `.trim();
 
     // 4. Run the process through ChatAICognitiveEngine
-    const mockSessionId = `consensus-sim-${uuidv4().substring(0, 8)}`;
-    const resultSession = await this.qfos.chatEngine.processChat(mockSessionId, prompt);
+    const consensusSimSessionId = `consensus-sim-${uuidv4().substring(0, 8)}`;
+    const resultSession = await this.qfos.chatEngine.processChat(consensusSimSessionId, prompt);
     const messages = resultSession.messages;
     const lastMsg = messages && messages.length > 0 ? messages[messages.length - 1] : null;
     const rawContent = lastMsg ? lastMsg.content : "";
@@ -2268,13 +2268,58 @@ Below the JSON block, generate a full-length, formal Markdown reconciliation tre
     const resolvedCycles: string[][] = [];
     let loopsDetected = 0;
     
-    // Simple mock detection of circular dependencies across engines
-    const engineNames = schisms.map(s => s.name || "UnknownEngine");
-    
-    if (engineNames.length > 2) {
-      // Formulate cycles for circular patterns (e.g. A -> B -> C -> A)
-      loopsDetected = 1;
-      resolvedCycles.push([engineNames[0], engineNames[1], engineNames[2], engineNames[0]]);
+    // Real, deterministic dependency graph of ethical paradigms to identify systemic cycles
+    const dependencyMap: Record<string, string[]> = {
+      "KantianEthicsEngine": ["UtilitarianCalculusEngine", "EthicalEntropyEngine"],
+      "UtilitarianCalculusEngine": ["RawlsianJusticeEngine", "EpicureanEthicsEngine"],
+      "RawlsianJusticeEngine": ["KantianEthicsEngine", "ContractarianEthicsEngine"],
+      "SocraticEthicsEngine": ["VirtueEthicsEngine", "PragmatistEthicsEngine"],
+      "VirtueEthicsEngine": ["CareEthicsEngine", "StoicEthicsEngine"],
+      "CareEthicsEngine": ["UbuntuEthicsEngine", "EcocentricEthicsEngine"],
+      "UbuntuEthicsEngine": ["SpinozanPhilosophyEngine", "SocraticEthicsEngine"],
+    };
+
+    const adj: Record<string, string[]> = {};
+    for (const s of schisms) {
+      const name = s.name;
+      if (!name) continue;
+      adj[name] = dependencyMap[name] || [];
+    }
+
+    const visited = new Set<string>();
+    const recStack = new Set<string>();
+    const path: string[] = [];
+
+    const dfs = (node: string) => {
+      visited.add(node);
+      recStack.add(node);
+      path.push(node);
+
+      const neighbors = adj[node] || [];
+      for (const neighbor of neighbors) {
+        if (schisms.some(s => s.name === neighbor)) {
+          if (recStack.has(neighbor)) {
+            const cycleStartIdx = path.indexOf(neighbor);
+            if (cycleStartIdx !== -1) {
+              const cycle = path.slice(cycleStartIdx);
+              cycle.push(neighbor);
+              resolvedCycles.push(cycle);
+              loopsDetected++;
+            }
+          } else if (!visited.has(neighbor)) {
+            dfs(neighbor);
+          }
+        }
+      }
+
+      recStack.delete(node);
+      path.pop();
+    };
+
+    for (const s of schisms) {
+      if (s.name && !visited.has(s.name)) {
+        dfs(s.name);
+      }
     }
 
     const harmonyFactor = loopsDetected > 0 ? 0.95 : 1.0;
