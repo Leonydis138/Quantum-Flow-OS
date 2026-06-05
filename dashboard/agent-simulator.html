@@ -1,52 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>
-    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
-    const params = new URLSearchParams(window.location.search);
-    if (!params.has('standalone')) {
-      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
-      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
-    }
-  </script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantum Flow OS - Multi-Agent Simulation Sandbox</title>
+  <title>ANTIGRAVITY-OS — Quantum-Swarm Agent Company Engine</title>
+  <meta name="description" content="A premium autonomous quantum-agent simulation illustrating self-organizing cash flows, cascading SLA failures, and ethical governance ontology.">
+  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+  
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Custom Styles for Simulator -->
+  <link rel="stylesheet" href="agent-simulator.css">
 
   <style>
-    /* Back Navigation */
+    /* Integration bar styled to match Quantum Flow OS design precisely */
     .dept-back-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 24px;
+      padding: 14px 24px;
       background: rgba(10, 20, 40, 0.45);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .dept-back-link {
-      color: var(--text-secondary);
+      color: #94a3b8;
       text-decoration: none;
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 14px;
       font-weight: 500;
-      transition: var(--transition-smooth);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .dept-back-link:hover {
-      color: var(--color-magenta);
+      color: var(--color-laser-teal, #00e5ff);
       transform: translateX(-4px);
     }
     .dept-title-area {
@@ -55,251 +51,34 @@
       gap: 10px;
     }
     .dept-title-area i {
-      color: var(--color-magenta);
+      color: var(--color-electric-violet, #7c4dff);
     }
     .dept-title-area h2 {
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.5px;
-      color: var(--text-primary);
+      color: #f1f5f9;
       margin: 0;
     }
     .dept-badge {
-      font-family: var(--font-mono);
+      font-family: var(--font-code, monospace);
       font-size: 11px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.06);
       padding: 4px 12px;
       border-radius: 20px;
-      color: var(--text-secondary);
-    }
-
-    /* Primary Grid */
-    .sim-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.8fr;
-      gap: 24px;
-    }
-
-    .glass-card {
-      background: rgba(10, 20, 40, 0.35);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      padding-bottom: 12px;
-    }
-
-    /* Forms */
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    input, select {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      padding: 10px 14px;
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 14px;
-      transition: var(--transition-smooth);
-    }
-
-    input:focus, select:focus {
-      border-color: var(--color-magenta);
-      outline: none;
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    /* Buttons */
-    .btn {
-      background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
-      border: 1px solid rgba(236, 72, 153, 0.3);
-      color: var(--text-primary);
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: var(--transition-smooth);
-    }
-
-    .btn:hover {
-      background: linear-gradient(135deg, rgba(236, 72, 153, 0.4) 0%, rgba(139, 92, 246, 0.4) 100%);
-      border-color: rgba(236, 72, 153, 0.6);
-      transform: translateY(-2px);
-    }
-
-    .btn.secondary {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .btn.secondary:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    /* Agent Cards */
-    .agents-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 10px;
-    }
-
-    .agent-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      position: relative;
-    }
-
-    .agent-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .agent-name {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .agent-paradigm {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      padding: 2px 6px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .agent-stat {
-      font-size: 12px;
-      color: var(--text-secondary);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .agent-progress-bg {
-      height: 4px;
-      width: 100px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .agent-progress-fill {
-      height: 100%;
-      border-radius: 2px;
-      background: var(--color-magenta);
-    }
-
-    .badge-standing {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 12px;
-      font-weight: 500;
-    }
-
-    .badge-standing.exemplary {
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: var(--color-green);
-    }
-
-    .badge-standing.conforming {
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      color: var(--color-blue);
-    }
-
-    .badge-standing.deviant {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: var(--color-magenta);
-    }
-
-    /* Sim Control bar */
-    .sim-controls {
-      display: flex;
-      gap: 12px;
-    }
-
-    /* Logs */
-    .logs-table-container {
-      max-height: 400px;
-      overflow-y: auto;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th {
-      background: rgba(255, 255, 255, 0.02);
-      padding: 12px 16px;
-      color: var(--text-secondary);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      text-align: left;
-    }
-
-    td {
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: var(--text-primary);
-    }
-
-    tr:hover td {
-      background: rgba(255, 255, 255, 0.01);
-    }
-
-    .mono {
-      font-family: var(--font-mono);
+      color: #94a3b8;
     }
   </style>
 </head>
-<body class="dark-mode">
-  <div class="glow-bg"></div>
-  <div class="grid-lines"></div>
+<body>
 
-  <div class="app-container" style="max-width: 1300px; margin: 0 auto; padding: 40px 24px;">
-    <!-- Navigation back -->
+  <!-- Glow Backgrounds from Quantum Flow OS -->
+  <div class="glow-bg"></div>
+
+  <div id="app-container" style="padding-top: 20px;">
+    
+    <!-- NAVIGATION BAR TO RETURN TO PORTAL -->
     <div class="dept-back-bar">
       <a href="index.html" class="dept-back-link">
         <i data-lucide="arrow-left"></i> Back to Main Portal
@@ -311,269 +90,416 @@
       <span class="dept-badge">SIMULATOR SANDBOX</span>
     </div>
 
-    <div class="sim-grid">
-      <!-- Left column: Registry & Control -->
-      <div style="display: flex; flex-direction: column; gap: 24px;">
-        <!-- Controls -->
-        <div class="glass-card">
-          <div class="card-title">
-            <i data-lucide="play" style="color: var(--color-green)"></i> Simulation Controls
+    <!-- HEADER COMMAND BAR -->
+    <header>
+      <div class="title-container">
+        <div class="core-logo">⏃</div>
+        <div class="brand-details">
+          <h1>ANTIGRAVITY-OS</h1>
+          <p>Quantum-Swarm Agent Company Simulation &amp; Ethical Governance Sandbox</p>
+        </div>
+      </div>
+      
+      <div class="hologram-hud-nodes">
+        <div class="hud-node">
+          <div class="pulse-dot"></div>
+          <span>NEURAL SWARM LINK: <span style="color: var(--color-laser-teal); text-shadow: var(--glow-teal);">ONLINE</span></span>
+        </div>
+        <div class="hud-node">
+          <span style="color: var(--color-slate-gray);">SIMULATION WAVE:</span>
+          <span id="macro-cycle-number" style="color: var(--color-neon-mint); text-shadow: var(--glow-mint); font-weight: bold; margin-left: 0.4rem;">1</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CORE COLUMN DECK GRID -->
+    <div class="simulation-main-grid">
+      
+      <!-- COLUMN 1: Market Intelligence & Ethical Governance & Conversational NLP -->
+      <div class="col-panel">
+        
+        <!-- MACRO HUD OVERVIEW -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Cognitive Telemetry</h2>
+            <span class="terminal-badge">METRICS</span>
           </div>
-          <div class="sim-controls">
-            <button class="btn" style="flex: 1;" onclick="triggerTick()">
-              <i data-lucide="fast-forward"></i> Execute Step (Tick)
-            </button>
-            <button class="btn secondary" onclick="resetSimulator()">
-              <i data-lucide="refresh-cw"></i> Reset Sandbox
-            </button>
+          
+          <div class="quantum-grid-stat">
+            <div class="q-stat-cell">
+              <span class="q-label">Total Liquid Capital</span>
+              <span class="q-value cyan" id="m-liquidity-pool">$1,410,000</span>
+            </div>
+            <div class="q-stat-cell">
+              <span class="q-label">Swarm Volatility</span>
+              <span class="q-value pink" id="m-volatility-pct">22.5%</span>
+            </div>
           </div>
-          <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
-            <span>Current Tick: <strong class="mono" id="sim-tick" style="color: var(--text-primary)">0</strong></span>
-            <span>Societal Cohesion: <strong class="mono" id="sim-cohesion" style="color: var(--color-green)">100%</strong></span>
+          
+          <div style="font-size: 0.74rem; color: var(--color-slate-gray); font-family: var(--font-code); line-height: 1.55;">
+            &gt; Monitoring a complex cybernetic flow matrix where autonomous neuromorphic agents trade computational datasets and token bandwidth dynamically under Lyapunov stability indices.
           </div>
         </div>
 
-        <!-- Registry -->
-        <div class="glass-card">
-          <div class="card-title">
-            <i data-lucide="user-plus" style="color: var(--color-magenta)"></i> Spawn Autonomous Agent
+        <!-- QUANTUM FLOW ETHICAL CONSOLE -->
+        <div class="glass-terminal-card" style="border-bottom: 2px solid var(--color-electric-violet);">
+          <div class="card-title-bar">
+            <h2>Quantum Flow Core</h2>
+            <span class="terminal-badge warning">ETHICAL ONTOLOGY</span>
           </div>
-          <form id="spawn-form" onsubmit="spawnAgent(event)" style="display: flex; flex-direction: column; gap: 16px;">
-            <div class="form-group">
-              <label for="agent-name">Agent Designation / Name</label>
-              <input type="text" id="agent-name" placeholder="e.g. Agent_Kant" required>
+          
+          <div class="cyber-slider-group">
+            <label for="ethical-paradigm-select">
+              <span>ACTIVE ETHICAL ONTOLOGY PROTOCOL</span>
+            </label>
+            <select id="ethical-paradigm-select" class="terminal-input" style="width: 100%; border-color: rgba(124, 77, 255, 0.25); background: rgba(5,6,11,0.95); padding: 0.55rem 0.85rem; font-family: var(--font-sans); font-weight:600; color: #fff; cursor: pointer;">
+              <option value="buddhist">☸️ BUDDHIST (Compassion & Collective Safety)</option>
+              <option value="stoic" selected>🏛️ STOIC (Equanimity & High Market Resilience)</option>
+              <option value="nietzschean">🦅 NIETZSCHEAN (Will to Power & Overdrive Growth)</option>
+              <option value="kantian">⚖️ KANTIAN (Deontological Duty Invariant)</option>
+              <option value="utilitarian">📊 UTILITARIAN (Aggregate Welfare Calculus)</option>
+              <option value="machiavellian">👑 MACHIAVELLIAN (Systemic Survival Hegemon)</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.25rem;">
+            <div class="hud-node" style="padding: 0.35rem 0.5rem; font-size: 0.65rem; justify-content: space-between; background: rgba(0,0,0,0.4);">
+              <span style="color: var(--color-slate-gray); font-weight:600;">NON_TRIVIALITY</span>
+              <span style="color: var(--color-laser-teal); font-weight: 700; letter-spacing: 0.5px;">ONLINE</span>
             </div>
-            <div class="form-group">
-              <label for="agent-paradigm">Operational Paradigm</label>
-              <select id="agent-paradigm">
-                <option value="KANTIAN">KANTIAN (Categorical Imperative, Universal Maxims)</option>
-                <option value="UTILITARIAN">UTILITARIAN (Max Utility, Balanced Harmony)</option>
-                <option value="EGOIST">EGOIST (Egoist Utility, Self-Centric Boost)</option>
-              </select>
+            <div class="hud-node" style="padding: 0.35rem 0.5rem; font-size: 0.65rem; justify-content: space-between; background: rgba(0,0,0,0.4);">
+              <span style="color: var(--color-slate-gray); font-weight:600;">OBSERVER_PROT</span>
+              <span id="opt-observer-status" style="color: var(--color-neon-mint); font-weight: 700; letter-spacing: 0.5px;">ACTIVE</span>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-              <div class="form-group">
-                <label for="agent-sociability">Sociability (Cooperation)</label>
-                <input type="number" id="agent-sociability" min="0" max="1" step="0.1" value="0.7">
-              </div>
-              <div class="form-group">
-                <label for="agent-aggression">Aggression (Risk-Taking)</label>
-                <input type="number" id="agent-aggression" min="0" max="1" step="0.1" value="0.4">
-              </div>
+          </div>
+
+          <div style="border-top: 1px solid rgba(255,255,255,0.03); padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; font-family: var(--font-code); color: var(--color-slate-gray);">
+              <span>REVERSIBILITY DECK ENGINE</span>
+              <span id="rollback-history-count" style="color: var(--color-laser-teal); font-weight:700;">0 Snapshots</span>
             </div>
-            <button class="btn" type="submit">
-              <i data-lucide="sparkles"></i> Register & Deploy Agent
+            <button class="hud-action-btn pink-pulse" id="btn-reversibility-rollback" style="width: 100%; font-size: 0.68rem; padding: 0.55rem;" title="Perform temporal rollback to previous wave state">
+              <span>🔄 REVERT CHRONO WAVE STATE</span>
             </button>
+          </div>
+        </div>
+
+        <!-- OVERSEER SANDBOX OVERRIDES -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Swarm Sandpile Overrides</h2>
+            <span class="terminal-badge danger">SANDBOX</span>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <button class="hud-action-btn cyan-pulse" id="cb-inject" title="Infuse focus node with digital token reserves">
+                <span>◆ INJECT COGNITIVE CAPITAL</span>
+              </button>
+              <button class="hud-action-btn pink-pulse" id="cb-outage" title="Simulate a structural synapse disconnect">
+                <span>⚡ DISCONNECT SYNAPSE</span>
+              </button>
+            </div>
+            <button class="hud-action-btn amber-pulse" id="cb-shock" style="width: 100%;" title="Trigger a black-swan solar ddos flare">
+              <span>⚠️ DEPLOY COGNITIVE SYSTEM SHOCK</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- BOARDROOM CONVERSATIONAL OVERRIDES -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Boardroom Directive Link</h2>
+            <span class="terminal-badge">NLP CHANNEL</span>
+          </div>
+          
+          <div class="dialogue-scroller" id="dialogue-messages">
+            <!-- Messages procedurally compiled on-the-fly -->
+          </div>
+          
+          <form id="dialogue-form" onsubmit="return false;">
+            <div class="form-chat-row">
+              <input type="text" id="dialogue-input" class="terminal-input" placeholder="Issue executive directive (e.g. '/weights optimize', '/price 50', '/fix')..." autocomplete="off">
+              <button class="hud-action-btn cyan-pulse" id="btn-transmit" type="submit">TRANSMIT</button>
+            </div>
           </form>
         </div>
+
       </div>
 
-      <!-- Right column: Simulated Population & History Logs -->
-      <div style="display: flex; flex-direction: column; gap: 24px;">
-        <!-- Population -->
-        <div class="glass-card">
-          <div class="card-title">
-            <i data-lucide="users" style="color: var(--color-blue)"></i> Simulated Node Population
+      <!-- COLUMN 2: Neural Synapse Dependency Canvas & Historical Trends -->
+      <div class="col-panel canvas-column">
+        
+        <!-- SYNAPSE GRAPH MATIX -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Sovereign Synapse Dependency Matrix</h2>
+            <span class="terminal-badge">REAL-TIME GRAPH</span>
           </div>
-          <div class="agents-container" id="agents-population">
-            <!-- Dynamic Agent Cards -->
+          
+          <div class="synapse-sandbox" id="map-canvas-container">
+            <!-- SVG bezier linkages -->
+            <svg id="synapse-wires"></svg>
+            
+            <!-- Matrix Layer Titles -->
+            <div class="matrix-layer-tag tag-b2c">Cognitive Synthesizers (SaaS)</div>
+            <div class="matrix-layer-tag tag-api">Neural API Services (PaaS)</div>
+            <div class="matrix-layer-tag tag-iaas">Bedrock Infrastructure (IaaS)</div>
+
+            <!-- Dynamic Swarm Agent Nodes -->
+            <!-- SaaS TIER -->
+            <div class="synapse-node" id="node-comp_aetherflow">
+              <div class="s-node-head">
+                <span class="s-node-title">AetherFlow</span>
+                <span class="s-node-tier">SaaS</span>
+              </div>
+              <div class="s-node-metrics"><span>Runway:</span> <span class="val-high cash">$250k</span></div>
+              <div class="s-node-metrics"><span>Synapses:</span> <span class="val-high sla">99.8%</span></div>
+            </div>
+
+            <div class="synapse-node" id="node-comp_shieldguard">
+              <div class="s-node-head">
+                <span class="s-node-title">ShieldGuard</span>
+                <span class="s-node-tier">SaaS</span>
+              </div>
+              <div class="s-node-metrics"><span>Runway:</span> <span class="val-high cash">$180k</span></div>
+              <div class="s-node-metrics"><span>Synapses:</span> <span class="val-high sla">99.7%</span></div>
+            </div>
+
+            <!-- PaaS TIER -->
+            <div class="synapse-node" id="node-comp_dataforge">
+              <div class="s-node-head">
+                <span class="s-node-title">NeonDB Pg</span>
+                <span class="s-node-tier">PaaS</span>
+              </div>
+              <div class="s-node-metrics"><span>Runway:</span> <span class="val-high cash">$280k</span></div>
+              <div class="s-node-metrics"><span>Synapses:</span> <span class="val-high sla">99.9%</span></div>
+            </div>
+
+            <div class="synapse-node" id="node-comp_authnexus">
+              <div class="s-node-head">
+                <span class="s-node-title">AuthCipher</span>
+                <span class="s-node-tier">PaaS</span>
+              </div>
+              <div class="s-node-metrics"><span>Runway:</span> <span class="val-high cash">$190k</span></div>
+              <div class="s-node-metrics"><span>Synapses:</span> <span class="val-high sla">99.9%</span></div>
+            </div>
+
+            <div class="synapse-node" id="node-comp_deepcog">
+              <div class="s-node-head">
+                <span class="s-node-title">VectorSpace</span>
+                <span class="s-node-tier">AI-aaS</span>
+              </div>
+              <div class="s-node-metrics"><span>Runway:</span> <span class="val-high cash">$350k</span></div>
+              <div class="s-node-metrics"><span>Synapses:</span> <span class="val-high sla">99.5%</span></div>
+            </div>
+
+            <!-- IaaS TIER -->
+            <div class="synapse-node" id="node-comp_cloudscale">
+              <div class="s-node-head">
+                <span class="s-node-title">HyperScale</span>
+                <span class="s-node-tier">IaaS</span>
+              </div>
+              <div class="s-node-metrics"><span>Runway:</span> <span class="val-high cash">$420k</span></div>
+              <div class="s-node-metrics"><span>Synapses:</span> <span class="val-high sla">100%</span></div>
+            </div>
+
+          </div>
+          
+          <div style="font-size: 0.74rem; color: var(--color-slate-gray); font-family: var(--font-code); line-height: 1.45;">
+            &gt; Click nodes to shift strategic monitoring focus, view subservice chassis blades, inspect compilation pipelines, and analyze financial performance trends.
           </div>
         </div>
 
-        <!-- History Audit Log -->
-        <div class="glass-card">
-          <div class="card-title" style="justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <i data-lucide="history" style="color: var(--color-purple)"></i> Multi-Agent Log Trail
+        <!-- COMMAND FOCUS DETAIL MATRIX -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Command Focus: <span id="focus-header-name" style="color: var(--color-laser-teal); text-shadow: var(--glow-teal); margin-left: 0.5rem;">AetherFlow</span></h2>
+            <span class="terminal-badge" id="focus-header-desc">Sovereign AI Commit Refactorer &amp; PR Engine</span>
+          </div>
+          
+          <div class="split-hologram-row">
+            <!-- Operational stats details -->
+            <div class="audit-glass-panel">
+              <div class="audit-p-header">Kernel Node Telemetry</div>
+              <div class="audit-q-grid">
+                <div class="cell-pair"><span>Token Reserves:</span> <span class="bold-val" id="aud-r-cash" style="color: var(--color-neon-mint); font-weight:bold;">$250,000</span></div>
+                <div class="cell-pair"><span>Synapse SLA:</span> <span class="bold-val" id="aud-r-sla">99.8%</span></div>
+                <div class="cell-pair"><span>Inflow MRR:</span> <span class="bold-val" id="aud-r-mrr">$15,500</span></div>
+                <div class="cell-pair"><span>CVE Defects:</span> <span class="bold-val" id="aud-r-bugs" style="color: var(--color-acid-coral);">2</span></div>
+                <div class="cell-pair"><span>Active Swarms:</span> <span class="bold-val" id="aud-r-users">620</span></div>
+                <div class="cell-pair"><span>Code Coverage:</span> <span class="bold-val" id="aud-r-coverage">84%</span></div>
+              </div>
             </div>
-            <button class="btn secondary" style="padding: 6px 12px; font-size: 12px;" onclick="fetchHistory()">
-              <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Refresh
+
+            <!-- Price tuning slider widget -->
+            <div class="audit-glass-panel" style="justify-content: center; gap: 1rem;">
+              <div class="cyber-slider-group">
+                <label for="slider-price">
+                  <span>Unit Licensing Rate</span>
+                  <span class="highlight" id="slider-price-val">$25</span>
+                </label>
+                <input type="range" id="slider-price" min="5" max="3000" value="25" step="1">
+              </div>
+              <div style="font-family: var(--font-code); font-size: 0.72rem; color: var(--color-slate-gray); line-height: 1.45;">
+                Unit rates regulate transaction conversion elasticities. Excessive pricing triggers synapse load shedding and churn waves.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEON TELEMETRY CANVAS CHART -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Financial Buffer Trend (Last 20 Waves)</h2>
+            <span class="terminal-badge">TREND PLOT</span>
+          </div>
+          <div class="charts-hologram-wrapper">
+            <canvas id="live-telemetry-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- COGNITIVE TRANSACTION LEDGER -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Market Transaction Clearing Ledger</h2>
+            <span class="terminal-badge">LEDGER</span>
+          </div>
+          <div class="scrolling-ledger-scroller" id="ledger-scrolling-box">
+            <!-- Financial flows written in-loop -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLUMN 3: Chrono Pacing & Synaptic Agent Headquarters -->
+      <div class="col-panel">
+        
+        <!-- PACING CENTER -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Simulation Chronometer</h2>
+            <span class="terminal-badge">CONTROLS</span>
+          </div>
+          
+          <div class="sandbox-chrono-row">
+            <button class="hud-action-btn cyan-pulse" id="btn-p-auto" style="flex: 1;" title="Toggle automatic chronometer state wave">
+              <span>RUN CHRONOMETER</span>
+            </button>
+            <button class="hud-action-btn" id="btn-p-step" title="Step simulation clock one wave phase forward">
+              <span>STEP WAVE PHASE</span>
             </button>
           </div>
-
-          <div class="logs-table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tick</th>
-                  <th>Actions Attempted</th>
-                  <th>Resolution Vector (Allowed/Blocked)</th>
-                  <th>Cohesion Ratio</th>
-                </tr>
-              </thead>
-              <tbody id="logs-tbody">
-                <tr>
-                  <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
-                    Sandbox initialized. Execute ticks to populate audit history.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 0.85rem;">
+            <div class="chrono-speed-navbar">
+              <button class="chrono-speed-btn" id="p-slow" data-pacing="slow" title="3000ms steps">SLOW</button>
+              <button class="chrono-speed-btn active" id="p-tact" data-pacing="tactical" title="1500ms steps">TACTICAL</button>
+              <button class="chrono-speed-btn" id="p-fast" data-pacing="overdrive" title="400ms steps">OVERDRIVE</button>
+            </div>
+            <button class="hud-action-btn" id="btn-mute-audio" style="font-size: 0.72rem; padding: 0.4rem 0.75rem;">
+              MUTE HUD AUDIO
+            </button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <script>
-    lucide.createIcons();
+        <!-- AGENT SWARM HEADQUARTERS SUITE -->
+        <div class="glass-terminal-card hq-agentic-suite">
+          
+          <div class="hq-suite-navbar">
+            <button class="hq-suite-tab-btn active" data-tab="CEO">◆ SOPHIA [CEO]</button>
+            <button class="hq-suite-tab-btn" data-tab="PM">◆ MARCUS [PM]</button>
+            <button class="hq-suite-tab-btn" data-tab="DEV">◆ ELENA [DEV]</button>
+            <button class="hq-suite-tab-btn" data-tab="GROWTH">◆ ALEX [GROWTH]</button>
+            <button class="hq-suite-tab-btn" data-tab="DEVOPS">◆ DMITRI [SRE]</button>
+          </div>
 
-    async function fetchAgents() {
-      try {
-        const res = await fetch('/api/simulator/agents');
-        if (res.ok) {
-          const data = await res.json();
-          const agents = data.agents || [];
-          const container = document.getElementById('agents-population');
-
-          if (agents.length === 0) {
-            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-secondary)">No active agents registered.</div>`;
-            return;
-          }
-
-          container.innerHTML = agents.map(agent => {
-            // Memory calculations
-            const total = agent.memory.length;
-            const allowed = agent.memory.filter(m => m.allowed).length;
-            const allowedRatio = total > 0 ? (allowed / total) : 1.0;
+          <div class="hq-suite-body-panes">
             
-            let standing = 'conforming';
-            if (allowedRatio >= 0.9) standing = 'exemplary';
-            else if (allowedRatio < 0.5) standing = 'deviant';
+            <!-- CEO SCREEN -->
+            <div class="hq-suite-pane active" id="pane-ceo">
+              <div class="agent-directive-hologram" style="--pane-glow-color: var(--color-laser-teal);">
+                <span class="tag-label">SOPHIA [CEO] Strategic Paradigm Invariant:</span>
+                <div style="color: var(--color-platinum); font-style: italic; margin-top: 0.25rem; font-weight: 500;" id="aud-r-directive">Conserve liquid assets and expand unit SLA stability margins</div>
+              </div>
+              <div class="agent-scrolling-terminal" id="term-ceo" style="--pane-glow-color: var(--color-laser-teal);"></div>
+            </div>
 
-            return `
-              <div class="agent-card">
-                <div class="agent-card-header">
-                  <span class="agent-name">${agent.name}</span>
-                  <span class="agent-paradigm">${agent.paradigm}</span>
-                </div>
-                <div class="agent-stat">
-                  <span>Sociability</span>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <div class="agent-progress-bg">
-                      <div class="agent-progress-fill" style="width: ${agent.sociability * 100}%"></div>
-                    </div>
-                    <span class="mono">${Number(agent.sociability).toFixed(1)}</span>
-                  </div>
-                </div>
-                <div class="agent-stat">
-                  <span>Aggression</span>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <div class="agent-progress-bg">
-                      <div class="agent-progress-fill" style="width: ${agent.aggression * 100}%; background: var(--color-purple);"></div>
-                    </div>
-                    <span class="mono">${Number(agent.aggression).toFixed(1)}</span>
-                  </div>
-                </div>
-                <div class="agent-stat" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 8px;">
-                  <span>Standing</span>
-                  <span class="badge-standing ${standing}">${standing.toUpperCase()}</span>
+            <!-- PM SCREEN -->
+            <div class="hq-suite-pane" id="pane-pm">
+              <div class="agent-directive-hologram" style="--pane-glow-color: var(--color-gold-dust);">
+                <span class="tag-label">MARCUS [PM] Roadmap Alignment:</span>
+                <div style="color: var(--color-platinum); font-style: italic; margin-top: 0.25rem; font-weight: 500;" id="aud-r-sprint">Establish asymmetric cryptographic handshakes</div>
+              </div>
+              <div class="agent-scrolling-terminal" id="term-pm" style="--pane-glow-color: var(--color-gold-dust); color: var(--color-gold-dust);"></div>
+            </div>
+
+            <!-- DEV SCREEN -->
+            <div class="hq-suite-pane" id="pane-dev">
+              <div class="agent-directive-hologram" style="--pane-glow-color: var(--color-neon-mint);">
+                <span class="tag-label">ELENA [DEV] Code compiler board:</span>
+              </div>
+              <div class="agent-scrolling-terminal" id="term-dev" style="--pane-glow-color: var(--color-neon-mint); color: var(--color-neon-mint);"></div>
+            </div>
+
+            <!-- GROWTH SCREEN -->
+            <div class="hq-suite-pane" id="pane-growth">
+              <div class="agent-directive-hologram" style="--pane-glow-color: var(--color-acid-coral);">
+                <span class="tag-label">ALEX [GROWTH] Funnel validation:</span>
+              </div>
+              <div class="agent-scrolling-terminal" id="term-growth" style="--pane-glow-color: var(--color-acid-coral); color: var(--color-acid-coral);"></div>
+            </div>
+
+            <!-- DEVOPS SCREEN -->
+            <div class="hq-suite-pane" id="pane-devops">
+              <div class="agent-directive-hologram" style="--pane-glow-color: var(--color-electric-violet);">
+                <span class="tag-label">DMITRI [SRE] Replication telemetry:</span>
+              </div>
+              <div style="margin-top: 0.5rem;">
+                <div class="devops-cell-title">INTERACTIVE BLADE CHASSIS SLOTS (CLICK RED BLADES TO REBOOT):</div>
+                <div class="devops-cell-grid" id="devops-container-health">
+                  <!-- Container nodes written procedurally -->
                 </div>
               </div>
-            `;
-          }).join('');
-        }
-      } catch (err) {
-        console.error('Failed to fetch agents:', err);
-      }
-    }
+              <div class="agent-scrolling-terminal" id="term-devops" style="--pane-glow-color: var(--color-electric-violet); color: var(--color-electric-violet); margin-top: 0.5rem;"></div>
+            </div>
 
-    async function fetchHistory() {
-      try {
-        const res = await fetch('/api/simulator/history');
-        if (res.ok) {
-          const data = await res.json();
-          const history = data.history || [];
-          const tbody = document.getElementById('logs-tbody');
+          </div>
 
-          if (history.length === 0) {
-            tbody.innerHTML = `
-              <tr>
-                <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
-                  No logs available yet. Press "Execute Step" to start simulation!
-                </td>
-              </tr>
-            `;
-            return;
-          }
+        </div>
 
-          // Show latest status in overall bar
-          const latest = history[history.length - 1];
-          document.getElementById('sim-tick').textContent = latest.tick;
-          document.getElementById('sim-cohesion').textContent = `${(latest.averageSocietalCohesion * 100).toFixed(1)}%`;
+        <!-- CLUSTER VIRTUAL FIREWALL RADAR MAP -->
+        <div class="glass-terminal-card">
+          <div class="card-title-bar">
+            <h2>Microservice Replication Firewall</h2>
+            <span class="terminal-badge">RADAR</span>
+          </div>
+          <div class="firewall-radar-screen">
+            <div class="radar-sweep-vector"></div>
+            <div class="radar-blip-signal" id="blip-1"></div>
+            <div class="radar-blip-signal" id="blip-2"></div>
+            <div class="radar-blip-signal" id="blip-3"></div>
+            <div style="position: absolute; bottom: 8px; right: 12px; font-family: var(--font-code); font-size: 0.65rem; color: var(--color-slate-gray);">
+              STATE: SYSTEM_NOMINAL
+            </div>
+          </div>
+        </div>
 
-          tbody.innerHTML = history.reverse().map(row => {
-            return `
-              <tr>
-                <td class="mono">Tick #${row.tick}</td>
-                <td class="mono">${row.attemptedCount} actions</td>
-                <td>
-                  <span class="badge-standing exemplary">${row.allowedCount} Allowed</span>
-                  <span class="badge-standing deviant">${row.blockedCount} Blocked</span>
-                </td>
-                <td class="mono">${(row.averageSocietalCohesion * 100).toFixed(1)}%</td>
-              </tr>
-            `;
-          }).join('');
-        }
-      } catch (err) {
-        console.error('Failed to fetch history:', err);
-      }
-    }
+        <!-- BLACK SWAN SYSTEM FAULT MESSAGE BAR -->
+        <div class="black-swan-warning-bar" id="macro-shock-ticker-bar">
+          <!-- Populated in-loop via shocks engine -->
+        </div>
 
-    async function triggerTick() {
-      try {
-        const res = await fetch('/api/simulator/tick', { method: 'POST' });
-        if (res.ok) {
-          await fetchAgents();
-          await fetchHistory();
-        }
-      } catch (err) {
-        alert('Tick execution failed.');
-      }
-    }
+      </div>
 
-    async function resetSimulator() {
-      if (confirm('Are you sure you want to reset simulation sandbox state?')) {
-        try {
-          const res = await fetch('/api/simulator/reset', { method: 'POST' });
-          if (res.ok) {
-            await fetchAgents();
-            await fetchHistory();
-            document.getElementById('sim-tick').textContent = "0";
-            document.getElementById('sim-cohesion').textContent = "100%";
-          }
-        } catch (err) {
-          alert('Failed to reset sandbox.');
-        }
-      }
-    }
+    </div>
 
-    async function spawnAgent(e) {
-      e.preventDefault();
-      const name = document.getElementById('agent-name').value;
-      const paradigm = document.getElementById('agent-paradigm').value;
-      const sociability = document.getElementById('agent-sociability').value;
-      const aggression = document.getElementById('agent-aggression').value;
+  </div>
 
-      try {
-        const res = await fetch('/api/simulator/agent/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, paradigm, sociability, aggression })
-        });
-        if (res.ok) {
-          document.getElementById('spawn-form').reset();
-          await fetchAgents();
-        }
-      } catch (err) {
-        alert('Failed to spawn agent.');
-      }
-    }
-
-    // Initial load
-    fetchAgents();
-    fetchHistory();
+  <script src="agent-simulator.js"></script>
+  <script>
+    // Initialize back-bar Lucide icons
+    lucide.createIcons();
   </script>
 </body>
 </html>

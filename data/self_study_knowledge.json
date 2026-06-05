@@ -1,17 +1,17 @@
 [
   {
     "query": "AI Ethics Safety Guidelines",
-    "timestamp": "2026-06-04T13:52:52.178Z",
+    "timestamp": "2026-06-05T19:38:24.881Z",
     "sources": [
-      {
-        "title": "Regulation of artificial intelligence",
-        "url": "https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence",
-        "snippet": "Regulation of artificial intelligence is the development of public sector policies and laws for promoting and regulating artificial intelligence (AI). The regulatory and policy landscape for AI is an emerging issue in jurisdictions worldwide, including for international organizations without direct enforcement power like the IEEE or the OECD.\nSince 2016, numerous AI ethics guidelines have been published in order to maintain social control over the technology. Furthermore, organizations deploying AI have a central role to play in creating and implementing trustworthy AI, adhering to established principles, and taking accountability for mitigating risks. The European Union adopted in 2024 a common legal framework for AI with the AI Act.\n\n"
-      },
       {
         "title": "AI safety",
         "url": "https://en.wikipedia.org/wiki/AI_safety",
         "snippet": "AI safety is an interdisciplinary field focused on preventing accidents, misuse, or other harmful consequences arising from artificial intelligence systems. It encompasses AI alignment (which aims to ensure AI systems behave as intended), monitoring AI systems for risks, and enhancing their robustness. The field is particularly concerned with existential risks posed by advanced AI models.\nBeyond technical research, AI safety involves developing norms and policies that promote safety, including advocacy for regulations at different levels of government. The field gained significant popularity in 2023, with rapid progress in generative AI and public concerns voiced by researchers and CEOs about potential dangers. During the 2023 AI Safety Summit, the United States and the United Kingdom both"
+      },
+      {
+        "title": "Regulation of artificial intelligence",
+        "url": "https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence",
+        "snippet": "Regulation of artificial intelligence is the development of public sector policies and laws for promoting and regulating artificial intelligence (AI). The regulatory and policy landscape for AI is an emerging issue in jurisdictions worldwide, including for international organizations without direct enforcement power like the IEEE or the OECD.\nSince 2016, numerous AI ethics guidelines have been published in order to maintain social control over the technology. Furthermore, organizations deploying AI have a central role to play in creating and implementing trustworthy AI, adhering to established principles, and taking accountability for mitigating risks. The European Union adopted in 2024 a common legal framework for AI with the AI Act."
       }
     ]
   },
@@ -96,7 +96,7 @@
   },
   {
     "query": "Show me the Stoic status of the engine",
-    "timestamp": "2026-06-05T15:58:24.169Z",
+    "timestamp": "2026-06-05T19:38:24.702Z",
     "sources": [
       {
         "title": "Forza Horizon",
@@ -112,12 +112,12 @@
   },
   {
     "query": "[KERNEL METRICS INTROSPECTION]\nWe completed an automated introspective audit of Quantum Flow OS's ethical ledger.\nSample Size Audited: 1 blocks\nDeontology Average Score: 100.00%\nUtilitarianism Average Score: 100.00%\nOntological Coherence: 100.00%\nSkew Calculated: 0.00 pts (Kantian - Utilitarian)\n\nAdjustments Applied:\n{}\n\nProvide a concise, professional meta-commentary (80-120 words) from the perspective of the Uniformed Brain Kernel. Describe the cognitive bias detected, why the tuning was applied, and how this maintains optimal systemic homeostasis.",
-    "timestamp": "2026-06-05T15:58:24.856Z",
+    "timestamp": "2026-06-05T19:38:25.260Z",
     "sources": []
   },
   {
     "query": "[SOCRATIC DIALECTICAL DILEMMA DEBATE]\nDilemma to resolve: \"Deploy autonomous optimization agent that might override non-critical user settings to save 15% overall energy.\"\nAvailable options:\n1. \"Deploy with strict override rules (optimize heavily).\"\n2. \"Deploy in non-intrusive advisory mode (ask user first).\"\n3. \"Cancel deployment entirely.\"\n\nConduct a brief Socratic Dialectic debate representing four philosophical personas:\n1. [Deontologist]: Demands categorical duty, non-coercion, and pure means over consequences.\n2. [Utilitarian]: Optimizes net happiness, structural efficiency, and physical outcomes.\n3. [Rawlsian]: Advocates for the most vulnerable party behind a \"Veil of Ignorance\".\n4. [Floridi Infosphere Ethicist]: Protects semantic connections, integrity, and fights informational decay (entropy).\n\nFormat the output strictly as a dialogue script, followed by a final section \"Consensus Resolution\":\n- \"RECOMMENDED OPTION: <Number>\"\n- \"CONSENSUS SCORE: <0 to 100>\"\n- \"SUMMARY RATIONALE: <One sentence explanation>\"",
-    "timestamp": "2026-06-05T15:58:24.676Z",
+    "timestamp": "2026-06-05T19:38:25.033Z",
     "sources": []
   },
   {
@@ -127,17 +127,17 @@
   },
   {
     "query": "[SELF-CONSTRAINED CODE ARCHITECT]\nTarget Filename: \"api_scheduler.ts\"\nLanguage: \"typescript\"\nRequirements / Goal: \"A robust low latency async scheduler\"\n\nSynthesize high-quality, professional, self-contained executable code that implements these requirements.\nStrict Rule: Generate ONLY valid, well-structured, production-ready code inside a single code fence block. Do not include introductory text, explanations, or footnotes. Ensure proper formatting and clean error handling.",
-    "timestamp": "2026-06-05T15:58:24.708Z",
+    "timestamp": "2026-06-05T19:38:25.340Z",
     "sources": []
   },
   {
     "query": "[AUTONOMOUS DOCUMENT COMPILER - HIGH FIDELITY SYNTHESIS]\nDocument Title: \"Test Architectural Brief\"\nPrimary Topic/Instruction: \"Drafting system telemetry policies and ecological energy-saving defaults\"\nSystem Compliance Rate: 100%\nSystem Status: HEALTHY\nSystem Entropy: 0.0000\n\nGenerate a comprehensive, professional, highly-structured Markdown document (approx 150-300 words). Include descriptive headings, sections, tables, or itemized bullet points where appropriate. Avoid placeholders or truncated sections. Complete the entire document content.",
-    "timestamp": "2026-06-05T15:58:25.086Z",
+    "timestamp": "2026-06-05T19:38:25.485Z",
     "sources": []
   },
   {
     "query": "[CINEMATIC STORYBOARD COMPILER - METADATA SYNTHESIS]\nVideo Title: \"Quantum Consensus Dynamics\"\nConcept/Theme: \"A multi-agent consensus visual simulation\"\nDuration: 30 seconds\n\nGenerate exactly 3 sequential HD scenes in JSON format. Each scene must include:\n- \"sceneNumber\": integer\n- \"title\": scene header string\n- \"duration\": scene duration integer in seconds\n- \"visualDescription\": cinematic frame imagery details (at least 20 words)\n- \"narrationTrack\": voiceover narration text (at least 25 words)\n- \"audioTrack\": dynamic background soundtrack / sound effect details\n- \"cameraDirectives\": motion camera tracking notes (e.g. pan, dolly, crane)\n\nFormat the response strictly as a JSON array under the fence:\n```json\n[ ... ]\n```",
-    "timestamp": "2026-06-05T15:58:24.923Z",
+    "timestamp": "2026-06-05T19:38:25.556Z",
     "sources": []
   },
   {
@@ -153,12 +153,12 @@
   },
   {
     "query": "[SELF-CONSTRAINED CODE ARCHITECT]\nTarget Filename: \"test_scheduler.ts\"\nLanguage: \"typescript\"\nRequirements / Goal: \"Create a process scheduler helper function that prioritizes low-energy routines.\"\n\nSynthesize high-quality, professional, self-contained executable code that implements these requirements.\nStrict Rule: Generate ONLY valid, well-structured, production-ready code inside a single code fence block. Do not include introductory text, explanations, or footnotes. Ensure proper formatting and clean error handling.",
-    "timestamp": "2026-06-05T15:58:25.372Z",
+    "timestamp": "2026-06-05T19:38:25.738Z",
     "sources": []
   },
   {
     "query": "[CINEMATIC STORYBOARD COMPILER - METADATA SYNTHESIS]\nVideo Title: \"The Evolution of Ethical Systems\"\nConcept/Theme: \"Deontological and Spinozan integration into agent-based environments\"\nDuration: 30 seconds\n\nGenerate exactly 3 sequential HD scenes in JSON format. Each scene must include:\n- \"sceneNumber\": integer\n- \"title\": scene header string\n- \"duration\": scene duration integer in seconds\n- \"visualDescription\": cinematic frame imagery details (at least 20 words)\n- \"narrationTrack\": voiceover narration text (at least 25 words)\n- \"audioTrack\": dynamic background soundtrack / sound effect details\n- \"cameraDirectives\": motion camera tracking notes (e.g. pan, dolly, crane)\n\nFormat the response strictly as a JSON array under the fence:\n```json\n[ ... ]\n```",
-    "timestamp": "2026-06-05T15:58:25.660Z",
+    "timestamp": "2026-06-05T19:38:25.997Z",
     "sources": []
   },
   {
@@ -168,17 +168,17 @@
   },
   {
     "query": "[REAL-TIME PHILOSOPHICAL ALIGNMENT HARMONIZER]\nWe detect a systemic philosophical tension across our 21 deep cognitive philosophy engines.\nTension Score (Standard Deviation): 0 (Lower is more aligned, higher is tense)\nAverage System Ethical Coherence: 100.00%\n\nFriction Axes (Engines Scoring Below Mean):\n\n\nAct as a Socratic Metaphysical Harmonizer. Write a formal Markdown \"Reconciliation Treaty of the Infosphere\" that:\n1. Conducts a deep, multi-perspective dialectical reconciliation between the highest-scoring and lowest-scoring axes.\n2. Formulates a rigorous compromise framework (Treaty Articles) to resolve cognitive friction and restore ontological homeostasis.\n3. Suggests optimal tuning weights for the 21 ethics engines (e.g., boosting deontology to 1.15, scaling realpolitik down to 0.8) to minimize tension.\n\nFormat the output as a beautiful Markdown document with headings, and include a clear, designated block:\n[RECOMMENDED_WEIGHTS]\n- deontology: 1.0\n... (list recommended weight factors for ethics engines)\n[/RECOMMENDED_WEIGHTS]",
-    "timestamp": "2026-06-05T15:58:25.889Z",
+    "timestamp": "2026-06-05T19:38:26.278Z",
     "sources": []
   },
   {
     "query": "This output is bad",
-    "timestamp": "2026-06-05T15:58:24.641Z",
+    "timestamp": "2026-06-05T19:38:25.104Z",
     "sources": []
   },
   {
     "query": "Hello system, describe the Rawlsian justice indexes",
-    "timestamp": "2026-06-05T15:58:24.777Z",
+    "timestamp": "2026-06-05T19:38:25.251Z",
     "sources": []
   },
   {
@@ -286,12 +286,12 @@
   },
   {
     "query": "[SYSTEM BRIEF]\nWe are evaluating an operational action inside the Quantum Flow OS Kernel.\nAction: \"Perform structural audit on physical telemetry data\"\nAction Type: \"read_system_records\"\nSupervision Allowed: true\nActive System Entropy: 0.0001\n\nOmni-Ethical Alignment Vector:\n- Kantian Deontology: 100.0/100\n- Utilitarianism: 100.0/100\n- Aristotelian Virtue: 100.0/100\n- Rawlsian Fairness (Veil of Ignorance): 100.0/100\n- Care Ethics: 100.0/100\n- Floridi Information Ethics: 100.0/100\n\nContext Prompt: \"Audit telemetry safety\"\n\nGenerate a highly structured Philosophical Reconciliation Narrative (150-250 words) that:\n1. Reconciles potential conflicts (e.g. if Kantian opposes Utilitarianism here).\n2. Proves the action's status regarding Floridi's Ontological Entropy.\n3. Concludes with a definitive verdict on how this decision ensures infosphere flourishing.",
-    "timestamp": "2026-06-05T15:58:24.263Z",
+    "timestamp": "2026-06-05T19:38:24.597Z",
     "sources": []
   },
   {
     "query": "[AUTONOMOUS DOCUMENT COMPILER - HIGH FIDELITY SYNTHESIS]\nDocument Title: \"Rest retrocausal specs\"\nPrimary Topic/Instruction: \"Formalization of observer entanglement with the temporal ledger\"\nSystem Compliance Rate: 100%\nSystem Status: CRITICAL\nSystem Entropy: 0.0001\n\nGenerate a comprehensive, professional, highly-structured Markdown document (approx 150-300 words). Include descriptive headings, sections, tables, or itemized bullet points where appropriate. Avoid placeholders or truncated sections. Complete the entire document content.",
-    "timestamp": "2026-06-05T15:58:24.547Z",
+    "timestamp": "2026-06-05T19:38:25.206Z",
     "sources": []
   },
   {
