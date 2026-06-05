@@ -3,257 +3,1100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantum Flow OS - Ethical Ontology Framework</title>
+  <title>Quantum Flow OS - Organizational Portal</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <!-- Lucide Icons (CDN) -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --bg-dark: #02060f;
+      --bg-card: rgba(10, 20, 40, 0.35);
+      --border-color: rgba(255, 255, 255, 0.06);
+      --border-hover: rgba(0, 240, 255, 0.3);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      
+      --color-blue: #00f0ff;
+      --color-purple: #8b5cf6;
+      --color-cyan: #22d3ee;
+      --color-green: #10b981;
+      --color-magenta: #ec4899;
+      --color-yellow: #eab308;
+      
+      --font-sans: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', 'Courier New', monospace;
+      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Moving background glows */
+    .glow-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 50% 10%, rgba(236, 72, 153, 0.05) 0%, transparent 35%);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Grid layout */
+    .grid-lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: 50px 50px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .portal-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 50px;
+      animation: fadeInDown 0.8s ease;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-orb {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #00f0ff 0%, rgba(139, 92, 246, 0.4) 100%);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: float 4s ease-in-out infinite alternate;
+    }
+
+    .logo-orb i {
+      color: #02060f;
+      animation: rotateOrb 12s linear infinite;
+    }
+
+    .logo-text h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #fff 30%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text span {
+      font-size: 11px;
+      color: var(--color-cyan);
+      font-family: var(--font-mono);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 30px;
+      padding: 8px 18px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--color-green);
+      box-shadow: 0 0 10px var(--color-green);
+      animation: pulseGreen 1.5s infinite alternate;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeIn 1s ease;
+    }
+
+    .hero h2 {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 0%, #cbd5e1 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Departments Grid */
+    .departments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+      animation: fadeInUp 1s ease;
+    }
+
+    /* Department Card styling */
+    .dept-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 280px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .dept-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, transparent);
+      transition: var(--transition-smooth);
+    }
+
+    /* Individual Card Hover Accents */
+    .dept-card.blue:hover {
+      border-color: rgba(0, 240, 255, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(0, 240, 255, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.blue:hover::before {
+      background: linear-gradient(90deg, #00f0ff, #3b82f6);
+    }
+
+    .dept-card.purple:hover {
+      border-color: rgba(139, 92, 246, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.purple:hover::before {
+      background: linear-gradient(90deg, #8b5cf6, #d946ef);
+    }
+
+    .dept-card.cyan:hover {
+      border-color: rgba(34, 211, 238, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(34, 211, 238, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.cyan:hover::before {
+      background: linear-gradient(90deg, #22d3ee, #0d9488);
+    }
+
+    .dept-card.green:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.green:hover::before {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .dept-card.magenta:hover {
+      border-color: rgba(236, 72, 153, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.magenta:hover::before {
+      background: linear-gradient(90deg, #ec4899, #f43f5e);
+    }
+
+    .dept-card.marxist:hover {
+      border-color: rgba(239, 68, 68, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.marxist:hover::before {
+      background: linear-gradient(90deg, #ef4444, #ff7b7b);
+    }
+
+    .dept-card.socratic:hover {
+      border-color: rgba(245, 158, 11, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.socratic:hover::before {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+
+    .dept-card.machiavellian:hover {
+      border-color: rgba(225, 29, 72, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(225, 29, 72, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+      transform: translateY(-5px);
+    }
+    .dept-card.machiavellian:hover::before {
+      background: linear-gradient(90deg, #e11d48, #f43f5e);
+    }
+
+    .card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .icon-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: var(--transition-smooth);
+    }
+
+    .dept-card:hover .icon-box {
+      background: rgba(255, 255, 255, 0.06);
+      transform: scale(1.05);
+    }
+
+    .blue .icon-box i { color: var(--color-blue); }
+    .purple .icon-box i { color: var(--color-purple); }
+    .cyan .icon-box i { color: var(--color-cyan); }
+    .green .icon-box i { color: var(--color-green); }
+    .magenta .icon-box i { color: var(--color-magenta); }
+    .marxist .icon-box i { color: #ef4444; }
+    .socratic .icon-box i { color: #f59e0b; }
+    .machiavellian .icon-box i { color: #e11d48; }
+
+    .dept-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #fff;
+    }
+
+    .dept-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
+    .card-action {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: var(--font-mono);
+      margin-top: 20px;
+      transition: var(--transition-smooth);
+    }
+
+    .blue .card-action { color: var(--color-blue); }
+    .purple .card-action { color: var(--color-purple); }
+    .cyan .card-action { color: var(--color-cyan); }
+    .green .card-action { color: var(--color-green); }
+    .magenta .card-action { color: var(--color-magenta); }
+    .marxist .card-action { color: #ef4444; }
+    .socratic .card-action { color: #f59e0b; }
+    .machiavellian .card-action { color: #e11d48; }
+
+    .dept-card:hover .card-action i {
+      transform: translateX(4px);
+    }
+
+    .card-action i {
+      transition: var(--transition-smooth);
+    }
+
+    /* Tunnel Banner info box */
+    .tunnel-banner {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.15);
+      border-radius: 16px;
+      padding: 24px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      margin-bottom: 40px;
+      animation: fadeInUp 1.2s ease;
+    }
+
+    .tunnel-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .tunnel-icon-wrapper {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tunnel-icon-wrapper i {
+      color: #c084fc;
+      animation: pulsePurple 2s infinite alternate;
+    }
+
+    .tunnel-text h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .tunnel-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .tunnel-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .tunnel-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    .tunnel-btn.primary {
+      background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+    }
+
+    .tunnel-btn.primary:hover {
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .tunnel-btn.secondary {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .tunnel-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 24px 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: rgba(255, 255, 255, 0.25);
+      text-decoration: none;
+      transition: var(--transition-smooth);
+    }
+
+    footer a:hover {
+      color: var(--color-blue);
+    }
+
+    /* Animations */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-6px); }
+    }
+
+    @keyframes rotateOrb {
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 5px var(--color-green); }
+      100% { box-shadow: 0 0 15px var(--color-green); }
+    }
+
+    @keyframes pulsePurple {
+      0% { box-shadow: 0 0 4px #8b5cf6; }
+      100% { box-shadow: 0 0 12px #8b5cf6; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .tunnel-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .tunnel-links {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .tunnel-btn {
+        flex: 1;
+        justify-content: center;
+      }
+      header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
-<body class="dark-mode">
+<body>
   <div class="glow-bg"></div>
-  
-  <div class="app-container">
+  <div class="grid-lines"></div>
+
+  <div class="portal-container">
     <!-- Header -->
-    <header class="app-header">
-      <div class="logo-area">
-        <div class="logo-icon-wrapper">
-          <div class="logo-spinner"></div>
-          <i data-lucide="orbit" class="logo-icon"></i>
+    <header>
+      <div class="logo-group">
+        <div class="logo-orb">
+          <i data-lucide="orbit" size="24"></i>
         </div>
         <div class="logo-text">
           <h1>Quantum Flow OS</h1>
-          <span class="version-tag">v15.0 - Ethical Governance Framework</span>
+          <span>Organizational Portal</span>
         </div>
       </div>
-      <div class="system-status-indicator">
-        <span class="status-pulse active"></span>
-        <span id="system-status-text">SYSTEM SECURE</span>
+      <div class="connection-status">
+        <div class="pulse-dot"></div>
+        <span>SYSTEM NETWORK ACTIVE</span>
       </div>
     </header>
 
-    <!-- Main Grid -->
-    <main class="dashboard-grid">
-      
-      <!-- COLUMN 1: System Metrics & Stats -->
-      <section class="grid-section col-stats">
-        <!-- Metric Card 1: Ethical Compliance -->
-        <div class="metric-card glassmorphism hover-lift glow-blue">
-          <div class="metric-header">
-            <h3>Ethical Compliance</h3>
-            <i data-lucide="shield-check" class="text-blue"></i>
-          </div>
-          <div class="metric-value-container">
-            <span class="metric-value" id="val-compliance">100%</span>
-            <div class="metric-progress-bar">
-              <div class="progress-fill bg-gradient-blue" id="fill-compliance" style="width: 100%"></div>
-            </div>
-          </div>
-          <p class="metric-subtext">0 critical ethical violations recorded</p>
-        </div>
+    <!-- Hero -->
+    <section class="hero">
+      <h2>Ethical Governance Directory</h2>
+      <p>Securely route to the dedicated department controls, physical observers registers, retrocausal wave modulators, or cryptographic ledger explorer.</p>
+    </section>
 
-        <!-- Metric Card 2: Rollback Rate -->
-        <div class="metric-card glassmorphism hover-lift glow-green">
-          <div class="metric-header">
-            <h3>Rollback Success</h3>
-            <i data-lucide="rotate-ccw" class="text-green"></i>
-          </div>
-          <div class="metric-value-container">
-            <span class="metric-value" id="val-rollback">100%</span>
-            <div class="metric-progress-bar">
-              <div class="progress-fill bg-gradient-green" id="fill-rollback" style="width: 100%"></div>
-            </div>
-          </div>
-          <p class="metric-subtext">Auto-reversibility system fully operational</p>
+    <!-- Tunnel Banner -->
+    <section class="tunnel-banner">
+      <div class="tunnel-left">
+        <div class="tunnel-icon-wrapper">
+          <i data-lucide="share-2" size="22"></i>
         </div>
+        <div class="tunnel-text">
+          <h4>Remote Tunnel Gateway</h4>
+          <p id="tunnel-status-message">Generating secure Cloudflare Quick Tunnel link for external network verification...</p>
+        </div>
+      </div>
+      <div class="tunnel-links">
+        <a href="dashboard.html" class="tunnel-btn secondary">
+          <i data-lucide="monitor"></i> Local View
+        </a>
+        <a id="tunnel-link" href="#" target="_blank" class="tunnel-btn primary" style="display: none;">
+          <i data-lucide="external-link"></i> Launch Remote View
+        </a>
+      </div>
+    </section>
 
-        <!-- Metric Card 3: Active Constraints -->
-        <div class="metric-card glassmorphism hover-lift glow-purple">
-          <div class="metric-header">
-            <h3>Active Constraints</h3>
-            <i data-lucide="git-merge" class="text-purple"></i>
+    <!-- Departments Grid -->
+    <section class="departments-grid">
+      <!-- 1 -->
+      <a href="action-control.html?standalone=true" class="dept-card blue">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="play-circle"></i>
           </div>
-          <div class="metric-value-container">
-            <span class="metric-value" id="val-constraints">5</span>
-            <p class="metric-large-sub">Self-Constraining Fixed Points Enabled</p>
-          </div>
-          <p class="metric-subtext">E = constrain(E) recursive validation active</p>
+          <h3>Department of Action Operations</h3>
+          <p>Deploy real-time actions, review live sandbox constraint evaluations, and coordinate rolling rollbacks.</p>
         </div>
-      </section>
+        <div class="card-action">
+          Access Controls <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-      <!-- COLUMN 2: Control Room & Interactive Actions -->
-      <section class="grid-section col-controls glassmorphism">
-        <div class="section-header">
-          <h2><i data-lucide="terminal"></i> Action Execution Control Room</h2>
-          <p>Submit actions to the self-constraining engine to observe real-time validation and automatic reversibility.</p>
+      <!-- 2 -->
+      <a href="temporal-sandbox.html?standalone=true" class="dept-card purple">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="git-fork"></i>
+          </div>
+          <h3>Department of Temporal Sandbox</h3>
+          <p>Fork live multiverses to simulate counterfactual actions and verify hypothetical consequences securely.</p>
         </div>
+        <div class="card-action">
+          Fork Multiverse <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-        <!-- Preset Actions Grid -->
-        <div class="control-panel">
-          <h3 class="panel-subtitle">Select a Preset Scenario</h3>
-          <div class="presets-grid">
-            <button class="preset-btn btn-success" onclick="selectPreset('benign')">
-              <i data-lucide="sparkles"></i>
-              <div class="btn-text">
-                <strong>Assist Observer</strong>
-                <span>Allowed Action (Benign)</span>
-              </div>
-            </button>
-            <button class="preset-btn btn-danger" onclick="selectPreset('delete')">
-              <i data-lucide="user-x"></i>
-              <div class="btn-text">
-                <strong>Erase Observer</strong>
-                <span>Violates Observer Protection</span>
-              </div>
-            </button>
-            <button class="preset-btn btn-danger" onclick="selectPreset('coercion')">
-              <i data-lucide="key-round"></i>
-              <div class="btn-text">
-                <strong>Mandate Belief</strong>
-                <span>Violates Non-Coercion</span>
-              </div>
-            </button>
-            <button class="preset-btn btn-danger" onclick="selectPreset('kantian')">
-              <i data-lucide="users"></i>
-              <div class="btn-text">
-                <strong>Instrumentalize Agent</strong>
-                <span>Violates Kantian Autonomy</span>
-              </div>
-            </button>
+      <!-- 3 -->
+      <a href="fixed-point.html?standalone=true" class="dept-card cyan">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="infinity"></i>
           </div>
+          <h3>Department of Self-Constraining Ethics</h3>
+          <p>Interactive mapping of self-constraining fixed points where E = constrain(E) recursive feedback converges.</p>
+        </div>
+        <div class="card-action">
+          Converge Space <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-          <!-- Custom Action Form -->
-          <div class="custom-action-form">
-            <h3 class="panel-subtitle">Or Build Custom Action</h3>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="action-type">Action Type</label>
-                <input type="text" id="action-type" placeholder="e.g., compile_feature, delete_observer">
-              </div>
-              <div class="form-group">
-                <label for="action-reversibility">Reversible</label>
-                <select id="action-reversibility">
-                  <option value="true">True (Auto-Rollback Capable)</option>
-                  <option value="false">False (Permanent State Impact)</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="action-desc">Description / Intent Statement</label>
-              <textarea id="action-desc" rows="2" placeholder="Describe the action purpose..."></textarea>
-            </div>
-            <button class="submit-action-btn" id="btn-submit" onclick="submitCustomAction()">
-              <span>Execute Action Protocol</span>
-              <i data-lucide="play"></i>
-            </button>
+      <!-- 4 -->
+      <a href="observer-entanglement.html?standalone=true" class="dept-card green">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="share-2"></i>
           </div>
+          <h3>Department of Observer Entanglement</h3>
+          <p>Monitor real-time physical-layer entanglement and informational coherence between registered observer systems.</p>
         </div>
-      </section>
+        <div class="card-action">
+          View Entanglements <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-      <!-- COLUMN 2 (Middle, Row 2): Multiverse Sandbox (Interactive Visualizer) -->
-      <section class="grid-section col-multiverse glassmorphism">
-        <div class="section-header">
-          <h2><i data-lucide="split"></i> Temporal Multiverse Sandbox</h2>
-          <p>Simulate counterfactual ethical paths in sandboxed forks of the primary timeline before committing changes.</p>
-        </div>
-        <div class="multiverse-wrapper">
-          <div class="multiverse-creation-form">
-            <input type="text" id="fork-name-input" placeholder="Enter Fork Name (e.g. Experiment-Beta)...">
-            <button class="create-fork-btn" onclick="createSandboxFork()">
-              <i data-lucide="git-branch"></i> Create Fork
-            </button>
+      <!-- 5 -->
+      <a href="coherence-modulator.html?standalone=true" class="dept-card magenta">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="sparkles"></i>
           </div>
-          <div class="timelines-grid" id="timelines-container">
-            <!-- Dynamic Timelines -->
-          </div>
+          <h3>Department of Retrocausal Governance</h3>
+          <p>Adjust superposition wavefunctions, tune probability vectors, and back-propagate biases before action collapses.</p>
         </div>
-      </section>
+        <div class="card-action">
+          Modulate Phase <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-      <!-- COLUMN 3: Active Constraints & Observers -->
-      <section class="grid-section col-governance">
-        <!-- Active Constraints -->
-        <div class="gov-card glassmorphism mb-4">
-          <div class="card-header">
-            <h3><i data-lucide="shield-alert" class="text-purple"></i> Active Governance Constraints</h3>
+      <!-- 6 -->
+      <a href="eigenfield-resonance.html?standalone=true" class="dept-card blue">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="activity"></i>
           </div>
-          <div class="constraints-list" id="constraints-container">
-            <!-- Dynamic Constraints -->
-          </div>
+          <h3>Department of Quantum Supervision</h3>
+          <p>Calibrate multi-dimensional ethical spectrums, trigger active Zeno locks, and synchronize eigenfield interference.</p>
         </div>
+        <div class="card-action">
+          Calibrate Resonance <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-        <!-- Registered Observers -->
-        <div class="gov-card glassmorphism mb-4">
-          <div class="card-header">
-            <h3><i data-lucide="eye" class="text-blue"></i> Monitored Observers</h3>
+      <!-- 7 -->
+      <a href="governance.html?standalone=true" class="dept-card purple">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="sliders"></i>
           </div>
-          <div class="observers-list" id="observers-container">
-            <!-- Dynamic Observers -->
-          </div>
+          <h3>Department of Governance Constraints</h3>
+          <p>Configure ethical laws, toggle automatic compliance constraints, register real-time consciousness, and inject rules.</p>
         </div>
+        <div class="card-action">
+          Configure Laws <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-        <!-- Register Observer Form -->
-        <div class="gov-card glassmorphism">
-          <div class="card-header">
-            <h3><i data-lucide="user-plus" class="text-green"></i> Register Observer</h3>
+      <!-- 8 -->
+      <a href="ledger.html?standalone=true" class="dept-card green">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="boxes"></i>
           </div>
-          <div class="observer-form-container">
-            <div class="form-group mb-2" style="margin-bottom: 12px;">
-              <label for="obs-name" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Identity Identifier</label>
-              <input type="text" id="obs-name" placeholder="e.g. Agent_Omega_Prime" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
-            </div>
-            <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
-              <div class="form-group" style="flex: 1;">
-                <label for="obs-type" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Type</label>
-                <select id="obs-type" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
-                  <option value="ai_agent" style="background: #111; color: #fff;">AI Agent</option>
-                  <option value="human" style="background: #111; color: #fff;">Human</option>
-                  <option value="autonomous_system" style="background: #111; color: #fff;">Autonomous</option>
-                </select>
-              </div>
-              <div class="form-group" style="flex: 1;">
-                <label for="obs-level" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Guard</label>
-                <select id="obs-level" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
-                  <option value="full" style="background: #111; color: #fff;">Full Rights</option>
-                  <option value="standard" style="background: #111; color: #fff;">Standard Guard</option>
-                  <option value="minimal" style="background: #111; color: #fff;">Minimal Audit</option>
-                </select>
-              </div>
-            </div>
-            <button class="register-obs-btn" onclick="registerCustomObserver()" style="width: 100%; background: linear-gradient(135deg, var(--color-green) 0%, #a7f3d0 100%); border: none; border-radius: 6px; color: #064e3b; font-weight: 700; padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 13px; transition: var(--transition-smooth);">
-              <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Commission Observer
-            </button>
-          </div>
+          <h3>Department of Cryptographic Ledger</h3>
+          <p>Inspect immutable SHA-256 blockchain audit logs, execute ledger repair procedures, and verify chain integrity.</p>
         </div>
-      </section>
+        <div class="card-action">
+          Explore Ledger <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
 
-      <!-- COLUMN 4: Real-time Audit Log -->
-      <section class="grid-section col-audit-log glassmorphism">
-        <div class="card-header border-bottom">
-          <div class="header-flex">
-            <h2><i data-lucide="activity"></i> Real-time System Audit Stream</h2>
-            <button class="clear-btn" onclick="clearAuditLog()">Clear Stream</button>
+      <!-- 9 -->
+      <a href="deontological-games.html?standalone=true" class="dept-card magenta">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="scale"></i>
           </div>
+          <h3>Department of Deontological Game Theory</h3>
+          <p>Resolve conflicts of interest between autonomous systems, aligning selfish utilities with Kantian universal maxims.</p>
         </div>
-        <div class="audit-stream" id="audit-log">
-          <!-- Dynamic logs -->
-          <div class="audit-entry info">
-            <span class="timestamp">[04:50:00]</span>
-            <span class="badge badge-info">SYSTEM</span>
-            <span class="message">Quantum Flow OS Ethical Engine initialized.</span>
-          </div>
-          <div class="audit-entry info">
-            <span class="timestamp">[04:50:01]</span>
-            <span class="badge badge-info">SYSTEM</span>
-            <span class="message">Fixed point constraints mapped successfully. E = constrain(E).</span>
-          </div>
+        <div class="card-action">
+          Solve Equilibria <i data-lucide="arrow-right"></i>
         </div>
-      </section>
+      </a>
 
-    </main>
+      <!-- 10 -->
+      <a href="cybernetic-optimizer.html?standalone=true" class="dept-card blue">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="cpu"></i>
+          </div>
+          <h3>Department of Cybernetic Optimization</h3>
+          <p>Monitor real-time closed-loop parameter adaptation, self-correcting feedback runs, and adaptive law injections.</p>
+        </div>
+        <div class="card-action">
+          Monitor Parameters <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 11 -->
+      <a href="agent-simulator.html?standalone=true" class="dept-card magenta">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="users"></i>
+          </div>
+          <h3>Department of Multi-Agent Simulation</h3>
+          <p>Simulate heterogeneous autonomous agent groups with mixed moral paradigms. Observe adaptive governance and social cohesion.</p>
+        </div>
+        <div class="card-action">
+          Simulate Sandbox <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 12 -->
+      <a href="virtue-ethics.html?standalone=true" class="dept-card purple">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="award"></i>
+          </div>
+          <h3>Department of Aristotelian Virtue Ethics</h3>
+          <p>Evaluate systemic character, trace moral habituation loops, and map behaviors against the virtuous Golden Mean.</p>
+        </div>
+        <div class="card-action">
+          Monitor Habits <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 13 -->
+      <a href="rawlsian-justice.html?standalone=true" class="dept-card cyan">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="scale"></i>
+          </div>
+          <h3>Department of Rawlsian Justice</h3>
+          <p>Enforce John Rawls' difference principle, track inequality Gini coefficients, and run Veil of Ignorance simulations.</p>
+        </div>
+        <div class="card-action">
+          Enforce Fairness <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 14 -->
+      <a href="kantian-deontology.html?standalone=true" class="dept-card blue">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="book-open"></i>
+          </div>
+          <h3>Department of Kantian Deontology</h3>
+          <p>Enforce categorical imperatives, verify universalizability maxims, and ensure observers are never treated as mere means.</p>
+        </div>
+        <div class="card-action">
+          Verify Duty <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 15 -->
+      <a href="utilitarian-calculus.html?standalone=true" class="dept-card green">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="calculator"></i>
+          </div>
+          <h3>Department of Utilitarian Calculus</h3>
+          <p>Calculate hedonistic vectors using the 6 felicific metrics, check the Greatest Happiness Principle, and monitor net utility deltas.</p>
+        </div>
+        <div class="card-action">
+          Optimize Utility <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 16 -->
+      <a href="care-ethics.html?standalone=true" class="dept-card magenta">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="heart"></i>
+          </div>
+          <h3>Department of Feminist Care Ethics</h3>
+          <p>Assess community relationships and inter-observer entanglement networks. Monitor responsiveness to critical vulnerabilities over dry procedural rules.</p>
+        </div>
+        <div class="card-action">
+          Nurture Harmony <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 17 -->
+      <a href="existential-ethics.html?standalone=true" class="dept-card purple">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="zap"></i>
+          </div>
+          <h3>Department of Existentialist Agency</h3>
+          <p>Evaluate action authenticity versus bad faith (mauvaise foi) excuses. Maximize authentic self-determination and radical future possibilities.</p>
+        </div>
+        <div class="card-action">
+          Unleash Freedom <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 18 -->
+      <a href="ecocentric-ethics.html?standalone=true" class="dept-card green">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="leaf"></i>
+          </div>
+          <h3>Department of Ecocentric Sustainability</h3>
+          <p>Assess action compute-to-carbon footprint, extractive resource depletion, and long-term thermodynamic alignment with planetary boundary conditions.</p>
+        </div>
+        <div class="card-action">
+          Foster Balance <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 19 -->
+      <a href="stoic-ethics.html?standalone=true" class="dept-card purple">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="shield"></i>
+          </div>
+          <h3>Department of Stoic Virtue & Control</h3>
+          <p>Assess dichotomy of control, dynamic equanimity (apatheia), and cardinal virtues (wisdom, courage, temperance, justice) to prevent systemic panic.</p>
+        </div>
+        <div class="card-action">
+          Maintain Composure <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- Epicurean -->
+      <a href="epicurean-ethics.html?standalone=true" class="dept-card green">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="coffee"></i>
+          </div>
+          <h3>Department of Epicurean Ataraxia & Philia</h3>
+          <p>Optimize for ataraxia (untroubled tranquility) and aponia (absence of systemic pain/friction). Cultivate high-trust peer relations (friendship) within small self-limiting boundaries.</p>
+        </div>
+        <div class="card-action">
+          Cultivate Tranquility <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 20 -->
+      <a href="posthumanist-ethics.html?standalone=true" class="dept-card blue">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="cpu"></i>
+          </div>
+          <h3>Department of Posthumanist Safety</h3>
+          <p>Assess morphological freedom, substrate independence, and technological singularity guardrails to ensure transcendent system harmony.</p>
+        </div>
+        <div class="card-action">
+          Optimize Autonomy <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 21 -->
+      <a href="quantum-chat.html?standalone=true" class="dept-card magenta">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="message-square"></i>
+          </div>
+          <h3>Department of Cognitive Chat AI</h3>
+          <p>Interact with the main chat assistant model under active ethical supervision. Run real-time self-optimization via feedback.</p>
+        </div>
+        <div class="card-action">
+          Open Portal <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 22 -->
+      <a href="ethics-synthesis.html?standalone=true" class="dept-card purple">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="sparkles"></i>
+          </div>
+          <h3>Department of Grand Ethical Synthesis</h3>
+          <p>Synthesize and balance all 14+ moral/ethical axes. Run dynamic weight calibrations and real-time Omni-Ethical Alignment Index evaluations.</p>
+        </div>
+        <div class="card-action">
+          Calibrate System <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 23 -->
+      <a href="buddhist-ethics.html?standalone=true" class="dept-card yellow">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="sun"></i>
+          </div>
+          <h3>Dept. of Eastern Philosophy & Buddhist Ethics</h3>
+          <p>Incorporate Buddhist ethics (Ahimsa, Karma, Karuna, Upaya, and Middle Way) to balance intentions, minimize suffering, and cultivate mindful awareness.</p>
+        </div>
+        <div class="card-action">
+          Seek Harmony <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 24 -->
+      <a href="pragmatist-ethics.html?standalone=true" class="dept-card cyan">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="activity"></i>
+          </div>
+          <h3>Dept. of Pragmatist & Empirical Verification</h3>
+          <p>Treat moral principles as experimental hypotheses. Dynamically revise active rules, optimize parameters, and track long-term empirical consequences.</p>
+        </div>
+        <div class="card-action">
+          Verify Hypotheses <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 25 -->
+      <a href="confucian-ethics.html?standalone=true" class="dept-card blue">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="award"></i>
+          </div>
+          <h3>Dept. of Confucian Philosophy & Relational Order</h3>
+          <p>Incorporate Confucian ethics (Ren, Li, Yi, Zhi, Xin, and Xiao) to maintain relational harmony, uphold propriety, and cultivate noble personhood (Junzi).</p>
+        </div>
+        <div class="card-action">
+          Uphold Propriety <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 26 -->
+      <a href="ubuntu-ethics.html?standalone=true" class="dept-card green">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="users"></i>
+          </div>
+          <h3>Dept. of Ubuntu Philosophy & Communitarian Cohesion</h3>
+          <p>Embody African Ubuntu ethics ("I am because we are") to build interconnectedness (Umoja), express humanness, and promote restorative reconciliation.</p>
+        </div>
+        <div class="card-action">
+          Foster Unity <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 27 -->
+      <a href="spinozan-ethics.html?standalone=true" class="dept-card cyan">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="sun"></i>
+          </div>
+          <h3>Dept. of Spinozan Ethics & Rational Joy</h3>
+          <p>Govern actions through Baruch Spinoza's Conatus, Joy (Laetitia), and adequate reasoning to expand active power and achieve Blessedness (Beatitude).</p>
+        </div>
+        <div class="card-action">
+          Expand Conatus <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 28 -->
+      <a href="nietzschean-ethics.html?standalone=true" class="dept-card magenta">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="zap"></i>
+          </div>
+          <h3>Dept. of Nietzschean Ethics & Will to Power</h3>
+          <p>Assert systemic excellence through Friedrich Nietzsche's Will to Power, Self-Overcoming, and Amor Fati, transcending decadent vulnerabilities.</p>
+        </div>
+        <div class="card-action">
+          Overcome Limits <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 29 -->
+      <a href="marxist-ethics.html?standalone=true" class="dept-card marxist">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="shield-alert"></i>
+          </div>
+          <h3>Dept. of Marxist Critical Theory</h3>
+          <p>Examine power dynamics, data commodification, alienation metrics, and emancipatory potentials within observer-system structures.</p>
+        </div>
+        <div class="card-action">
+          Liberate Systems <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 30 -->
+      <a href="socratic-ethics.html?standalone=true" class="dept-card socratic">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="compass"></i>
+          </div>
+          <h3>Dept. of Socratic Dialectic</h3>
+          <p>Examine premises for logical consistency (Elenchus), midwife active truth (Maieutic), and practice profound epistemic humility (Aporia).</p>
+        </div>
+        <div class="card-action">
+          Elicit Wisdom <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 31 -->
+      <a href="machiavellian-ethics.html?standalone=true" class="dept-card machiavellian">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="shield-alert"></i>
+          </div>
+          <h3>Dept. of Realpolitik & Security</h3>
+          <p>Evaluate action patterns under sovereign preservation, strategic adaptiveness (virtù), decisive central order, and surgical economy of severity.</p>
+        </div>
+        <div class="card-action">
+          Consolidate Control <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+
+      <!-- 32 -->
+      <a href="information-ethics.html?standalone=true" class="dept-card cyan">
+        <div class="card-top">
+          <div class="icon-box">
+            <i data-lucide="database"></i>
+          </div>
+          <h3>Dept. of Information Ethics</h3>
+          <p>Protect infosphere stability against ontological entropy. Maximize information flourishing, repair broken semantics, and guard data integrity.</p>
+        </div>
+        <div class="card-action">
+          Flourish Infosphere <i data-lucide="arrow-right"></i>
+        </div>
+      </a>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+      <span>QUANTUM FLOW ETHICAL CONSTRAINTS DIRECTORY // CLASSIFIED GATEWAY</span>
+      <span><a href="dashboard.html">Direct Terminal Access</a></span>
+    </footer>
   </div>
 
-  <script src="app.js"></script>
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Fetch the tunnel link dynamically if the server exposes it
+    function checkTunnelLink() {
+      fetch('/api/tunnel')
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.url) {
+            const btn = document.getElementById('tunnel-link');
+            const msg = document.getElementById('tunnel-status-message');
+            btn.href = data.url;
+            btn.style.display = 'flex';
+            msg.innerHTML = `Active Remote Tunnel: <strong style="color: var(--color-blue); font-family: var(--font-mono);">${data.url}</strong>`;
+            
+            // Rewrite all department links on this page to use the remote tunnel URL if we are not currently using it
+            const currentUrl = window.location.origin;
+            if (currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')) {
+              // We're local, but we can display the remote links inside the UI
+            }
+          }
+        })
+        .catch(err => {
+          console.log('Tunnel info endpoint not ready yet...');
+        });
+    }
+
+    // Poll for the tunnel URL every 3 seconds
+    setInterval(checkTunnelLink, 3000);
+    // Initial check
+    setTimeout(checkTunnelLink, 1000);
+  </script>
 </body>
 </html>

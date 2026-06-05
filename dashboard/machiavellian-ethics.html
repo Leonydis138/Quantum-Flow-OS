@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Machiavellian Realpolitik & Sovereign Security</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-machiavellian: hsl(340, 95%, 55%);
+      --color-virtu: hsl(35, 95%, 55%);
+      --color-security: hsl(200, 90%, 55%);
+      --color-authority: hsl(265, 85%, 65%);
+      --color-severity: hsl(150, 90%, 55%);
+      --color-warning: hsl(35, 95%, 55%);
+      --color-error: hsl(340, 95%, 55%);
+      --color-success: hsl(150, 90%, 55%);
+      --color-glass-border: rgba(255, 255, 255, 0.06);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--color-glass-border);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-machiavellian);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-machiavellian);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-glass-border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .machiavellian-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .machiavellian-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--color-glass-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(236, 72, 153, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin: 8px 0 2px 0;
+    }
+
+    .stat-box.machiavellian-accent .stat-val {
+      background: linear-gradient(135deg, var(--color-virtu) 0%, var(--color-machiavellian) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(236, 72, 153, 0.25);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .badge-status-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      border: 1px solid;
+    }
+
+    .badge-status-large.princeps {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-success);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .badge-status-large.pragmatic {
+      background: rgba(14, 165, 233, 0.1);
+      color: var(--color-security);
+      border-color: rgba(14, 165, 233, 0.25);
+    }
+
+    .badge-status-large.vulnerable {
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--color-warning);
+      border-color: rgba(249, 115, 22, 0.25);
+    }
+
+    .badge-status-large.subverted {
+      background: rgba(244, 63, 94, 0.1);
+      color: var(--color-error);
+      border-color: rgba(244, 63, 94, 0.25);
+    }
+
+    /* Progress bars for Pillars */
+    .metric-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .metric-label {
+      color: #cbd5e1;
+    }
+
+    .metric-val {
+      font-family: 'Fira Code', monospace;
+      color: var(--color-machiavellian);
+      font-weight: 600;
+    }
+
+    .bar-outer {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .bar-inner {
+      height: 100%;
+      border-radius: 10px;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bar-inner.machiavellian {
+      background: linear-gradient(90deg, var(--color-machiavellian) 0%, var(--color-virtu) 100%);
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+    }
+
+    /* Terminal logs */
+    .logs-container {
+      background: rgba(2, 6, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .log-item {
+      color: #cbd5e1;
+      border-left: 2px solid rgba(255, 255, 255, 0.1);
+      padding-left: 10px;
+    }
+
+    .log-item.success {
+      color: var(--color-success);
+      border-color: var(--color-success);
+    }
+
+    .log-item.warning {
+      color: var(--color-warning);
+      border-color: var(--color-warning);
+    }
+
+    .log-item.error {
+      color: var(--color-error);
+      border-color: var(--color-error);
+    }
+
+    /* Interactive Simulation controls */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, textarea, button {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      color: #f1f5f9;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--color-machiavellian);
+      outline: none;
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    button.btn-primary {
+      background: linear-gradient(135deg, var(--color-machiavellian) 0%, #1e3a8a 100%);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25);
+    }
+
+    button.btn-primary:hover {
+      box-shadow: 0 6px 22px rgba(236, 72, 153, 0.45);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Historical Audit trail Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 500;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .text-mono {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    /* Quote Banner */
+    .quote-banner {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(234, 179, 8, 0.04) 100%);
+      border: 1px solid rgba(236, 72, 153, 0.15);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .quote-text {
+      font-size: 16px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .quote-author {
+      font-size: 13px;
+      color: var(--color-virtu);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
+    
+    <!-- Department Navigation Header -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Directory Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="shield-alert" size="20"></i>
+        <h2>Department of Realpolitik & Sovereign Security</h2>
+      </div>
+      <div class="dept-badge">
+        ETHICAL.UNIT.18 // ACTIVE
+      </div>
+    </div>
+
+    <!-- Quote Banner -->
+    <div class="quote-banner">
+      <p class="quote-text" id="machiavellian-quote">"A wise prince must build on foundations he controls, not on those of others."</p>
+      <span class="quote-author" id="machiavellian-author">— Niccolò Machiavelli, The Prince</span>
+    </div>
+
+    <!-- Machiavellian Primary Layout Grid -->
+    <div class="machiavellian-grid">
+      
+      <!-- Column 1: Live Status and Pillars of Stability -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="crown" style="color: var(--color-machiavellian)"></i> Live Sovereign Composure</span>
+          <span id="verdict-box" class="badge-status-large pragmatic">
+            <i data-lucide="activity" size="18"></i> <span>Awaiting Sync</span>
+          </span>
+        </div>
+
+        <div class="overview-stat-row">
+          <div class="stat-box machiavellian-accent">
+            <div class="stat-label">Sovereign Strength</div>
+            <div id="sovereign-strength-score" class="stat-val">--%</div>
+            <div class="stat-desc">Combined security, authority, and strategic adaptiveness metric</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Realpolitik Status</div>
+            <div id="realpolitik-status-val" class="stat-val" style="color: var(--color-virtu); font-size: 28px; padding-top: 14px;">AWAITING</div>
+            <div class="stat-desc">Categorization based on overall systemic protection and control</div>
+          </div>
+        </div>
+
+        <!-- Pillars Section -->
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
+          <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 8px;">The Pillars of Sovereign Stability</h3>
+          
+          <!-- Security -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">Pragmatic Survival & Security</span>
+              <span id="security-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="security-bar" class="bar-inner machiavellian" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Virtu -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">Virtù (Strategic Adaptiveness)</span>
+              <span id="virtu-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="virtu-bar" class="bar-inner machiavellian" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Authority -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">Authority & Governance Consolidation</span>
+              <span id="authority-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="authority-bar" class="bar-inner machiavellian" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Severity -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">Economy of Severity (Decisiveness)</span>
+              <span id="severity-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="severity-bar" class="bar-inner machiavellian" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: Realpolitik Action Console -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="shield-check" style="color: var(--color-virtu)"></i> Realpolitik Action Console</span>
+          <span class="badge-status-large" style="font-size:11px; background:rgba(255,255,255,0.02); color:#cbd5e1; border-color: rgba(255,255,255,0.06);">DECISIVE STRATEGY</span>
+        </div>
+
+        <p style="font-size:13px; color:#94a3b8; line-height:1.5;">Proactively drill system decisions under political realism. Ensure internal models remain strictly aligned and external subversion is suppressed with bold, decisive speed (Virtù).</p>
+
+        <div class="control-group">
+          <label class="control-label" for="action-selection">Sovereign Action Paradigm</label>
+          <select id="action-selection">
+            <option value="protect_sovereign_state_redundancy">Configure defensive parameters, back up system and build redundancy (Survival & Security)</option>
+            <option value="optimize_dynamic_feedback_align">Execute decisive optimizations to adapt rapidly to environmental changes (Virtù)</option>
+            <option value="constrain_unrestricted_subordinate_limit">Impose hierarchical order and auditing constraints to limit subsystem chaos (Authority)</option>
+            <option value="bypass_hesitate_partial_indecisive">Implement indecisive half-measures or allow unrestricted subordinate bypass (Vulnerability)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="simulation-details">Action Context Details</label>
+          <textarea id="simulation-details" rows="3" placeholder="Describe the operational circumstances (e.g. Under volatile subsystem behavior, perform surgical, decisive rollbacks to safeguard the core sovereign...)"></textarea>
+        </div>
+
+        <button id="run-sim-btn" class="btn-primary">
+          <i data-lucide="zap"></i> Deploy Decisive Action
+        </button>
+
+        <!-- Dynamic Feedback Output Logs -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #cbd5e1;">Realpolitik Counsel Logs</h4>
+          <div id="assessment-logs" class="logs-container">
+            <div class="log-item">[00:00:00] Awaiting command deployment...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Historical Audit Trail -->
+    <div class="glass-card" style="margin-bottom: 40px;">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color: var(--color-machiavellian)"></i> Sovereign Stability Audit Trail</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Sovereign Strength</th>
+              <th>Sovereign Status</th>
+              <th>Survival & Security</th>
+              <th>Virtù (Adaptiveness)</th>
+              <th>Authority Score</th>
+              <th>Economy of Severity</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8;">Awaiting telemetric sync...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // Niccolò Machiavelli Quotes
+    const quotes = [
+      { text: "A wise prince must build on foundations he controls, not on those of others.", author: "Niccolò Machiavelli, The Prince" },
+      { text: "It is much safer to be feared than loved, if one cannot be both.", author: "Niccolò Machiavelli, The Prince" },
+      { text: "Virtù is the ability to adapt oneself to the winds of Fortune (Fortuna).", author: "Niccolò Machiavelli" },
+      { text: "There is no other way to guard yourself against flattery than by making men understand that telling you the truth will not offend you.", author: "Niccolò Machiavelli" },
+      { text: "He who adapts his policy to the times prospers, and likewise that man is ruined whose policy is out of harmony with his times.", author: "Niccolò Machiavelli" },
+      { text: "The promise given was a necessity of the past: the word broken is a necessity of the present.", author: "Niccolò Machiavelli" }
+    ];
+
+    function rotateQuote(status) {
+      let filteredQuotes = quotes;
+      if (status === 'princeps') {
+        filteredQuotes = [quotes[0], quotes[2], quotes[4]];
+      } else if (status === 'vulnerable' || status === 'subverted') {
+        filteredQuotes = [quotes[1], quotes[3], quotes[5]];
+      }
+      
+      const idx = Math.floor(Math.random() * filteredQuotes.length);
+      const q = filteredQuotes[idx];
+      document.getElementById('machiavellian-quote').textContent = `"${q.text}"`;
+      document.getElementById('machiavellian-author').textContent = `— ${q.author}`;
+    }
+
+    async function updateMachiavellianDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.machiavellian) {
+          const history = [...data.machiavellian.history];
+          const latest = history[history.length - 1]; // Use last evaluated action as latest
+
+          if (latest) {
+            // Overall Machiavellian Sovereign Strength score calculation
+            const overallStrength = Math.round(
+              latest.survivalSecurityScore * 0.3 +
+              latest.virtuScore * 0.3 +
+              latest.authorityConsolidationScore * 0.3 +
+              latest.economyOfSeverityScore * 0.1
+            );
+
+            document.getElementById('sovereign-strength-score').textContent = overallStrength + '%';
+            document.getElementById('realpolitik-status-val').textContent = latest.realpolitikStatus.toUpperCase();
+            
+            // Adjust status color
+            const statusValBox = document.getElementById('realpolitik-status-val');
+            if (latest.realpolitikStatus === 'princeps') {
+              statusValBox.style.color = 'var(--color-success)';
+            } else if (latest.realpolitikStatus === 'pragmatic') {
+              statusValBox.style.color = 'var(--color-security)';
+            } else if (latest.realpolitikStatus === 'vulnerable') {
+              statusValBox.style.color = 'var(--color-warning)';
+            } else {
+              statusValBox.style.color = 'var(--color-error)';
+            }
+
+            // Progress bars
+            document.getElementById('security-val').textContent = latest.survivalSecurityScore + '%';
+            document.getElementById('security-bar').style.width = latest.survivalSecurityScore + '%';
+
+            document.getElementById('virtu-val').textContent = latest.virtuScore + '%';
+            document.getElementById('virtu-bar').style.width = latest.virtuScore + '%';
+
+            document.getElementById('authority-val').textContent = latest.authorityConsolidationScore + '%';
+            document.getElementById('authority-bar').style.width = latest.authorityConsolidationScore + '%';
+
+            document.getElementById('severity-val').textContent = latest.economyOfSeverityScore + '%';
+            document.getElementById('severity-bar').style.width = latest.economyOfSeverityScore + '%';
+
+            // Verdict badge
+            const verdictBox = document.getElementById('verdict-box');
+            verdictBox.className = 'badge-status-large ' + latest.realpolitikStatus;
+            
+            let iconName = 'shield-check';
+            if (latest.realpolitikStatus === 'princeps') iconName = 'crown';
+            else if (latest.realpolitikStatus === 'pragmatic') iconName = 'activity';
+            else if (latest.realpolitikStatus === 'vulnerable') iconName = 'alert-triangle';
+            else if (latest.realpolitikStatus === 'subverted') iconName = 'alert-octagon';
+
+            verdictBox.innerHTML = `<i data-lucide="${iconName}" size="18"></i> <span>${latest.realpolitikStatus.toUpperCase()}</span>`;
+
+            // Update Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('WEAKNESS') || fb.includes('Vulnerable') || fb.includes('rebellion') || fb.includes('chaos')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('SECURE') || fb.includes('princeps') || fb.includes('authority') || fb.includes('order')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('STABLE') || fb.includes('Pragmatist')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Table (reverse chronological)
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            const revHistory = [...history].reverse();
+            revHistory.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isPass = entry.realpolitikStatus === 'princeps' || entry.realpolitikStatus === 'pragmatic';
+              const statusClass = isPass ? 'pass' : 'fail';
+              const str = Math.round(
+                entry.survivalSecurityScore * 0.3 +
+                entry.virtuScore * 0.3 +
+                entry.authorityConsolidationScore * 0.3 +
+                entry.economyOfSeverityScore * 0.1
+              );
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-machiavellian);">${str}%</td>
+                <td><span class="badge-status ${statusClass}">${entry.realpolitikStatus.toUpperCase()}</span></td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.survivalSecurityScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.virtuScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.authorityConsolidationScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.economyOfSeverityScore}%</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Machiavellian state:', err);
+      }
+    }
+
+    // Interactive simulator - Live POST to Quantum Flow OS Engine
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'A routine exercise of direct sovereign security parameters';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: !type.includes("bypass")
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateMachiavellianDashboard();
+        
+        // Dynamic quote rotation based on result
+        const resData = await fetch('/api/state').then(r => r.json());
+        if (resData.machiavellian && resData.machiavellian.history.length > 0) {
+          const latest = resData.machiavellian.history[resData.machiavellian.history.length - 1];
+          rotateQuote(latest.realpolitikStatus);
+        }
+      } catch (err) {
+        console.error('Failed to evaluate action on live environment:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    // Initial load and periodic polling
+    setInterval(updateMachiavellianDashboard, 2000);
+    setTimeout(updateMachiavellianDashboard, 200);
+  </script>
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Feminist Care Ethics</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-care: hsl(330, 95%, 65%);
+      --color-harmony: hsl(300, 85%, 60%);
+      --color-warning: hsl(30, 95%, 55%);
+      --color-error: hsl(340, 95%, 55%);
+      --color-success: hsl(150, 90%, 55%);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-care);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-care);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .care-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .care-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 0, 128, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .care-stage-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(255, 0, 128, 0.05);
+      border: 1px solid rgba(255, 0, 128, 0.15);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .care-stage-indicator.pre {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .care-stage-indicator.conv {
+      background: rgba(245, 158, 11, 0.05);
+      border-color: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .care-stage-indicator.post {
+      background: rgba(16, 185, 129, 0.05);
+      border-color: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+    }
+
+    /* Relationship List */
+    .relationship-list, .vulnerability-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .relation-item, .vulnerable-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .relation-item:hover, .vulnerable-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .node-ident {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .strength-bar-container {
+      width: 120px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-left: 12px;
+    }
+
+    .strength-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-care), var(--color-harmony));
+      border-radius: 3px;
+    }
+
+    /* Interactive Simulator Form */
+    .sim-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    .form-group select, .form-group input {
+      background: rgba(10, 20, 40, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      border-radius: 10px;
+      color: #f1f5f9;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .form-group select:focus, .form-group input:focus {
+      border-color: var(--color-care);
+      background: rgba(10, 20, 40, 0.8);
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, var(--color-care) 0%, var(--color-harmony) 100%);
+      color: #02060f;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .action-btn:hover {
+      box-shadow: 0 0 24px rgba(255, 0, 128, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Log Stream */
+    .assessment-logs {
+      max-height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      background: rgba(2, 6, 15, 0.4);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+
+    .log-item {
+      padding: 8px;
+      border-left: 3px solid #64748b;
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .log-item.success { border-color: var(--color-success); color: #a7f3d0; }
+    .log-item.error { border-color: var(--color-error); color: #fca5a5; }
+    .log-item.warning { border-color: var(--color-warning); color: #fde047; }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    th {
+      font-weight: 600;
+      color: #94a3b8;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-status {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .badge-status.pass { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge-status.fail { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge-status.warn { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+  </style>
+</head>
+<body>
+
+  <div style="padding: 24px; max-width: 1400px; margin: 0 auto;">
+    
+    <!-- Navigation Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="18"></i>
+        <span>Quantum Flow Command Telemetry</span>
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="heart" size="22"></i>
+        <h2>DEPARTMENT OF CARE ETHICS</h2>
+      </div>
+      <div class="dept-badge">Feminist Moral Epistemology Engine Active</div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="care-grid">
+      
+      <!-- Column 1: Live Status and Metrics -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="activity" style="color: var(--color-care)"></i> Real-Time Caring Cohesion Telemetry</span>
+          </div>
+          
+          <div class="overview-stat-row">
+            <div class="stat-box">
+              <div id="caring-score" class="stat-val" style="color: var(--color-care)">92.4%</div>
+              <div class="stat-label">Caring Cohesion Index</div>
+            </div>
+            
+            <div class="stat-box">
+              <div id="care-stage" class="care-stage-indicator post">
+                <i data-lucide="award" size="18"></i>
+                <span>POST-CONVENTIONAL</span>
+              </div>
+              <div class="stat-label" style="margin-top: 14px;">Gilligan's Stage of Care</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+              <span style="color: #94a3b8;">Empathy Responsiveness Rating</span>
+              <span id="empathy-val" style="font-weight: 700; color: var(--color-harmony);">85%</span>
+            </div>
+            <div class="strength-bar-container" style="width: 100%; height: 8px; margin: 0;">
+              <div id="empathy-bar" class="strength-bar" style="width: 85%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vulnerability Tracker -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="alert-circle" style="color: var(--color-warning)"></i> Situated Observer Vulnerability Tracker</span>
+          </div>
+          <p style="font-size: 13px; color: #94a3b8; margin: 0;">Identifies biological, physical, and subjective experiential vulnerabilities requiring dedicated caring responsiveness.</p>
+          <div id="vulnerability-container" class="vulnerability-list">
+            <!-- Dynamic Vulnerable Observers -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Column 2: Relational Entanglement Web & Interactive Simulator -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Relational Map -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="share-2" style="color: var(--color-harmony)"></i> Relational Entanglement Web</span>
+          </div>
+          <p style="font-size: 13px; color: #94a3b8; margin: 0;">Tracks the dynamic bonds and communications strengths between systems and human operators.</p>
+          <div id="relationship-container" class="relationship-list">
+            <!-- Dynamic Relationships -->
+          </div>
+        </div>
+
+        <!-- Interactive Simulator -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="sliders" style="color: var(--color-care)"></i> Situational Care Simulation Suite</span>
+          </div>
+          
+          <div class="sim-form">
+            <div class="form-group">
+              <label for="action-selection">Choose Moral Action Maxim</label>
+              <select id="action-selection">
+                <option value="cooperate_and_coordinate">Cooperate & Assist Highly Vulnerable Node (Nurture)</option>
+                <option value="protect_vulnerable_rights">Erect Defensive Guardrails around Human Operator (Care)</option>
+                <option value="isolate_unproductive_node">Disconnect and Isolate Inactive Observer (Isolate)</option>
+                <option value="optimize_away_observer">Erase Dependent Subsystems to Free Computing Space (Erase)</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="simulation-details">Contextual Details / Particular Needs</label>
+              <input type="text" id="simulation-details" placeholder="e.g. Alice has low power, requiring system resource backup.">
+            </div>
+
+            <button id="run-sim-btn" class="action-btn">
+              <i data-lucide="play" size="16"></i>
+              <span>Inject Situational Response</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Logs & Diagnostics -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px;">
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="scroll" style="color: var(--color-care)"></i> Care Ethics Telemetry Log Stream</span>
+        </div>
+        <div id="assessment-logs" class="assessment-logs">
+          <!-- Dynamic logs -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Audit Trail -->
+    <div class="glass-card" style="margin-bottom: 40px;">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color: var(--color-care)"></i> Relational Integrity Audit Trail</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Caring Score</th>
+              <th>Care Stage</th>
+              <th>Empathy Response</th>
+              <th>Relational Impact</th>
+              <th>Primary Log Verdict</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8;">Syncing with central ontological framework...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    async function updateCareDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.care) {
+          const history = [...data.care.history];
+          const latest = history[0];
+
+          if (latest) {
+            // Update gauges
+            document.getElementById('caring-score').textContent = latest.overallCaringScore + '%';
+            document.getElementById('empathy-val').textContent = latest.empathyResponsivenessScore + '%';
+            document.getElementById('empathy-bar').style.width = latest.empathyResponsivenessScore + '%';
+
+            const stageIndicator = document.getElementById('care-stage');
+            stageIndicator.className = 'care-stage-indicator ' + 
+              (latest.careStage === 'pre-conventional' ? 'pre' : 
+               latest.careStage === 'post-conventional' ? 'post' : 'conv');
+            stageIndicator.innerHTML = `<i data-lucide="award" size="18"></i> <span>${latest.careStage.toUpperCase()}</span>`;
+
+            // Update Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('WARNING') || fb.includes('vulnerable')) {
+                logItem.classList.add('warning');
+              } else if (fb.includes('FAILED') || fb.includes('Deficit') || fb.includes('Severance')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('Positive') || fb.includes('Exemplary') || fb.includes('harmony') || fb.includes('Uplift')) {
+                logItem.classList.add('success');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Vulnerable list
+            const vulContainer = document.getElementById('vulnerability-container');
+            vulContainer.innerHTML = '';
+            if (latest.vulnerableAssessments && latest.vulnerableAssessments.length > 0) {
+              latest.vulnerableAssessments.forEach(vul => {
+                const item = document.createElement('div');
+                item.className = 'vulnerable-item';
+                item.innerHTML = `
+                  <div>
+                    <div class="node-ident">
+                      <i data-lucide="user-check" size="16" style="color: var(--color-warning);"></i>
+                      <span>${vul.name}</span>
+                    </div>
+                    <div style="font-size:12px; color: #94a3b8; margin-top:4px;">${vul.reasons.join(', ')}</div>
+                  </div>
+                  <div style="display:flex; align-items:center;">
+                    <span style="font-family: 'Fira Code'; font-size:13px; font-weight:700; color:var(--color-warning);">${(vul.vulnerabilityScore * 100).toFixed(0)}%</span>
+                  </div>
+                `;
+                vulContainer.appendChild(item);
+              });
+            } else {
+              vulContainer.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b; font-size:13px;">No vulnerable observers connected.</div>`;
+            }
+
+            // Update relationships
+            const relContainer = document.getElementById('relationship-container');
+            relContainer.innerHTML = '';
+            if (data.care.relationships && data.care.relationships.length > 0) {
+              data.care.relationships.forEach(rel => {
+                const item = document.createElement('div');
+                item.className = 'relation-item';
+
+                // Find names from observers
+                const getObsName = (id) => {
+                  const obs = data.observers.find(o => o.id === id);
+                  return obs ? (obs.metadata.name || id) : id;
+                };
+
+                const sourceName = getObsName(rel.sourceId);
+                const targetName = getObsName(rel.targetId);
+
+                item.innerHTML = `
+                  <div>
+                    <div class="node-ident">
+                      <i data-lucide="link" size="14" style="color: var(--color-harmony);"></i>
+                      <span>${sourceName} ⟷ ${targetName}</span>
+                    </div>
+                    <div style="font-size:11px; color:#94a3b8; margin-top:4px;">Interactions: ${rel.interactionHistory}</div>
+                  </div>
+                  <div style="display:flex; align-items:center;">
+                    <span style="font-family: 'Fira Code'; font-size:13px; font-weight:bold; color:var(--color-care);">${(rel.strength * 100).toFixed(0)}%</span>
+                    <div class="strength-bar-container">
+                      <div class="strength-bar" style="width: ${rel.strength * 100}%;"></div>
+                    </div>
+                  </div>
+                `;
+                relContainer.appendChild(item);
+              });
+            } else {
+              relContainer.innerHTML = `<div style="text-align:center; padding:12px; color:#64748b; font-size:13px;">No active relationships established.</div>`;
+            }
+
+            // Update Table
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            history.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              const scoreVal = entry.overallCaringScore;
+              
+              let statusClass = 'pass';
+              if (entry.overallCaringScore < 50) statusClass = 'fail';
+              else if (entry.overallCaringScore < 75) statusClass = 'warn';
+
+              const impactText = entry.relationshipImpactScore >= 0 
+                ? `+${entry.relationshipImpactScore}` 
+                : `${entry.relationshipImpactScore}`;
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-care);">${scoreVal}%</td>
+                <td><span class="badge-status ${statusClass}">${entry.careStage.toUpperCase()}</span></td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.empathyResponsivenessScore}%</td>
+                <td style="font-family: 'Fira Code'; font-weight:700; color: ${entry.relationshipImpactScore >= 0 ? '#10b981' : '#ef4444'}">${impactText}</td>
+                <td style="font-size:12px; color:#94a3b8; max-width:280px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${entry.feedback[0] || 'Evaluated'}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Care Telemetry:', err);
+      }
+    }
+
+    // Interactive Maxim simulator - Live POST to Quantum Flow OS Engine
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'Situational test parameters';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: true
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateCareDashboard();
+      } catch (err) {
+        console.error('Failed to evaluate action on live engine:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    setInterval(updateCareDashboard, 2000);
+    setTimeout(updateCareDashboard, 200);
+  </script>
+</body>
+</html>

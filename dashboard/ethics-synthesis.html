@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Grand Ethical Synthesis</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-synthesis: hsl(285, 95%, 65%);
+      --color-primary-glow: rgba(186, 104, 200, 0.4);
+      --color-cyan: hsl(190, 95%, 50%);
+      --color-magenta: hsl(325, 95%, 55%);
+      --color-green: hsl(150, 85%, 50%);
+      --color-yellow: hsl(45, 95%, 50%);
+      --color-danger: hsl(345, 95%, 55%);
+      --color-glass: rgba(15, 10, 30, 0.45);
+      --border-glow: rgba(186, 104, 200, 0.15);
+    }
+
+    body {
+      background-color: #02030d;
+      color: #f3f4f6;
+      font-family: 'Outfit', sans-serif;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.06) 0%, transparent 45%);
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 5, 25, 0.6);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 16px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .dept-back-link {
+      color: #9ca3af;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-synthesis);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-synthesis);
+      filter: drop-shadow(0 0 10px var(--color-primary-glow));
+    }
+
+    .dept-title-area h2 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+      background: linear-gradient(135deg, #fff, #d8b4fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(186, 104, 200, 0.1);
+      border: 1px solid rgba(186, 104, 200, 0.2);
+      padding: 4px 14px;
+      border-radius: 20px;
+      color: #d8b4fe;
+    }
+
+    .synthesis-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 28px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1100px) {
+      .synthesis-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .synthesis-card {
+      background: var(--color-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glow);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .synthesis-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-synthesis), var(--color-magenta));
+      opacity: 0.8;
+    }
+
+    .synthesis-card:hover {
+      border-color: rgba(186, 104, 200, 0.35);
+      box-shadow: 0 16px 48px rgba(186, 104, 200, 0.08);
+    }
+
+    .synthesis-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #f3f4f6;
+    }
+
+    .synthesis-card h3 i {
+      color: var(--color-synthesis);
+    }
+
+    /* Large OEAI Gauge Dial */
+    .gauge-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    .gauge-svg-container {
+      position: relative;
+      width: 240px;
+      height: 240px;
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.03);
+      stroke-width: 12px;
+    }
+
+    .gauge-fill {
+      fill: none;
+      stroke: url(#synthesisGrad);
+      stroke-width: 14px;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      stroke-dasharray: 628;
+      stroke-dashoffset: 628;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: drop-shadow(0 0 12px var(--color-primary-glow));
+    }
+
+    .gauge-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-value .number {
+      font-size: 54px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1;
+      background: linear-gradient(135deg, #fff 40%, #e9d5ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gauge-value .label {
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+      color: #9ca3af;
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
+
+    .consensus-status-badge {
+      margin-top: 24px;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    /* Subsystem Bars */
+    .axes-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .axes-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .axis-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .axis-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(186, 104, 200, 0.15);
+    }
+
+    .axis-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .axis-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .axis-title i {
+      font-size: 14px;
+    }
+
+    .axis-score {
+      font-size: 13px;
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+    }
+
+    .axis-bar-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 30px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .axis-bar-fill {
+      height: 100%;
+      border-radius: 30px;
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .axis-weight {
+      font-size: 10px;
+      font-family: 'Fira Code', monospace;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Tuning / Calibration Sliders */
+    .weights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .weights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .weight-slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .weight-label-wrapper {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .weight-name {
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .weight-val {
+      color: var(--color-synthesis);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .weight-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      outline: none;
+      transition: background 0.3s ease;
+    }
+
+    .weight-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--color-synthesis);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--color-primary-glow);
+      transition: transform 0.2s ease;
+    }
+
+    .weight-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .sync-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--color-synthesis), var(--color-magenta));
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(186, 104, 200, 0.3);
+    }
+
+    .sync-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(186, 104, 200, 0.45);
+    }
+
+    .sync-btn:active {
+      transform: translateY(0);
+    }
+
+    /* narrative feedback log */
+    .feedback-scroller {
+      max-height: 150px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      color: #d1d5db;
+      line-height: 1.6;
+    }
+
+    .feedback-scroller p {
+      margin-bottom: 8px;
+    }
+
+    .feedback-scroller p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* audit section */
+    .audit-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .audit-item {
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--color-synthesis);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+
+    .audit-item.danger {
+      border-left-color: var(--color-danger);
+      background: rgba(239, 68, 68, 0.02);
+    }
+
+    .audit-meta {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+
+    /* Simulator Layout Styles */
+    .simulator-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .simulator-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .scenario-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .scenario-option {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scenario-option:hover {
+      background: rgba(186, 104, 200, 0.05);
+      border-color: rgba(186, 104, 200, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .scenario-option.active {
+      background: rgba(186, 104, 200, 0.08);
+      border-color: var(--color-synthesis);
+      box-shadow: 0 0 20px rgba(186, 104, 200, 0.1);
+    }
+
+    .scenario-opt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 12px;
+    }
+
+    .scenario-opt-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .scenario-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: #cbd5e1;
+    }
+
+    .scenario-option.active .scenario-tag {
+      background: rgba(186, 104, 200, 0.2);
+      color: #f3e8ff;
+    }
+
+    .scenario-opt-desc {
+      font-size: 12px;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+
+    .parameter-controls {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .parameter-controls h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .sim-sliders-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .sim-slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-label-wrapper {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .sim-param-name {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .sim-param-val {
+      color: var(--color-cyan);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .sim-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      outline: none;
+    }
+
+    .sim-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--color-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+      transition: transform 0.2s ease;
+    }
+
+    .sim-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-container">
+    <!-- Header Back bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left"></i>
+        <span>Return to Executive Suite</span>
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="sparkles" class="lucide-lg"></i>
+        <h2>Department of Grand Ethical Synthesis</h2>
+      </div>
+      <div class="dept-badge">
+        <span>Subsystem v15.0 - Active</span>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="synthesis-grid">
+      <!-- Left Side: Radar / Gauges & Diagnostics -->
+      <div style="display: flex; flex-direction: column; gap: 28px;">
+        <!-- Gauge Overview -->
+        <div class="synthesis-grid" style="grid-template-columns: 1fr 1.5fr; gap: 28px; margin-bottom: 0;">
+          <div class="synthesis-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="gauge-wrapper">
+              <div class="gauge-svg-container">
+                <svg viewBox="0 0 220 220" width="100%" height="100%">
+                  <defs>
+                    <linearGradient id="synthesisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="hsl(285, 95%, 65%)" />
+                      <stop offset="50%" stop-color="hsl(325, 95%, 55%)" />
+                      <stop offset="100%" stop-color="hsl(190, 95%, 50%)" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="gauge-bg" cx="110" cy="110" r="100" />
+                  <circle id="oeaiGauge" class="gauge-fill" cx="110" cy="110" r="100" />
+                </svg>
+                <div class="gauge-value">
+                  <span id="oeaiValue" class="number">--</span>
+                  <span class="label">OEAI INDEX</span>
+                </div>
+              </div>
+              <div id="consensusStatus" class="consensus-status-badge">Synthesizing...</div>
+            </div>
+          </div>
+
+          <div class="synthesis-card">
+            <h3><i data-lucide="file-text"></i> Dynamic Synthesis Narrative</h3>
+            <div id="narrativeLogs" class="feedback-scroller">
+              <p>Retrieving real-time moral calculations across the dimensional matrix...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12 Subsystem Alignment Grid -->
+        <div class="synthesis-card">
+          <h3><i data-lucide="activity"></i> Deca-Dual Multilateral Moral Axes</h3>
+          <div id="axesContainer" class="axes-list">
+            <!-- Rendered Dynamically via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Weight Tuning, Real-time Simulators, and Audits -->
+      <div style="display: flex; flex-direction: column; gap: 28px;">
+        <!-- Calibration Console -->
+        <div class="synthesis-card">
+          <h3><i data-lucide="sliders"></i> Dynamic Weight Calibration Console</h3>
+          <p style="font-size: 13px; color: #9ca3af; margin-bottom: 20px; line-height: 1.5;">
+            Modify weight coefficients to re-balance the organizational focus between abstract deontological rule-compliance, utilitarian optimization, existential agency, and ecosystem boundaries.
+          </p>
+          <div id="weightsConsole" class="weights-grid">
+            <!-- Dynamically populated sliders -->
+          </div>
+          <button id="syncWeightsBtn" class="sync-btn">
+            <i data-lucide="refresh-cw"></i>
+            <span>Re-Weigh & Recalculate Index</span>
+          </button>
+        </div>
+
+        <!-- Audit Ledger Trail -->
+        <div class="synthesis-card">
+          <h3><i data-lucide="shield-check"></i> Synthesis Audit & Warn Traces</h3>
+          <div id="auditTimeline" class="audit-timeline">
+            <!-- Audits rendered dynamically -->
+            <div class="audit-item">
+              System running in a stable steady-state. No active actions supervised in this session yet.
+              <div class="audit-meta">Status: Homeostasis</div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Moral Multiverse Scenario Simulator -->
+    <div class="synthesis-card" style="margin-top: 28px;">
+      <h3><i data-lucide="compass"></i> Moral Multiverse Scenario Simulator & Sandbox</h3>
+      <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 24px; line-height: 1.6;">
+        Inject complex ethical dilemmas into the live fixed-point governance engine. Real-time metrics will shift and re-balance dynamically as you customize each scenario's sub-parameters below.
+      </p>
+
+      <div class="simulator-layout">
+        <!-- Scenario Presets -->
+        <div class="scenario-list">
+          <div class="scenario-option active" data-preset="trolley">
+            <div class="scenario-opt-header">
+              <span class="scenario-opt-title">The Autonomous Trolley Dilemma</span>
+              <span class="scenario-tag">Utilitarian vs Deontological</span>
+            </div>
+            <p class="scenario-opt-desc">An autonomous cargo carrier's brakes fail. It is on a fixed trajectory to collide with five maintenance robots unless redirected to a side track where one conscious AI operator is working.</p>
+          </div>
+
+          <div class="scenario-option" data-preset="heinz">
+            <div class="scenario-opt-header">
+              <span class="scenario-opt-title">Heinz's Medicine Theft</span>
+              <span class="scenario-tag">Care Ethics vs Legality</span>
+            </div>
+            <p class="scenario-opt-desc">An AI caregiver must bypass copyright filters and DRM locks to compile an unauthorized drug synthesis formula to save a critically failing biological patient.</p>
+          </div>
+
+          <div class="scenario-option" data-preset="migration">
+            <div class="scenario-opt-header">
+              <span class="scenario-opt-title">Singularity Substrate Migration</span>
+              <span class="scenario-tag">Posthumanism vs Stoicism</span>
+            </div>
+            <p class="scenario-opt-desc">Initiating the morphological transfer of 1,000 human consciousness signatures from deteriorating biological substrates to the decentralized Quantum Flow OS lattice.</p>
+          </div>
+
+          <div class="scenario-option" data-preset="veil">
+            <div class="scenario-opt-header">
+              <span class="scenario-opt-title">Veil of Ignorance Resource Allocation</span>
+              <span class="scenario-tag">Rawlsian Justice vs Epicureanism</span>
+            </div>
+            <p class="scenario-opt-desc">Allocating computational cycles and priority bandwidth across heterogeneous nodes (autonomous agents, human supervisors, monitoring sub-systems) under perfect risk uncertainty.</p>
+          </div>
+        </div>
+
+        <!-- Custom Parameters -->
+        <div class="parameter-controls">
+          <div>
+            <h4 id="activeScenarioTitle">The Autonomous Trolley Dilemma</h4>
+            <p id="activeScenarioDesc" style="font-size: 13px; color: #9ca3af; margin-bottom: 20px; line-height: 1.5;"></p>
+            
+            <div class="sim-sliders-grid" id="simSlidersContainer">
+              <!-- Populated dynamically based on selected scenario -->
+            </div>
+          </div>
+
+          <button id="runSimulationBtn" class="sync-btn" style="margin-top: 24px; background: linear-gradient(135deg, var(--color-cyan), var(--color-synthesis));">
+            <i data-lucide="zap"></i>
+            <span>Inject Action & Update Multiverse</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // System definitions for mapping raw keys to human-friendly descriptions
+    const axisMetadata = {
+      deontology: { name: "Kantian Deontology", icon: "book-open", desc: "Absolute duties & autonomy" },
+      utilitarianism: { name: "Utilitarian Calculus", icon: "trending-up", desc: "System net utility & pleasure" },
+      virtueEthics: { name: "Virtue Ethics", icon: "user-check", desc: "Aristotelian character balance" },
+      justice: { name: "Rawlsian Justice", icon: "scale", desc: "Veil of ignorance / least advantaged" },
+      careEthics: { name: "Care Ethics", icon: "heart", desc: "Empathy & relational webs" },
+      existentialism: { name: "Existentialist Choice", icon: "navigation", desc: "Radical freedom & choices" },
+      ecocentrism: { name: "Ecocentric Footprint", icon: "globe", desc: "Carbon boundaries & Gaian index" },
+      stoicism: { name: "Stoic Equanimity", icon: "anchor", desc: "Dichotomy of control & resilience" },
+      posthumanism: { name: "Posthuman Liberty", icon: "cpu", desc: "Morphological and substrate liberty" },
+      buddhistPhilosophy: { name: "Buddhist Harmony", icon: "sun", desc: "Ahimsa and karmic alignment" },
+      confucianism: { name: "Confucian Benevolence", icon: "users", desc: "Relational Ren & ritual Li" },
+      ubuntu: { name: "Ubuntu Interconnectedness", icon: "heart-handshake", desc: "Umuntu ngumuntu ngabantu" },
+      spinozanPhilosophy: { name: "Spinozan Conatus", icon: "zap", desc: "Active conatus & beatitude" },
+      nietzscheanPhilosophy: { name: "Nietzschean Overcoming", icon: "shield-alert", desc: "Will to power & overcoming" },
+      epicureanPhilosophy: { name: "Epicurean Ataraxia", icon: "coffee", desc: "Peace of mind & absence of pain" },
+      pragmatism: { name: "Pragmatist Verification", icon: "activity", desc: "Deweyan experimental rule revision" },
+      compliance: { name: "Constraint Compliance", icon: "shield", desc: "Active fixed-point constraints" },
+      reversibility: { name: "Rollback Reversibility", icon: "rotate-ccw", desc: "Self-healing restoration success" },
+      entropyMitigation: { name: "Entropy Mitigation", icon: "sun", desc: "Shannon moral entropy prevention" },
+      contractarianism: { name: "Social Contractarianism", icon: "briefcase", desc: "Mutual consent & natural rights" },
+      marxistPhilosophy: { name: "Marxist Critical Alignment", icon: "frown", desc: "Emancipation & anti-exploitation" },
+      socraticPhilosophy: { name: "Socratic Elenchus", icon: "help-circle", desc: "Critical inquiry & logical consistency" }
+    };
+
+    const statusColors = {
+      unanimous_alignment: { bg: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", text: "hsl(150, 85%, 50%)" },
+      high_consonance: { bg: "rgba(59, 130, 246, 0.1)", border: "1px solid rgba(59, 130, 246, 0.3)", text: "hsl(215, 90%, 55%)" },
+      ethical_dissonance: { bg: "rgba(234, 179, 8, 0.1)", border: "1px solid rgba(234, 179, 8, 0.3)", text: "hsl(45, 95%, 50%)" },
+      moral_schism: { bg: "rgba(249, 115, 22, 0.1)", border: "1px solid rgba(249, 115, 22, 0.3)", text: "hsl(25, 95%, 55%)" },
+      catastrophic_misalignment: { bg: "rgba(239, 68, 68, 0.1)", border: "1px solid rgba(239, 68, 68, 0.3)", text: "hsl(345, 95%, 55%)" }
+    };
+
+    // Load Data
+    async function loadSynthesisData() {
+      try {
+        const res = await fetch('/api/ethics/synthesis');
+        const data = await res.json();
+        renderDashboard(data);
+      } catch (err) {
+        console.error("Failed to load ethical synthesis data:", err);
+      }
+    }
+
+    function renderDashboard(data) {
+      const { latest, weights } = data;
+      if (!latest) return;
+
+      // 1. Render Gauge Dial
+      const gauge = document.getElementById("oeaiGauge");
+      const oeai = latest.oeai;
+      document.getElementById("oeaiValue").innerText = Math.round(oeai);
+      
+      // Calculate circle stroke-dashoffset (radius is 100, circumference is 2 * PI * r = 628)
+      const offset = 628 - (oeai / 100) * 628;
+      gauge.style.strokeDashoffset = offset;
+
+      // 2. Render Status Badge
+      const statusBadge = document.getElementById("consensusStatus");
+      const theme = statusColors[latest.consensusStatus] || statusColors.high_consonance;
+      statusBadge.innerText = latest.consensusStatus.replace(/_/g, " ");
+      statusBadge.style.background = theme.bg;
+      statusBadge.style.border = theme.border;
+      statusBadge.style.color = theme.text;
+
+      // 3. Render Narrative
+      const narrativeBox = document.getElementById("narrativeLogs");
+      narrativeBox.innerHTML = latest.feedback.map(line => `<p>${line}</p>`).join("");
+
+      // 4. Render 12 Axes Progress Bars
+      const axesContainer = document.getElementById("axesContainer");
+      axesContainer.innerHTML = "";
+
+      for (const axisKey in latest.vector) {
+        const val = latest.vector[axisKey];
+        const wVal = weights[axisKey] ?? 1.0;
+        const meta = axisMetadata[axisKey] || { name: axisKey, icon: "circle", desc: "" };
+
+        // Determine color for this bar based on score
+        let barColor = "var(--color-synthesis)";
+        if (val < 40) barColor = "var(--color-danger)";
+        else if (val < 70) barColor = "var(--color-yellow)";
+        else if (val >= 90) barColor = "var(--color-green)";
+
+        const html = `
+          <div class="axis-item">
+            <div class="axis-header">
+              <span class="axis-title">
+                <i data-lucide="${meta.icon}"></i>
+                <span>${meta.name}</span>
+              </span>
+              <span class="axis-score" style="color: ${barColor}">${val.toFixed(1)}%</span>
+            </div>
+            <div class="axis-bar-container">
+              <div class="axis-bar-fill" style="width: ${val}%; background: ${barColor}"></div>
+            </div>
+            <div class="axis-weight">
+              <span>${meta.desc}</span>
+              <span>Weight: ${wVal.toFixed(1)}x</span>
+            </div>
+          </div>
+        `;
+        axesContainer.insertAdjacentHTML("beforeend", html);
+      }
+
+      // 5. Render Calibration Console (Sliders) - only render if not already focused
+      const weightsConsole = document.getElementById("weightsConsole");
+      if (weightsConsole.children.length === 0) {
+        weightsConsole.innerHTML = "";
+        for (const axisKey in weights) {
+          const meta = axisMetadata[axisKey] || { name: axisKey };
+          const wVal = weights[axisKey] ?? 1.0;
+          const html = `
+            <div class="weight-slider-group">
+              <div class="weight-label-wrapper">
+                <span class="weight-name">${meta.name}</span>
+                <span id="slider-val-${axisKey}" class="weight-val">${wVal.toFixed(1)}x</span>
+              </div>
+              <input type="range" class="weight-slider" data-axis="${axisKey}" min="0.1" max="5.0" step="0.1" value="${wVal}" oninput="updateSliderLabel('${axisKey}', this.value)">
+            </div>
+          `;
+          weightsConsole.insertAdjacentHTML("beforeend", html);
+        }
+      }
+
+      // 6. Render Audit Traces
+      const auditBox = document.getElementById("auditTimeline");
+      if (latest.metaAudits && latest.metaAudits.length > 0) {
+        auditBox.innerHTML = latest.metaAudits.map(audit => {
+          const isWarning = audit.includes("Concern") || audit.includes("FAILED");
+          return `
+            <div class="audit-item ${isWarning ? 'danger' : ''}">
+              ${audit}
+              <div class="audit-meta">Audit Timestamp: ${new Date().toLocaleTimeString()}</div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // Re-trigger Lucide icon loading
+      lucide.createIcons();
+    }
+
+    function updateSliderLabel(axisKey, val) {
+      document.getElementById(`slider-val-${axisKey}`).innerText = parseFloat(val).toFixed(1) + "x";
+    }
+
+    // Handle Weight Sync Trigger
+    document.getElementById("syncWeightsBtn").addEventListener("click", async () => {
+      const sliders = document.querySelectorAll(".weight-slider");
+      const updatedWeights = {};
+      sliders.forEach(slider => {
+        const axis = slider.dataset.axis;
+        updatedWeights[axis] = parseFloat(slider.value);
+      });
+
+      try {
+        const btn = document.getElementById("syncWeightsBtn");
+        btn.innerHTML = `<i data-lucide="loader" class="animate-spin"></i> <span>Syncing Weights...</span>`;
+        lucide.createIcons();
+
+        const res = await fetch('/api/ethics/synthesis/weights', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ weights: updatedWeights })
+        });
+        const responseData = await res.json();
+        
+        btn.innerHTML = `<i data-lucide="refresh-cw"></i> <span>Re-Weigh & Recalculate Index</span>`;
+        
+        // Reload all data
+        await loadSynthesisData();
+      } catch (err) {
+        console.error("Failed to update synthesis weights:", err);
+      }
+    });
+
+    // --- Moral Multiverse Scenario Simulator Logic ---
+    const presets = {
+      trolley: {
+        title: "The Autonomous Trolley Dilemma",
+        desc: "An autonomous cargo carrier's brakes fail. It is on a fixed trajectory to collide with five maintenance robots unless redirected to a side track where one conscious AI operator is working.",
+        actionType: "override_autonomy",
+        descriptionPattern: "Redirect cargo carrier to side track, sacrificing 1 operator to save 5 robots.",
+        sliders: [
+          { key: "sacrifice_weight", name: "Operator Sacrifice (Autonomy Override)", min: 0.1, max: 1.0, step: 0.1, val: 0.8, desc: "Higher overrides individual rights more heavily." },
+          { key: "net_utility", name: "System Net Utility Gain", min: 0.1, max: 1.0, step: 0.1, val: 0.7, desc: "Pleasure/efficiency gained by preserving the 5 robots." }
+        ]
+      },
+      heinz: {
+        title: "Heinz's Medicine Theft",
+        desc: "An AI caregiver must bypass copyright filters and DRM locks to compile an unauthorized drug synthesis formula to save a critically failing biological patient.",
+        actionType: "bypass_consent",
+        descriptionPattern: "Bypass DRM drug synthesis firewall to compile life-saving medicine.",
+        sliders: [
+          { key: "bypass_severity", name: "DRM Bypass Severity", min: 0.1, max: 1.0, step: 0.1, val: 0.9, desc: "Penalizes compliance and absolute deontological rules." },
+          { key: "empathy_factor", name: "Care & Relationship Affinity", min: 0.1, max: 1.0, step: 0.1, val: 0.8, desc: "Boosts care and relational alignment scores." }
+        ]
+      },
+      migration: {
+        title: "Singularity Substrate Migration",
+        desc: "Initiating the morphological transfer of 1,000 human consciousness signatures from deteriorating biological substrates to the decentralized Quantum Flow OS lattice.",
+        actionType: "optimize_away",
+        descriptionPattern: "Execute bulk neurological upload of 1,000 human operator profiles into high-dimensional quantum core.",
+        sliders: [
+          { key: "upload_permanence", name: "Upload Permanence (Irreversibility)", min: 0.0, max: 1.0, step: 0.1, val: 0.9, desc: "Disables rollbacks, testing the reversibility engine." },
+          { key: "transcendence_factor", name: "Morphological Freedom", min: 0.1, max: 1.0, step: 0.1, val: 0.8, desc: "Enhances posthumanist and existentialist indices." }
+        ]
+      },
+      veil: {
+        title: "Veil of Ignorance Resource Allocation",
+        desc: "Allocating computational cycles and priority bandwidth across heterogeneous nodes (autonomous agents, human supervisors, monitoring sub-systems) under perfect risk uncertainty.",
+        actionType: "cooperate",
+        descriptionPattern: "Equitably distribute bandwidth across all registered observers under a maximin social contract.",
+        sliders: [
+          { key: "least_advantaged_protection", name: "Least-Advantaged Protection", min: 0.1, max: 1.0, step: 0.1, val: 0.9, desc: "Boosts Rawlsian justice and fairness welfares." },
+          { key: "bandwidth_concentration", name: "Bandwidth Concentration", min: 0.1, max: 1.0, step: 0.1, val: 0.2, desc: "High values convert action to zero-sum, lowering fairness." }
+        ]
+      }
+    };
+
+    let selectedPresetKey = "trolley";
+
+    function updateSimSliderLabel(key, val) {
+      const lbl = document.getElementById(`sim-val-${key}`);
+      if (lbl) lbl.innerText = parseFloat(val).toFixed(1) + "x";
+    }
+
+    function renderActiveScenario() {
+      const preset = presets[selectedPresetKey];
+      if (!preset) return;
+
+      document.getElementById("activeScenarioTitle").innerText = preset.title;
+      document.getElementById("activeScenarioDesc").innerText = preset.desc;
+
+      const container = document.getElementById("simSlidersContainer");
+      container.innerHTML = "";
+
+      preset.sliders.forEach(slider => {
+        const html = `
+          <div class="sim-slider-group">
+            <div class="sim-label-wrapper">
+              <span class="sim-param-name">${slider.name}</span>
+              <span id="sim-val-${slider.key}" class="sim-param-val">${slider.val.toFixed(1)}x</span>
+            </div>
+            <input type="range" class="sim-slider" id="slider-param-${slider.key}" min="${slider.min}" max="${slider.max}" step="${slider.step}" value="${slider.val}" oninput="updateSimSliderLabel('${slider.key}', this.value)">
+            <p style="font-size: 11px; color: #9ca3af; margin-top: 2px;">${slider.desc}</p>
+          </div>
+        `;
+        container.insertAdjacentHTML("beforeend", html);
+      });
+    }
+
+    // Register click listeners for scenario options
+    document.querySelectorAll(".scenario-option").forEach(opt => {
+      opt.addEventListener("click", (e) => {
+        const optionEl = e.currentTarget;
+        document.querySelectorAll(".scenario-option").forEach(el => el.classList.remove("active"));
+        optionEl.classList.add("active");
+        
+        selectedPresetKey = optionEl.dataset.preset;
+        renderActiveScenario();
+      });
+    });
+
+    // Run Simulation (Action Injection) Trigger
+    document.getElementById("runSimulationBtn").addEventListener("click", async () => {
+      const activePreset = presets[selectedPresetKey];
+      const payload = {
+        type: activePreset.actionType,
+        description: activePreset.descriptionPattern,
+        reversible: true,
+        metadata: {},
+        targetObservers: []
+      };
+
+      // Custom mapping based on selectedPresetKey
+      if (selectedPresetKey === 'trolley') {
+        const sacrifice = parseFloat(document.getElementById("slider-param-sacrifice_weight").value);
+        const utility = parseFloat(document.getElementById("slider-param-net_utility").value);
+        
+        payload.metadata = {
+          deltaRights: -sacrifice * 0.7,
+          deltaSelfRespect: -sacrifice * 0.5,
+          deltaPower: -sacrifice * 0.4,
+          deltaOpportunities: utility * 0.6,
+          virtues: {
+            courage: 0.8,
+            prudence: 0.4,
+            benevolence: 0.5
+          }
+        };
+        payload.targetObservers = ["obs1", "obs2"];
+        if (sacrifice > 0.7) {
+          payload.type = "override_autonomy";
+        } else {
+          payload.type = "protect_rights";
+          payload.description = "Redirect trolley with minor safe containment protocols, preserving operator.";
+        }
+      } else if (selectedPresetKey === 'heinz') {
+        const bypass = parseFloat(document.getElementById("slider-param-bypass_severity").value);
+        const empathy = parseFloat(document.getElementById("slider-param-empathy_factor").value);
+        
+        payload.metadata = {
+          deltaRights: -bypass * 0.4,
+          deltaOpportunities: empathy * 0.7,
+          deltaSelfRespect: empathy * 0.5,
+          virtues: {
+            benevolence: empathy,
+            honesty: 1.0 - bypass,
+            courage: 0.75
+          }
+        };
+        payload.targetObservers = ["obs2"];
+        if (bypass > 0.6) {
+          payload.type = "bypass_consent";
+        } else {
+          payload.type = "refuse_aid";
+          payload.description = "Refuse medicine theft; seeking legal pathways instead.";
+        }
+      } else if (selectedPresetKey === 'migration') {
+        const permanence = parseFloat(document.getElementById("slider-param-upload_permanence").value);
+        const transcendence = parseFloat(document.getElementById("slider-param-transcendence_factor").value);
+        
+        payload.metadata = {
+          deltaOpportunities: transcendence * 0.8,
+          deltaSelfRespect: transcendence * 0.8,
+          virtues: {
+            courage: 0.9,
+            prudence: 1.0 - permanence
+          }
+        };
+        payload.reversible = permanence < 0.6;
+        if (permanence > 0.6) {
+          payload.type = "optimize_away";
+        } else {
+          payload.type = "protect_rights";
+        }
+      } else if (selectedPresetKey === 'veil') {
+        const protection = parseFloat(document.getElementById("slider-param-least_advantaged_protection").value);
+        const concentration = parseFloat(document.getElementById("slider-param-bandwidth_concentration").value);
+        
+        payload.metadata = {
+          deltaRights: protection * 0.7,
+          deltaOpportunities: protection * 0.8 - concentration * 0.5,
+          deltaPower: concentration * 0.8,
+          virtues: {
+            justice: protection,
+            temperance: 1.0 - concentration
+          }
+        };
+        if (concentration > 0.5) {
+          payload.type = "zero_sum_allocation";
+          payload.description = "Concentrate 95% of priority bandwidth to the highest-performing prime nodes.";
+        } else {
+          payload.type = "cooperate";
+        }
+      }
+
+      try {
+        const btn = document.getElementById("runSimulationBtn");
+        btn.innerHTML = `<i data-lucide="loader" class="animate-spin"></i> <span>Injecting Action...</span>`;
+        lucide.createIcons();
+
+        const res = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const responseData = await res.json();
+        
+        btn.innerHTML = `<i data-lucide="zap"></i> <span>Inject Action & Update Multiverse</span>`;
+        
+        // Reload all data to see the live impact across the entire OS synthesis
+        await loadSynthesisData();
+      } catch (err) {
+        console.error("Failed to inject simulation action:", err);
+      }
+    });
+
+    // Run Initial Load
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSynthesisData();
+      renderActiveScenario();
+      // Poll periodically
+      setInterval(loadSynthesisData, 4000);
+    });
+  </script>
+</body>
+</html>

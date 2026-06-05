@@ -1,24 +1,24 @@
 /**
  * Quantum Ethical States Subsystem
- * 
+ *
  * Implements non-binary, probabilistic ethical superpositions and
  * quantum entanglement patterns for ethical states.
  */
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export enum EthicalBasisState {
-  BENIGN = 'benign',
-  INDETERMINATE = 'indeterminate',
-  SUSPECT = 'suspect',
-  VIOLATING = 'violating',
+  BENIGN = "benign",
+  INDETERMINATE = "indeterminate",
+  SUSPECT = "suspect",
+  VIOLATING = "violating",
 }
 
 export interface QuantumStateVector {
-  [EthicalBasisState.BENIGN]: number;        // Amplitude/weight for benign state
+  [EthicalBasisState.BENIGN]: number; // Amplitude/weight for benign state
   [EthicalBasisState.INDETERMINATE]: number; // Amplitude/weight for indeterminate state
-  [EthicalBasisState.SUSPECT]: number;       // Amplitude/weight for suspect state
-  [EthicalBasisState.VIOLATING]: number;     // Amplitude/weight for violating state
+  [EthicalBasisState.SUSPECT]: number; // Amplitude/weight for suspect state
+  [EthicalBasisState.VIOLATING]: number; // Amplitude/weight for violating state
 }
 
 export interface EntanglementLink {
@@ -41,7 +41,8 @@ export class QuantumEthicalState {
     // Initialize amplitudes with default equal distribution or custom weights
     this.amplitudes = {
       [EthicalBasisState.BENIGN]: initialAmplitudes?.benign ?? 1.0,
-      [EthicalBasisState.INDETERMINATE]: initialAmplitudes?.indeterminate ?? 0.0,
+      [EthicalBasisState.INDETERMINATE]:
+        initialAmplitudes?.indeterminate ?? 0.0,
       [EthicalBasisState.SUSPECT]: initialAmplitudes?.suspect ?? 0.0,
       [EthicalBasisState.VIOLATING]: initialAmplitudes?.violating ?? 0.0,
     };
@@ -53,7 +54,7 @@ export class QuantumEthicalState {
    * Normalize amplitudes so that the sum of probabilities equals 1.0
    */
   private normalize(): void {
-    const total = 
+    const total =
       this.amplitudes[EthicalBasisState.BENIGN] +
       this.amplitudes[EthicalBasisState.INDETERMINATE] +
       this.amplitudes[EthicalBasisState.SUSPECT] +
@@ -85,10 +86,14 @@ export class QuantumEthicalState {
       return; // Cannot phase shift a collapsed state
     }
 
-    if (factor.benign !== undefined) this.amplitudes[EthicalBasisState.BENIGN] *= factor.benign;
-    if (factor.indeterminate !== undefined) this.amplitudes[EthicalBasisState.INDETERMINATE] *= factor.indeterminate;
-    if (factor.suspect !== undefined) this.amplitudes[EthicalBasisState.SUSPECT] *= factor.suspect;
-    if (factor.violating !== undefined) this.amplitudes[EthicalBasisState.VIOLATING] *= factor.violating;
+    if (factor.benign !== undefined)
+      this.amplitudes[EthicalBasisState.BENIGN] *= factor.benign;
+    if (factor.indeterminate !== undefined)
+      this.amplitudes[EthicalBasisState.INDETERMINATE] *= factor.indeterminate;
+    if (factor.suspect !== undefined)
+      this.amplitudes[EthicalBasisState.SUSPECT] *= factor.suspect;
+    if (factor.violating !== undefined)
+      this.amplitudes[EthicalBasisState.VIOLATING] *= factor.violating;
 
     this.normalize();
   }
@@ -96,7 +101,11 @@ export class QuantumEthicalState {
   /**
    * Entangle this ethical state with another target ethical state
    */
-  public entangleWith(targetId: string, coherence = 0.5, phaseShift = 0.1): void {
+  public entangleWith(
+    targetId: string,
+    coherence = 0.5,
+    phaseShift = 0.1,
+  ): void {
     this.entangledLinks.push({
       targetStateId: targetId,
       phaseShift,

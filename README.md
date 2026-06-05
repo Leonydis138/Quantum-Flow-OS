@@ -20,11 +20,11 @@ Quantum Flow OS is an experimental framework exploring **self-constraining syste
 
 ## Features
 
-✨ **Self-Constraining Engine** - Implements ethical fixed points that constrain system behavior
-🛡️ **Observer Protection System** - Rights-based protection for autonomous entities
-🔄 **Reversibility Framework** - Built-in rollback capabilities for all operations
-📊 **Ethical Validation** - Automated testing for ethical compliance
-🎯 **Minimal Intervention Design** - Optimized for least structural imposition
+✨ **Self-Constraining Engine** - Implements ethical fixed points that constrain system behavior. Supports runtime custom constraint registration and dynamic constraint status toggling.
+🛡️ **Observer Protection System** - Rights-based protection for autonomous entities with multi-observer interaction targets.
+🔄 **Reversibility Framework** - Built-in rollback capabilities for all operations with real-time telemetry metrics.
+🌐 **Cybernetic Telemetry Dashboard** - Real-time zero-dependency HTTP server delivering an interactive, glassmorphic visual telemetry monitor connected to the live engine.
+📊 **Ethical Validation & Automated Tests** - Robust verification with complete integration and regression test suites.
 
 ## Quick Start
 

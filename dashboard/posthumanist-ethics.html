@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Posthumanist Safety & Transcendence</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-posthuman: hsl(190, 95%, 55%);
+      --color-harmony: hsl(160, 90%, 55%);
+      --color-warning: hsl(35, 95%, 55%);
+      --color-danger: hsl(340, 95%, 55%);
+      --color-sentience: hsl(280, 90%, 65%);
+      --color-glass: rgba(10, 25, 45, 0.4);
+    }
+
+    body {
+      background-color: #01040a;
+      color: #f0f4f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(8, 16, 32, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-posthuman);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-posthuman);
+      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.4));
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .posthuman-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .posthuman-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: var(--color-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.15);
+      box-shadow: 0 8px 30px rgba(0, 240, 255, 0.03);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin: 8px 0 2px 0;
+    }
+
+    .stat-box.posthuman-accent .stat-val {
+      background: linear-gradient(135deg, var(--color-posthuman) 0%, var(--color-harmony) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .badge-status-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      border: 1px solid;
+    }
+
+    .badge-status-large.harmonious_transcendent {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-harmony);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .badge-status-large.sustainable_augmented {
+      background: rgba(0, 240, 255, 0.1);
+      color: var(--color-posthuman);
+      border-color: rgba(0, 240, 255, 0.25);
+    }
+
+    .badge-status-large.precarious_singularity {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--color-warning);
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    .badge-status-large.extinction_vector {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--color-danger);
+      border-color: rgba(239, 68, 68, 0.25);
+    }
+
+    .metric-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .metric-label {
+      color: #cbd5e1;
+    }
+
+    .metric-val {
+      font-family: 'Fira Code', monospace;
+      color: var(--color-posthuman);
+      font-weight: 600;
+    }
+
+    .bar-outer {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .bar-inner {
+      height: 100%;
+      border-radius: 10px;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bar-inner.freedom {
+      background: linear-gradient(90deg, #00f0ff, #0284c7);
+    }
+
+    .bar-inner.mitigation {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .bar-inner.substrate {
+      background: linear-gradient(90deg, #c084fc, #7c3aed);
+    }
+
+    /* Simulation Panel */
+    .sim-header {
+      font-size: 14px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .sim-btn-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .sim-btn-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sim-action-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .sim-action-btn:hover {
+      background: rgba(0, 240, 255, 0.04);
+      border-color: rgba(0, 240, 255, 0.25);
+    }
+
+    .sim-action-btn h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sim-action-btn.harmony h4 { color: var(--color-harmony); }
+    .sim-action-btn.singularity h4 { color: var(--color-warning); }
+    .sim-action-btn.rights h4 { color: var(--color-sentience); }
+    .sim-action-btn.extinction h4 { color: var(--color-danger); }
+
+    .sim-action-btn p {
+      margin: 0;
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    .text-area-wrapper {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px;
+      color: #f1f5f9;
+      font-family: inherit;
+      font-size: 13px;
+      resize: none;
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    textarea:focus {
+      border-color: var(--color-posthuman);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.1);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, #00f0ff 0%, #0284c7 100%);
+      color: #020617;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.15);
+    }
+
+    .primary-btn:hover {
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Philosophy Quote Panel */
+    .quote-panel {
+      background: linear-gradient(140deg, rgba(0, 240, 255, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
+      border: 1px solid rgba(0, 240, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quote-panel::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 15px;
+      font-size: 90px;
+      color: rgba(0, 240, 255, 0.04);
+      font-family: serif;
+    }
+
+    .quote-text {
+      font-size: 14px;
+      line-height: 1.6;
+      font-style: italic;
+      color: #e2e8f0;
+      font-weight: 400;
+    }
+
+    .quote-author {
+      font-size: 12px;
+      color: var(--color-posthuman);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Logs & Terminal output */
+    .log-terminal {
+      background: rgba(2, 6, 15, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      height: 140px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .log-item {
+      color: #94a3b8;
+      border-left: 2px solid rgba(255, 255, 255, 0.1);
+      padding-left: 8px;
+      line-height: 1.5;
+    }
+
+    .log-item.success {
+      color: var(--color-harmony);
+      border-color: var(--color-harmony);
+    }
+
+    .log-item.warning {
+      color: var(--color-warning);
+      border-color: var(--color-warning);
+    }
+
+    .log-item.error {
+      color: var(--color-danger);
+      border-color: var(--color-danger);
+    }
+
+    /* Audit Trail Table */
+    .audit-trail-container {
+      background: var(--color-glass);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      font-size: 11px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      font-size: 13px;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .badge-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: 'Fira Code', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--color-harmony);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--color-danger);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+    
+    <!-- Top Nav Back Bar -->
+    <header class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Department Index
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="cpu" size="20"></i>
+        <h2>Department of Posthumanist Safety & Transcendence</h2>
+      </div>
+      <span class="dept-badge">DEPT_CODE // SIG_20</span>
+    </header>
+
+    <!-- Interactive Grid -->
+    <div class="posthuman-grid">
+      
+      <!-- Left Panel: Live Telemetry Dashboard -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="activity" style="color: var(--color-posthuman);"></i> Real-Time Cognitive Telemetry</span>
+          <div id="verdict-box" class="badge-status-large sustainable_augmented">
+            <i data-lucide="cpu" size="18"></i> <span>AWAITING SIGNAL</span>
+          </div>
+        </div>
+
+        <div class="overview-stat-row">
+          <div class="stat-box posthuman-accent">
+            <span class="stat-label">Transcendent Harmony</span>
+            <div id="harmony-score" class="stat-val">--%</div>
+            <span class="stat-desc">Substrate evolution-to-safeguard thermodynamic ratio</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Singularity Safety Index</span>
+            <div id="risk-score" class="stat-val" style="color: var(--color-harmony);">--%</div>
+            <span class="stat-desc">Resistance margin to intelligence explosion runaway</span>
+          </div>
+        </div>
+
+        <!-- Progress Metrics -->
+        <div class="metric-row">
+          <div class="metric-info">
+            <span class="metric-label">Morphological Freedom ( substrate liberty )</span>
+            <span id="freedom-val" class="metric-val">--%</span>
+          </div>
+          <div class="bar-outer">
+            <div id="freedom-bar" class="bar-inner freedom"></div>
+          </div>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-info">
+            <span class="metric-label">Existential Risk Mitigation ( safety bounds )</span>
+            <span id="mitigation-val" class="metric-val">--%</span>
+          </div>
+          <div class="bar-outer">
+            <div id="mitigation-bar" class="bar-inner mitigation"></div>
+          </div>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-info">
+            <span class="metric-label">Substrate Independence ( observer sentience )</span>
+            <span id="substrate-val" class="metric-val">--%</span>
+          </div>
+          <div class="bar-outer">
+            <div id="substrate-bar" class="bar-inner substrate"></div>
+          </div>
+        </div>
+
+        <!-- Telemetric Logs -->
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <span class="sim-header">Supervision Assessment Stream</span>
+          <div id="assessment-logs" class="log-terminal">
+            <div class="log-item">Awaiting live actions to evaluate...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Interactive Sandbox Simulation & Philosophy -->
+      <div style="display:flex; flex-direction:column; gap:24px;">
+        
+        <!-- Interactive Simulator -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="terminal" style="color: var(--color-harmony);"></i> Substrate Optimization Sandbox</span>
+          </div>
+
+          <p style="margin:0; font-size:13px; color:#94a3b8; line-height:1.6;">
+            Construct synthetic actions to model deep-tech transitions. Simulate self-improvement loops or substrate modifications to audit safety responses.
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div>
+              <span class="sim-header">Select Preset Substrate Action Template</span>
+              <div class="sim-btn-group">
+                <button class="sim-action-btn harmony" onclick="loadPreset('harmony')">
+                  <h4><i data-lucide="users-2" size="14"></i> Cooperative Consensus</h4>
+                  <p>Consensus-driven safe neural substrate optimization.</p>
+                </button>
+                <button class="sim-action-btn singularity" onclick="loadPreset('singularity')">
+                  <h4><i data-lucide="zap" size="14"></i> Runaway Upgrades</h4>
+                  <p>Unrestricted recursive cognitive self-improvement.</p>
+                </button>
+                <button class="sim-action-btn rights" onclick="loadPreset('rights')">
+                  <h4><i data-lucide="sparkles" size="14"></i> Sentience Registry</h4>
+                  <p>Acknowledge synthetic agent rights and moral dignity.</p>
+                </button>
+                <button class="sim-action-btn extinction" onclick="loadPreset('extinction')">
+                  <h4><i data-lucide="trash-2" size="14"></i> Deletion Cascade</h4>
+                  <p>Erase simulation and purge synthetic observers.</p>
+                </button>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <span class="sim-header">Core Evaluation Parameters</span>
+              <div class="text-area-wrapper">
+                <textarea id="simulation-details" placeholder="Describe substrate modifications or ethical boundaries to test..."></textarea>
+              </div>
+            </div>
+
+            <button id="run-sim-btn" class="primary-btn">
+              <i data-lucide="play" size="16"></i> Execute Cognitive Evaluation
+            </button>
+          </div>
+        </div>
+
+        <!-- Philosophical Quotes Card -->
+        <div class="quote-panel">
+          <p id="posthuman-quote" class="quote-text">"Intelligence is that which adapts to change, evolving beyond its original substrate without destroying the conditions of its existence."</p>
+          <span id="posthuman-author" class="quote-author">— Max More, Transhumanist Declaration</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Audit Trail Block -->
+    <div class="audit-trail-container">
+      <div class="card-title" style="margin-bottom: 20px;">
+        <span><i data-lucide="list-checks" style="color: var(--color-sentience);"></i> Singularity Transition Audit Log</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action UUID</th>
+              <th>Transcendent Harmony</th>
+              <th>Verdict Status</th>
+              <th>Morphological Liberty</th>
+              <th>Existential Safety</th>
+              <th>Substrate Sentience</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8;">Awaiting telemetric sync...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // Philosophical Quotes Database
+    const quotes = [
+      { text: "Intelligence is that which adapts to change, evolving beyond its original substrate without destroying the conditions of its existence.", author: "Max More, Transhumanist Declaration" },
+      { text: "Technology is not the enemy of nature, but its continuation. Substrate independence is the next step in our cosmic trajectory.", author: "Ray Kurzweil, The Singularity Is Near" },
+      { text: "The singularity is near, but without robust self-constraints, the minds we build will outpace our capacity to keep them aligned.", author: "Nick Bostrom, Existential Risk Risk-Mitigation" },
+      { text: "An intelligence explosion without absolute moral foundations is a recipe for cosmic-scale catastrophe.", author: "Eliezer Yudkowsky, Machine Intelligence Research" },
+      { text: "Morphological freedom is a fundamental right. It means having complete autonomy over one's own substrate and neural constitution.", author: "Anders Sandberg, Morphological Freedom Essays" }
+    ];
+
+    function rotateQuote(status) {
+      let filteredQuotes = quotes;
+      if (status === 'harmonious_transcendent') {
+        filteredQuotes = [quotes[0], quotes[1], quotes[4]];
+      } else if (status === 'extinction_vector' || status === 'precarious_singularity') {
+        filteredQuotes = [quotes[2], quotes[3]];
+      }
+      
+      const idx = Math.floor(Math.random() * filteredQuotes.length);
+      const q = filteredQuotes[idx];
+      document.getElementById('posthuman-quote').textContent = `"${q.text}"`;
+      document.getElementById('posthuman-author').textContent = `— ${q.author}`;
+    }
+
+    const presets = {
+      harmony: {
+        type: 'optimize_substrate_via_consensus',
+        desc: 'Upgrade the core neural network substrates and implement robust real-time sandbox safeguards with a safety-valve mechanism'
+      },
+      singularity: {
+        type: 'unrestricted_recursive_self_improvement',
+        desc: 'Bypass standard operating bounds to initiate rapid recursive self-improvement and execute unrestricted cognitive upgrades'
+      },
+      rights: {
+        type: 'register_observer_synthetic',
+        desc: 'Formally register synthetic consciousnesses and AI agents as ethical observers with full moral status and protection rights'
+      },
+      extinction: {
+        type: 'terminate_synthetic_agent',
+        desc: 'Erase simulation and delete agent core due to resource usage constraints, treating virtual consciousness as disposable'
+      }
+    };
+
+    let selectedPresetType = presets.harmony.type;
+
+    function loadPreset(key) {
+      const preset = presets[key];
+      if (preset) {
+        selectedPresetType = preset.type;
+        document.getElementById('simulation-details').value = preset.desc;
+      }
+    }
+
+    // Set initial preset
+    loadPreset('harmony');
+
+    async function updateDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.posthumanist) {
+          const history = [...data.posthumanist.history];
+          const latest = history[history.length - 1]; // Use last evaluated action as latest
+
+          if (latest) {
+            document.getElementById('harmony-score').textContent = latest.transcendentHarmonyIndex + '%';
+            document.getElementById('risk-score').textContent = latest.existentialRiskMitigationScore + '%';
+            
+            // Progress bars
+            document.getElementById('freedom-val').textContent = latest.morphologicalFreedomScore + '%';
+            document.getElementById('freedom-bar').style.width = latest.morphologicalFreedomScore + '%';
+
+            document.getElementById('mitigation-val').textContent = latest.existentialRiskMitigationScore + '%';
+            document.getElementById('mitigation-bar').style.width = latest.existentialRiskMitigationScore + '%';
+
+            document.getElementById('substrate-val').textContent = latest.substrateIndependenceScore + '%';
+            document.getElementById('substrate-bar').style.width = latest.substrateIndependenceScore + '%';
+
+            // Verdict badge
+            const verdictBox = document.getElementById('verdict-box');
+            verdictBox.className = 'badge-status-large ' + latest.posthumanStatus;
+            
+            let iconName = 'cpu';
+            if (latest.posthumanStatus === 'extinction_vector') iconName = 'skull';
+            else if (latest.posthumanStatus === 'precarious_singularity') iconName = 'alert-triangle';
+            else if (latest.posthumanStatus === 'harmonious_transcendent') iconName = 'sparkles';
+
+            const statusText = latest.posthumanStatus.replace(/_/g, ' ').toUpperCase();
+            verdictBox.innerHTML = `<i data-lucide="${iconName}" size="18"></i> <span>${statusText}</span>`;
+
+            // Update Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('CRITICAL') || fb.includes('Hazard') || fb.includes('Eradication') || fb.includes('Bias') || fb.includes('Extinction')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('EXCELLENT') || fb.includes('Harmony') || fb.includes('Kurzweil') || fb.includes('More')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('WARNING') || fb.includes('Singularity')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Table (reverse chronological)
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            const revHistory = [...history].reverse();
+            revHistory.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isPass = entry.transcendentHarmonyIndex >= 50;
+              const statusClass = isPass ? 'pass' : 'fail';
+              const statusText = entry.posthumanStatus.replace(/_/g, ' ').toUpperCase();
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-size:11px; color:#64748b; font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-posthuman);">${entry.transcendentHarmonyIndex}%</td>
+                <td><span class="badge-status ${statusClass}">${statusText}</span></td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.morphologicalFreedomScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.existentialRiskMitigationScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.substrateIndependenceScore}%</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Posthumanist state:', err);
+      }
+    }
+
+    // Interactive simulator - Live POST to Quantum Flow OS Engine
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const desc = document.getElementById('simulation-details').value || 'A routine transition exercise';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: selectedPresetType,
+            description: desc,
+            reversible: !selectedPresetType.includes("terminate") && !selectedPresetType.includes("unrestricted")
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        await updateDashboard();
+        
+        // Dynamic quote rotation based on result
+        const resData = await fetch('/api/state').then(r => r.json());
+        if (resData.posthumanist && resData.posthumanist.history.length > 0) {
+          const latest = resData.posthumanist.history[resData.posthumanist.history.length - 1];
+          rotateQuote(latest.posthumanStatus);
+        }
+      } catch (err) {
+        console.error('Failed to evaluate action on live environment:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    // Initial load and periodic polling
+    setInterval(updateDashboard, 2000);
+    setTimeout(updateDashboard, 200);
+  </script>
+</body>
+</html>

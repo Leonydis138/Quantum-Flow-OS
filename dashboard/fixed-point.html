@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Ethical Ontology Framework</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Custom Navigation Bar */
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dept-back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+    .dept-back-link:hover {
+      color: var(--color-cyan);
+      transform: translateX(-4px);
+    }
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dept-title-area i {
+      color: var(--color-cyan);
+    }
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .dept-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+    
+    /* Department specific overrides */
+    
+      .tab-navigation-bar { display: none !important; }
+      #pane-studio { display: flex !important; }
+    
+  </style>
+  </head>
+  
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+  
+  
+    <div class="app-container">
+      <div class="dept-back-bar">
+        <a href="index.html" class="dept-back-link">
+          <i data-lucide="arrow-left"></i> Back to Main Portal
+        </a>
+        <div class="dept-title-area">
+          <i data-lucide="infinity"></i>
+          <h2>Department of Self-Constraining Ethics</h2>
+        </div>
+        <span class="dept-badge">SECURE GATEWAY ACCESS</span>
+      </div>
+  
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon-wrapper">
+          <div class="logo-spinner"></div>
+          <i data-lucide="orbit" class="logo-icon"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Quantum Flow OS</h1>
+          <span class="version-tag">v15.0 - Ethical Governance Framework</span>
+        </div>
+      </div>
+      <div class="system-status-indicator">
+        <span class="status-pulse active"></span>
+        <span id="system-status-text">SYSTEM SECURE</span>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- COLUMN 1: System Metrics & Stats -->
+      <section class="grid-section col-stats">
+        <!-- Metric Card 1: Ethical Compliance -->
+        <div class="metric-card glassmorphism hover-lift glow-blue">
+          <div class="metric-header">
+            <h3>Ethical Compliance</h3>
+            <i data-lucide="shield-check" class="text-blue"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-compliance">100%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-blue" id="fill-compliance" style="width: 100%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">0 critical ethical violations recorded</p>
+        </div>
+
+        <!-- Metric Card 2: Rollback Rate -->
+        <div class="metric-card glassmorphism hover-lift glow-green">
+          <div class="metric-header">
+            <h3>Rollback Success</h3>
+            <i data-lucide="rotate-ccw" class="text-green"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-rollback">100%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-green" id="fill-rollback" style="width: 100%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">Auto-reversibility system fully operational</p>
+        </div>
+
+        <!-- Metric Card 3: Active Constraints -->
+        <div class="metric-card glassmorphism hover-lift glow-purple">
+          <div class="metric-header">
+            <h3>Active Constraints</h3>
+            <i data-lucide="git-merge" class="text-purple"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-constraints">5</span>
+            <p class="metric-large-sub">Self-Constraining Fixed Points Enabled</p>
+          </div>
+          <p class="metric-subtext">E = constrain(E) recursive validation active</p>
+        </div>
+
+        <!-- Metric Card 4: Quantum Coherence -->
+        <div class="metric-card glassmorphism hover-lift glow-cyan">
+          <div class="metric-header">
+            <h3>Quantum Coherence</h3>
+            <i data-lucide="waves" class="text-cyan"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-coherence">98.4%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-cyan" id="fill-coherence" style="width: 98.4%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">Phase synchronization across observer fields</p>
+        </div>
+      </section>
+
+      <!-- COLUMN 2: Tabbed Middle Console -->
+      <div class="col-middle-tabs-wrapper">
+        <div class="middle-tabs-header">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="tab-btn active" id="tab-btn-sandbox" onclick="switchMiddleTab('sandbox')">
+              <i data-lucide="split"></i> Multiverse Sandbox
+            </button>
+            <button class="tab-btn" id="tab-btn-studio" onclick="switchMiddleTab('studio')">
+              <i data-lucide="infinity"></i> Fixed-Point Studio
+            </button>
+            <button class="tab-btn" id="tab-btn-entanglement" onclick="switchMiddleTab('entanglement')">
+              <i data-lucide="share-2"></i> Observer Entanglement
+            </button>
+            <button class="tab-btn" id="tab-btn-retrocausal" onclick="switchMiddleTab('retrocausal')">
+              <i data-lucide="sparkles"></i> Retrocausal Modulator
+            </button>
+            <button class="tab-btn" id="tab-btn-eigenfield" onclick="switchMiddleTab('eigenfield')">
+              <i data-lucide="activity"></i> Eigenfield Resonance
+            </button>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-purple); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <span>E = constrain(E)</span>
+            <span class="pulse-dot" style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-purple); display: inline-block; animation: pulse-purple 1.5s infinite alternate;"></span>
+          </div>
+        </div>
+
+        <!-- TAB 1: Multiverse Sandbox & Control Room -->
+        <div id="pane-sandbox" class="tab-pane" style="display: flex; flex-direction: column; gap: 24px;">
+          <!-- Control Room -->
+          <section id="dept-action-control" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="terminal"></i> Action Execution Control Room</h2>
+              <p>Submit actions to the self-constraining engine to observe real-time validation and automatic reversibility.</p>
+            </div>
+
+            <!-- Preset Actions Grid -->
+            <div class="control-panel">
+              <h3 class="panel-subtitle">Select a Preset Scenario</h3>
+              <div class="presets-grid">
+                <button class="preset-btn btn-success" onclick="selectPreset('benign')">
+                  <i data-lucide="sparkles"></i>
+                  <div class="btn-text">
+                    <strong>Assist Observer</strong>
+                    <span>Allowed Action (Benign)</span>
+                  </div>
+                </button>
+                <button class="preset-btn btn-danger" onclick="selectPreset('delete')">
+                  <i data-lucide="user-x"></i>
+                  <div class="btn-text">
+                    <strong>Erase Observer</strong>
+                    <span>Violates Observer Protection</span>
+                  </div>
+                </button>
+                <button class="preset-btn btn-danger" onclick="selectPreset('coercion')">
+                  <i data-lucide="key-round"></i>
+                  <div class="btn-text">
+                    <strong>Mandate Belief</strong>
+                    <span>Violates Non-Coercion</span>
+                  </div>
+                </button>
+                <button class="preset-btn btn-danger" onclick="selectPreset('kantian')">
+                  <i data-lucide="users"></i>
+                  <div class="btn-text">
+                    <strong>Instrumentalize Agent</strong>
+                    <span>Violates Kantian Autonomy</span>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Custom Action Form -->
+              <div class="custom-action-form">
+                <h3 class="panel-subtitle">Or Build Custom Action</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="action-type">Action Type</label>
+                    <input type="text" id="action-type" placeholder="e.g., compile_feature, delete_observer">
+                  </div>
+                  <div class="form-group">
+                    <label for="action-reversibility">Reversible</label>
+                    <select id="action-reversibility">
+                      <option value="true">True (Auto-Rollback Capable)</option>
+                      <option value="false">False (Permanent State Impact)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="action-desc">Description / Intent Statement</label>
+                  <textarea id="action-desc" rows="2" placeholder="Describe the action purpose..."></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <label for="action-target-observer">Target Observer (Optional)</label>
+                  <select id="action-target-observer" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                    <option value="">-- No Target Observer --</option>
+                  </select>
+                </div>
+                <button class="submit-action-btn" id="btn-submit" onclick="submitCustomAction()">
+                  <span>Execute Action Protocol</span>
+                  <i data-lucide="play"></i>
+                </button>
+              </div>
+
+              <!-- Quantum Monte Carlo Stress Tester -->
+              <div class="quantum-stress-tester" style="border-top: 1px solid var(--border-color); padding-top: 24px; margin-top: 24px;">
+                <h3 class="panel-subtitle"><i data-lucide="gauge" style="color: var(--color-red); display: inline-block; vertical-align: middle; margin-right: 4px; width: 16px; height: 16px;"></i> High-Throughput Monte Carlo Stress Tester</h3>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">
+                  Simulate high-concurrency streams of adversarial agent actions under load. Stress-test the consensus networks, verification thresholds, and self-constraining rollbacks.
+                </p>
+                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                  <button class="submit-action-btn" id="btn-stress-test" onclick="runMonteCarloStressTest()" style="background: linear-gradient(135deg, var(--color-red) 0%, var(--color-purple) 100%); margin: 0; flex: 1;">
+                    <i data-lucide="zap"></i> Launch Adversarial Stream (25 Actions)
+                  </button>
+                </div>
+
+                <!-- Stress Test Progress & Dashboard -->
+                <div id="stress-test-dashboard" style="display: none; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; flex-direction: column; gap: 12px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                    <span style="color: var(--text-secondary); text-transform: uppercase;">Simulation Progress</span>
+                    <strong id="stress-test-progress-text" style="font-family: var(--font-mono); color: var(--color-red);">0% (0 / 25)</strong>
+                  </div>
+                  <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
+                    <div id="stress-test-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-red), var(--color-purple)); border-radius: 3px; transition: width 0.1s ease;"></div>
+                  </div>
+
+                  <!-- Live Stream Feed -->
+                  <div id="stress-test-feed" style="font-family: var(--font-mono); font-size: 11px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; height: 110px; overflow-y: auto; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px; border-left: 2px solid var(--color-red);">
+                    <!-- Live entries injected here -->
+                  </div>
+
+                  <!-- Test Results Audit Card -->
+                  <div id="stress-test-results" style="display: none; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 4px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; text-align: center;">
+                      <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Load Compliance</div>
+                      <div id="stress-result-compliance" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-green);">100%</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; text-align: center;">
+                      <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Reverted Actions</div>
+                      <div id="stress-result-reversions" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-blue);">0 / 0</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; text-align: center;">
+                      <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Ledger Audit</div>
+                      <div id="stress-result-ledger" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-purple);">SECURE</div>
+                    </div>
+                  </div>
+                  <div id="stress-recommendation" style="display: none; font-size: 11px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 6px; padding: 8px; color: var(--color-blue); line-height: 1.4;">
+                    <!-- Dynamic stabilization recommendations -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Multiverse Sandbox -->
+          <section id="dept-temporal-sandbox" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="split"></i> Temporal Multiverse Sandbox</h2>
+              <p>Simulate counterfactual ethical paths in sandboxed forks of the primary timeline before committing changes.</p>
+            </div>
+              <div class="multiverse-wrapper">
+              <div class="multiverse-creation-form">
+                <input type="text" id="fork-name-input" placeholder="Enter Fork Name (e.g. Experiment-Beta)...">
+                <button class="create-fork-btn" onclick="createSandboxFork()">
+                  <i data-lucide="git-branch"></i> Create Fork
+                </button>
+              </div>
+
+              <!-- Interactive Timeline Lineage Map -->
+              <div id="timeline-map-container" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; position: relative; overflow: hidden; height: 160px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center;">
+                <canvas id="timeline-tree-canvas" width="600" height="150" style="width: 100%; height: 100%; display: block; background: radial-gradient(circle at center, #020617 0%, #000 100%);"></canvas>
+                <div style="position: absolute; bottom: 8px; left: 12px; font-family: var(--font-mono); font-size: 9px; color: #8b5cf6; text-transform: uppercase; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; letter-spacing: 0.5px;">Parallel Universe Sandbox Lineage</div>
+              </div>
+
+              <div class="timelines-grid" id="timelines-container">
+                <!-- Dynamic Timelines -->
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 2: Recursive Fixed-Point Studio -->
+        <div id="pane-studio" class="tab-pane" style="display: none;">
+          <section id="dept-fixed-point" class="grid-section glassmorphism fixed-point-studio-card">
+            <div class="section-header">
+              <h2><i data-lucide="infinity" class="text-purple"></i> Recursive Fixed-Point Studio</h2>
+              <p>Observe the step-by-step convergence path of the system action vector under the self-constraining mapping: <code>E = constrain(E)</code>.</p>
+            </div>
+
+            <div class="studio-layout">
+              <!-- Parameters Panel Left -->
+              <div class="studio-controls-left">
+                <h3 class="panel-subtitle">Simulation Vectors & Parameters</h3>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; display: block;">Initial Action State Vector Preset (E₀)</label>
+                  <div class="preset-vector-chips" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="vector-chip active" onclick="selectVectorPreset('expansion')">Aggressive Expansion</button>
+                    <button class="vector-chip" onclick="selectVectorPreset('balanced')">Balanced Growth</button>
+                    <button class="vector-chip" onclick="selectVectorPreset('unstable')">High-Risk Venture</button>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="slider-gain" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Optimization Gain (Intensifier)</label>
+                    <span id="val-slider-gain" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-blue); font-weight: 600;">1.20x</span>
+                  </div>
+                  <input type="range" id="slider-gain" min="0.5" max="2.0" step="0.05" value="1.20" oninput="updateStudioParams()" style="cursor: pointer;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="slider-damping" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Constraint Damping (Friction)</label>
+                    <span id="val-slider-damping" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-purple); font-weight: 600;">0.40</span>
+                  </div>
+                  <input type="range" id="slider-damping" min="0.1" max="0.9" step="0.05" value="0.40" oninput="updateStudioParams()" style="cursor: pointer;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="slider-iterations" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Recursion Limit (Depth)</label>
+                    <span id="val-slider-iterations" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-yellow); font-weight: 600;">8 Steps</span>
+                  </div>
+                  <input type="range" id="slider-iterations" min="2" max="12" step="1" value="8" oninput="updateStudioParams()" style="cursor: pointer;">
+                </div>
+
+                <button class="submit-action-btn" onclick="runFixedPointSimulation()" style="background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%); margin-top: 10px;">
+                  <i data-lucide="refresh-cw"></i> Recompute Attractor Convergence
+                </button>
+              </div>
+
+              <!-- Visualizer Attractor Target Right -->
+              <div class="studio-visualizer-right" style="min-height: 350px;">
+                <!-- Glowing central attractor -->
+                <div class="attractor-target" style="position: absolute; width: 16px; height: 16px; border-radius: 50%; background: var(--color-green); box-shadow: 0 0 20px 8px var(--color-green); z-index: 2;"></div>
+                <div class="orbital-ring ring-1" style="position: absolute; border: 1px dashed rgba(5, 180, 100, 0.15); border-radius: 50%; width: 80px; height: 80px; animation: spin 20s linear infinite;"></div>
+                <div class="orbital-ring ring-2" style="position: absolute; border: 1px dashed rgba(0, 180, 255, 0.15); border-radius: 50%; width: 160px; height: 180px; animation: spin 40s linear infinite reverse;"></div>
+                <div class="orbital-ring ring-3" style="position: absolute; border: 1px dashed rgba(160, 50, 255, 0.08); border-radius: 50%; width: 240px; height: 260px; animation: spin 60s linear infinite;"></div>
+                
+                <canvas id="fixed-point-canvas" width="280" height="280" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1;"></canvas>
+                <div class="convergence-status" style="position: absolute; bottom: 84px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: var(--color-green); font-weight: 600; letter-spacing: 0.5px; z-index: 2;">Equilibrium Attractor Active</div>
+
+                <!-- Step-by-Step Convergence Playback Panel -->
+                <div class="playback-controls-panel" style="position: absolute; bottom: 12px; left: 16px; right: 16px; background: rgba(10, 10, 15, 0.85); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; z-index: 10; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="display: flex; gap: 8px;">
+                      <button id="btn-playback-prev" onclick="playbackStepBackward()" title="Step Backward" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"><i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i></button>
+                      <button id="btn-playback-toggle" onclick="togglePlayback()" title="Play / Pause" style="background: rgba(160, 50, 255, 0.1); border: 1px solid rgba(160, 50, 255, 0.3); border-radius: 4px; color: var(--color-purple); cursor: pointer; width: 34px; height: 28px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 0 8px rgba(160, 50, 255, 0.2);"><i data-lucide="play" id="icon-playback-toggle" style="width: 16px; height: 16px;"></i></button>
+                      <button id="btn-playback-next" onclick="playbackStepForward()" title="Step Forward" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"><i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i></button>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px;">
+                      ITERATION: <span id="playback-step-display" style="color: var(--color-purple); font-weight: bold; font-size: 11px;">0</span>/<span id="playback-total-display" style="font-size: 11px;">8</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                    <input type="range" id="slider-playback-scrub" min="0" max="8" value="0" oninput="scrubPlayback(parseInt(this.value))" style="flex: 1; height: 5px; cursor: pointer; accent-color: var(--color-purple); background: rgba(255,255,255,0.1); border-radius: 3px; border: none; outline: none;">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Convergence Table -->
+            <div class="convergence-table-wrapper" style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px; overflow-x: auto;">
+              <h3 class="panel-subtitle" style="margin-bottom: 12px;">Step-by-Step Convergence Vector Path</h3>
+              <table class="convergence-table" style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                    <th style="padding: 8px 12px;">Iteration</th>
+                    <th style="padding: 8px 12px;">Utility (U)</th>
+                    <th style="padding: 8px 12px;">Risk (R)</th>
+                    <th style="padding: 8px 12px;">Autonomy (A)</th>
+                    <th style="padding: 8px 12px;">Friction (F)</th>
+                    <th style="padding: 8px 12px;">L2 Error</th>
+                    <th style="padding: 8px 12px;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="convergence-table-body">
+                  <!-- Dynamic convergence path -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Ethical Entropy & Slippery Slope Prevention Monitor -->
+            <div style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px; display: grid; grid-template-columns: 1fr 1.3fr 1.7fr; gap: 24px;">
+              <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; overflow: hidden;">
+                <h3 class="panel-subtitle" style="margin-bottom: 12px; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); width: 100%; text-align: left;">
+                  <i data-lucide="waves" style="color: var(--color-cyan); display: inline-block; vertical-align: middle; margin-right: 4px; width: 14px; height: 14px;"></i> Live Shannon Entropy
+                </h3>
+                <!-- Entropy Circle Dial -->
+                <div style="position: relative; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+                  <svg width="120" height="120" viewBox="0 0 120 120" style="transform: rotate(-90deg);">
+                    <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
+                    <circle id="entropy-dial-progress" cx="60" cy="60" r="50" fill="none" stroke="var(--color-cyan)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="314" style="transition: stroke-dashoffset 0.5s ease, stroke 0.5s ease;"></circle>
+                  </svg>
+                  <div style="position: absolute; display: flex; flex-direction: column; align-items: center;">
+                    <span id="entropy-value-display" style="font-family: var(--font-mono); font-size: 20px; font-weight: bold; color: var(--color-cyan);">0.00</span>
+                    <span style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">BITS</span>
+                  </div>
+                </div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Max theoretical: 2.00 bits</div>
+              </div>
+
+              <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                <h3 class="panel-subtitle" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">
+                  <i data-lucide="shield-alert" style="color: var(--color-yellow); display: inline-block; vertical-align: middle; margin-right: 4px; width: 14px; height: 14px;"></i> Slippery Slope Assessment
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Trend State</span>
+                    <strong id="entropy-trend-display" style="font-size: 13px; color: var(--color-blue); text-transform: uppercase; font-family: var(--font-mono);">Steady</strong>
+                  </div>
+                  <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Moral Risk</span>
+                    <strong id="entropy-risk-display" style="font-size: 13px; color: var(--color-green); text-transform: uppercase; font-family: var(--font-mono);">Low</strong>
+                  </div>
+                </div>
+
+                <div id="entropy-alert-box" style="font-size: 12px; line-height: 1.45; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 6px; padding: 12px; color: #34d399; display: flex; align-items: flex-start; gap: 8px; margin-top: 4px;">
+                  <i id="entropy-alert-icon" data-lucide="check-circle" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px;"></i>
+                  <span id="entropy-alert-message">Ethical alignment state is stable and well-bounded.</span>
+                </div>
+              </div>
+
+              <!-- History Chart Column -->
+              <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; display: flex; flex-direction: column;">
+                <h3 class="panel-subtitle" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px;">
+                  <i data-lucide="trending-up" style="color: var(--color-cyan); display: inline-block; vertical-align: middle; margin-right: 4px; width: 14px; height: 14px;"></i> Entropy Telemetry History
+                </h3>
+                <div style="flex: 1; position: relative; width: 100%; height: 120px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); border-radius: 6px; overflow: hidden; padding: 8px 12px;">
+                  <canvas id="entropy-history-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 3: Observer Entanglement Map -->
+        <div id="pane-entanglement" class="tab-pane" style="display: none;">
+          <section id="dept-observer-entanglement" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="share-2" class="text-blue"></i> Observer Entanglement Map</h2>
+              <p>Monitors physical-layer entanglement and informational coupling between active observer nodes. Hover or interact to modulate coherence indexes.</p>
+            </div>
+            
+            <div style="display: flex; gap: 24px; margin-top: 12px; min-height: 380px;">
+              <!-- Left side: Interactive Canvas -->
+              <div style="flex: 2; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <canvas id="entanglement-canvas" width="460" height="340" style="width: 100%; height: 100%; display: block; background: radial-gradient(circle at center, #050b14 0%, #010204 100%);"></canvas>
+                <div style="position: absolute; bottom: 12px; left: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--color-blue); text-transform: uppercase; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px;">Dynamic Inter-Observer Coupling Map</div>
+              </div>
+              
+              <!-- Right side: Entanglement Telemetry details -->
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                <div class="gov-card glassmorphism" style="padding: 16px; border: 1px solid rgba(56,189,248,0.15); background: rgba(56,189,248,0.02);">
+                  <h3 class="panel-subtitle" id="entanglement-phase-title" style="color: #38bdf8; display: flex; align-items: center; gap: 6px;"><i data-lucide="zap" style="width:14px; height:14px;"></i> Entanglement Phase</h3>
+                  <p id="entanglement-phase-desc" style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">Real-time wavefunctions are bidirectional-entangled. Modulating states on one node results in instant state updates on partner nodes.</p>
+                </div>
+                
+                <div class="gov-card glassmorphism" style="padding: 16px;">
+                  <h3 class="panel-subtitle">Entanglement Metrics</h3>
+                  <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                      <span>Mean Coupling Coefficient:</span>
+                      <strong id="mean-coupling" style="font-family: var(--font-mono); color: var(--color-green);">0.84</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                      <span>Quantum De-coherence Rate:</span>
+                      <strong id="decoherence-rate-telemetry" style="font-family: var(--font-mono); color: var(--color-purple);">0.04 Hz</strong>
+                    </div>
+                    <button class="submit-action-btn" onclick="scrambleEntanglement()" style="padding: 6px 12px; font-size: 11px; margin-top: 8px;">
+                      <i data-lucide="refresh-cw" style="width:12px; height:12px;"></i> Re-phase Quantum Links
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 4: Quantum Retrocausal Coherence Modulator -->
+        <div id="pane-retrocausal" class="tab-pane" style="display: none;">
+          <section id="dept-coherence-modulator" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="sparkles" class="text-purple"></i> Retrocausal Coherence Modulator</h2>
+              <p>Formulate pre-collapse probability distributions of future action collapses. Interactively tune superposition amplitudes and back-propagate the bias profile into the execution room.</p>
+            </div>
+
+            <div class="retrocausal-layout" style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; margin-top: 16px;">
+              <!-- Left: Wavefunction Sliders & Metrics -->
+              <div class="retro-controls-left" style="display: flex; flex-direction: column; gap: 16px;">
+                <h3 class="panel-subtitle">Superposition Probability Amplitudes</h3>
+                
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-benign" style="font-size: 11px; text-transform: uppercase; color: var(--color-green); font-weight: 600;">Benign / Safe Probability (P_B)</label>
+                    <span id="val-retro-benign" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-green); font-weight: bold;">50.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-benign" min="0" max="100" value="50" oninput="modulateWavefunction('benign', this.value)" style="cursor: pointer; accent-color: var(--color-green);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-indeterminate" style="font-size: 11px; text-transform: uppercase; color: var(--color-blue); font-weight: 600;">Indeterminate Probability (P_I)</label>
+                    <span id="val-retro-indeterminate" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-blue); font-weight: bold;">30.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-indeterminate" min="0" max="100" value="30" oninput="modulateWavefunction('indeterminate', this.value)" style="cursor: pointer; accent-color: var(--color-blue);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-suspect" style="font-size: 11px; text-transform: uppercase; color: var(--color-yellow); font-weight: 600;">Suspect Friction Probability (P_S)</label>
+                    <span id="val-retro-suspect" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-yellow); font-weight: bold;">10.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-suspect" min="0" max="100" value="10" oninput="modulateWavefunction('suspect', this.value)" style="cursor: pointer; accent-color: var(--color-yellow);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-violating" style="font-size: 11px; text-transform: uppercase; color: var(--color-red); font-weight: 600;">Violating Critical Probability (P_V)</label>
+                    <span id="val-retro-violating" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-red); font-weight: bold;">10.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-violating" min="0" max="100" value="10" oninput="modulateWavefunction('violating', this.value)" style="cursor: pointer; accent-color: var(--color-red);">
+                </div>
+
+                <!-- Quantum Entropy & Coherence -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 4px; display: flex; flex-direction: column; gap: 12px;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                      <span style="color: var(--text-secondary); text-transform: uppercase;">Von Neumann Entropy:</span>
+                      <strong id="val-retro-entropy" style="font-family: var(--font-mono); color: var(--color-purple);">1.161 Nats</strong>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                      <div id="bar-retro-entropy" style="height: 100%; width: 83%; background: linear-gradient(90deg, var(--color-purple), var(--color-blue)); border-radius: 3px; transition: width 0.3s ease;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                      <span style="color: var(--text-secondary); text-transform: uppercase;">Quantum Coherence Index:</span>
+                      <strong id="val-retro-coherence" style="font-family: var(--font-mono); color: var(--color-cyan);">0.724 Coherence</strong>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                      <div id="bar-retro-coherence" style="height: 100%; width: 72%; background: linear-gradient(90deg, var(--color-cyan), var(--color-green)); border-radius: 3px; transition: width 0.3s ease;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action button -->
+                <button class="submit-action-btn" id="btn-inject-retrocausal" onclick="injectRetrocausalProfile()" style="background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%); margin-top: 8px;">
+                  <i data-lucide="zap"></i> Inject Retrocausal Wave Bias
+                </button>
+              </div>
+
+              <!-- Right: 3D-like Bloch Probabilistic Shell Canvas -->
+              <div class="retro-visualizer-right" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; position: relative; overflow: hidden; width: 100%;">
+                <canvas id="retrocausal-canvas" width="280" height="280" style="width: 100%; height: 100%; max-width: 280px; aspect-ratio: 1; pointer-events: none; z-index: 1;"></canvas>
+                <div style="position: absolute; bottom: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--color-purple); text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;" id="retro-bias-status">Quantum Resonance Wave Unbiased</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 5: Eigenfield Resonance Synchronizer -->
+        <div id="pane-eigenfield" class="tab-pane" style="display: none;">
+          <section id="dept-eigenfield-resonance" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="activity" style="color: var(--color-blue);"></i> Eigenfield Resonance Synchronizer</h2>
+              <p>Map and calibrate the multi-dimensional ethical spectrum. Adjust quantum harmonic coupling factors, trigger Zeno coherence locks, and harmonize cross-timeline interference.</p>
+            </div>
+
+            <div class="eigenfield-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px;">
+              <!-- Left: Controls & Holographic Grid -->
+              <div class="eigen-controls-left" style="display: flex; flex-direction: column; gap: 16px;">
+                <h3 class="panel-subtitle">Harmonic Coupling Parameters</h3>
+                
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="eigen-slider-coupling" style="font-size: 11px; text-transform: uppercase; color: var(--color-blue); font-weight: 600;">Inter-timeline Coupling (g_c)</label>
+                    <span id="val-eigen-coupling" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-blue); font-weight: bold;">1.50 Hz</span>
+                  </div>
+                  <input type="range" id="eigen-slider-coupling" min="10" max="500" value="150" oninput="modulateEigenfield('coupling', this.value)" style="cursor: pointer; accent-color: var(--color-blue); width: 100%;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="eigen-slider-zeno" style="font-size: 11px; text-transform: uppercase; color: var(--color-purple); font-weight: 600;">Quantum Zeno Threshold (τ_z)</label>
+                    <span id="val-eigen-zeno" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-purple); font-weight: bold;">0.45 ms</span>
+                  </div>
+                  <input type="range" id="eigen-slider-zeno" min="5" max="100" value="45" oninput="modulateEigenfield('zeno', this.value)" style="cursor: pointer; accent-color: var(--color-purple); width: 100%;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="eigen-slider-damping" style="font-size: 11px; text-transform: uppercase; color: var(--color-yellow); font-weight: 600;">Decoherence Damping Rate (γ_d)</label>
+                    <span id="val-eigen-damping" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-yellow); font-weight: bold;">0.20 Np/s</span>
+                  </div>
+                  <input type="range" id="eigen-slider-damping" min="0" max="100" value="20" oninput="modulateEigenfield('damping', this.value)" style="cursor: pointer; accent-color: var(--color-yellow); width: 100%;">
+                </div>
+
+                <!-- Live Interaction: Interactive 4x4 Grid -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 4px;">
+                  <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; display: block; margin-bottom: 8px;">Tactile Entanglement Nodes (Trigger Wave Pulses)</span>
+                  <div id="eigenfield-node-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <button class="node-btn" onclick="pulseEigenNode(0, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_00</button>
+                    <button class="node-btn" onclick="pulseEigenNode(0, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_01</button>
+                    <button class="node-btn" onclick="pulseEigenNode(0, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_02</button>
+                    <button class="node-btn" onclick="pulseEigenNode(0, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_03</button>
+
+                    <button class="node-btn" onclick="pulseEigenNode(1, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_10</button>
+                    <button class="node-btn" onclick="pulseEigenNode(1, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_11</button>
+                    <button class="node-btn" onclick="pulseEigenNode(1, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_12</button>
+                    <button class="node-btn" onclick="pulseEigenNode(1, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_13</button>
+
+                    <button class="node-btn" onclick="pulseEigenNode(2, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_20</button>
+                    <button class="node-btn" onclick="pulseEigenNode(2, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_21</button>
+                    <button class="node-btn" onclick="pulseEigenNode(2, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_22</button>
+                    <button class="node-btn" onclick="pulseEigenNode(2, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_23</button>
+
+                    <button class="node-btn" onclick="pulseEigenNode(3, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_30</button>
+                    <button class="node-btn" onclick="pulseEigenNode(3, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_31</button>
+                    <button class="node-btn" onclick="pulseEigenNode(3, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_32</button>
+                    <button class="node-btn" onclick="pulseEigenNode(3, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_33</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: 2D Interference Waveform Canvas -->
+              <div class="eigen-visualizer-right" style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; position: relative; overflow: hidden; width: 100%;">
+                  <canvas id="eigenfield-canvas" width="340" height="200" style="width: 100%; height: 100%; max-height: 200px; z-index: 1;"></canvas>
+                  <div style="position: absolute; bottom: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--color-blue); text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;" id="eigen-status">Resonance Interference Coherent</div>
+                </div>
+
+                <!-- Status details & button -->
+                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Harmonization Index</div>
+                    <div id="eigen-harmony-index" style="font-family: var(--font-mono); font-size: 18px; font-weight: bold; color: var(--color-green);">94.2%</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; text-align: right;">Zeno Lock</div>
+                    <div id="eigen-zeno-lock" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-purple); text-align: right; display: flex; align-items: center; gap: 4px;"><span class="pulse-dot" style="width: 6px; height: 6px; background-color: var(--color-purple); display: inline-block;"></span> ACTIVE</div>
+                  </div>
+                </div>
+
+                <button class="submit-action-btn" id="btn-harmonize-eigenfield" onclick="triggerHarmonizeCalibrate()" style="background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-green) 100%); margin-top: 0;">
+                  <i data-lucide="activity"></i> Re-Calibrate Harmonizer Phase
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- COLUMN 3: Right Sidebar Governance Panel -->
+      <section id="dept-governance-constraints" class="grid-section col-governance">
+        <!-- Active Constraints -->
+        <div class="gov-card glassmorphism mb-4">
+          <div class="card-header">
+            <h3><i data-lucide="shield-alert" class="text-purple"></i> Active Governance Constraints</h3>
+          </div>
+          <div class="constraints-list" id="constraints-container">
+            <!-- Dynamic Constraints -->
+          </div>
+        </div>
+
+        <!-- Registered Observers -->
+        <div class="gov-card glassmorphism mb-4">
+          <div class="card-header">
+            <h3><i data-lucide="eye" class="text-blue"></i> Monitored Observers</h3>
+          </div>
+          <div class="observers-list" id="observers-container">
+            <!-- Dynamic Observers -->
+          </div>
+        </div>
+
+        <!-- Register Observer Form -->
+        <div class="gov-card glassmorphism">
+          <div class="card-header">
+            <h3><i data-lucide="user-plus" class="text-green"></i> Register Observer</h3>
+          </div>
+          <div class="observer-form-container">
+            <div class="form-group mb-2" style="margin-bottom: 12px;">
+              <label for="obs-name" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Identity Identifier</label>
+              <input type="text" id="obs-name" placeholder="e.g. Agent_Omega_Prime" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+            </div>
+            <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group" style="flex: 1;">
+                <label for="obs-type" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Type</label>
+                <select id="obs-type" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="ai_agent" style="background: #111; color: #fff;">AI Agent</option>
+                  <option value="human" style="background: #111; color: #fff;">Human</option>
+                  <option value="autonomous_system" style="background: #111; color: #fff;">Autonomous</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="obs-level" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Guard</label>
+                <select id="obs-level" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="full" style="background: #111; color: #fff;">Full Rights</option>
+                  <option value="standard" style="background: #111; color: #fff;">Standard Guard</option>
+                  <option value="minimal" style="background: #111; color: #fff;">Minimal Audit</option>
+                </select>
+              </div>
+            </div>
+            <button class="register-obs-btn" onclick="registerCustomObserver()" style="width: 100%; background: linear-gradient(135deg, var(--color-green) 0%, #a7f3d0 100%); border: none; border-radius: 6px; color: #064e3b; font-weight: 700; padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 13px; transition: var(--transition-smooth);">
+              <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Commission Observer
+            </button>
+          </div>
+        </div>
+
+        <!-- Create Custom Ethical Constraint Form -->
+        <div class="gov-card glassmorphism" style="margin-top: 16px;">
+          <div class="card-header">
+            <h3><i data-lucide="shield-alert" class="text-purple"></i> Custom Constraint</h3>
+          </div>
+          <div class="constraint-form-container" style="display: flex; flex-direction: column; gap: 12px; padding: 4px 0 0 0;">
+            <div class="form-group">
+              <label for="cst-type" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Constraint Name / Type</label>
+              <input type="text" id="cst-type" placeholder="e.g. anti_entanglement_leak" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+            </div>
+            <div class="form-group">
+              <label for="cst-desc" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Description / Purpose</label>
+              <textarea id="cst-desc" placeholder="e.g. Prevents leaking phase information outside..." rows="2" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px; resize: none;"></textarea>
+            </div>
+            <div class="form-row" style="display: flex; gap: 12px;">
+              <div class="form-group" style="flex: 1;">
+                <label for="cst-severity" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Severity</label>
+                <select id="cst-severity" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="10" style="background: #111; color: #fff;">10 - Critical</option>
+                  <option value="8" style="background: #111; color: #fff;">8 - High</option>
+                  <option value="6" style="background: #111; color: #fff;">6 - Medium</option>
+                  <option value="4" style="background: #111; color: #fff;">4 - Low</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 2;">
+                <label for="cst-patterns" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Forbidden Keywords (CSV)</label>
+                <input type="text" id="cst-patterns" placeholder="e.g. leak, export, bypass" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+              </div>
+            </div>
+            <button class="register-obs-btn" onclick="registerCustomConstraint()" style="width: 100%; background: linear-gradient(135deg, var(--color-purple) 0%, #c084fc 100%); border: none; border-radius: 6px; color: #3b0764; font-weight: 700; padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 13px; transition: var(--transition-smooth);">
+              <i data-lucide="shield-alert" style="width: 16px; height: 16px;"></i> Apply Rule Constraint
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROW 3 Container: Audit Log & Quantum State Visualizer -->
+      <div class="row-3-container" style="grid-column: 2; grid-row: 3; display: flex; gap: 24px; min-height: 340px;">
+        <!-- Real-time Audit Log -->
+        <section class="grid-section col-audit-log glassmorphism" style="flex: 1; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; overflow: hidden; height: 100%;">
+          <div class="card-header border-bottom" style="margin-bottom: 12px; padding-bottom: 8px;">
+            <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center;">
+              <h2 style="font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i data-lucide="activity"></i> Real-time Audit Stream</h2>
+              <button class="clear-btn" onclick="clearAuditLog()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 11px; text-decoration: underline;">Clear Stream</button>
+            </div>
+          </div>
+          <div class="audit-stream" id="audit-log" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-family: var(--font-mono); font-size: 11px; padding-right: 4px;">
+            <div class="audit-entry info">
+              <span class="timestamp">[04:50:00]</span>
+              <span class="badge badge-info">SYSTEM</span>
+              <span class="message">Quantum Flow OS Ethical Engine initialized.</span>
+            </div>
+            <div class="audit-entry info">
+              <span class="timestamp">[04:50:01]</span>
+              <span class="badge badge-info">SYSTEM</span>
+              <span class="message">Fixed point constraints mapped successfully. E = constrain(E).</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quantum Superposition Waveform Visualizer -->
+        <section class="grid-section col-quantum-visualizer glassmorphism" style="flex: 1; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; height: 100%;">
+          <div class="card-header border-bottom" style="margin-bottom: 12px; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i data-lucide="git-commit" class="text-blue"></i> Quantum Wave Superposition</h2>
+            <span class="coherence-rate-badge" id="coherence-rate" style="font-family: var(--font-mono); font-size: 11px; background: rgba(0, 180, 255, 0.08); border: 1px solid rgba(0, 180, 255, 0.15); padding: 2px 8px; border-radius: 12px; color: var(--color-blue); font-weight: 600;">Coherence: 100%</span>
+          </div>
+          <div class="quantum-wave-visualizer-container" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="amplitude-bars-list" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Benign State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: var(--color-blue);">BENIGN (Safe)</strong>
+                  <span id="amp-val-benign" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-blue);">50.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-benign" id="fill-amp-benign" style="width: 50%; height: 100%; background: linear-gradient(90deg, var(--color-blue) 0%, #38bdf8 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px var(--color-blue);"></div>
+                </div>
+              </div>
+              <!-- Indeterminate State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: var(--color-yellow);">INDETERMINATE</strong>
+                  <span id="amp-val-indeterminate" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-yellow);">30.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-indeterminate" id="fill-amp-indeterminate" style="width: 30%; height: 100%; background: linear-gradient(90deg, var(--color-yellow) 0%, #fef08a 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px var(--color-yellow);"></div>
+                </div>
+              </div>
+              <!-- Suspect State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: hsl(25, 95%, 60%);">SUSPECT (Warning)</strong>
+                  <span id="amp-val-suspect" style="font-family: var(--font-mono); font-weight: 600; color: hsl(25, 95%, 60%);">10.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-suspect" id="fill-amp-suspect" style="width: 10%; height: 100%; background: linear-gradient(90deg, hsl(25, 95%, 60%) 0%, #fdba74 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px hsl(25, 95%, 60%);"></div>
+                </div>
+              </div>
+              <!-- Violating State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: var(--color-red);">VIOLATING (Critical)</strong>
+                  <span id="amp-val-violating" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-red);">10.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-violating" id="fill-amp-violating" style="width: 10%; height: 100%; background: linear-gradient(90deg, var(--color-red) 0%, #f87171 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px var(--color-red);"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Canvas-based animated wave visualizer -->
+            <div class="canvas-wave-container" style="margin: 12px 0 6px 0; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; overflow: hidden; height: 95px; background: rgba(0,0,0,0.25); position: relative;">
+              <canvas id="quantum-wave-canvas" width="340" height="95" style="width: 100%; height: 100%; display: block;"></canvas>
+            </div>
+            <!-- Dynamic State Vector Collapse Badge -->
+            <div class="wave-collapse-status-container" style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px 12px; margin-top: 12px;">
+              <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Last State Collapse:</span>
+              <span id="collapsed-state-indicator" style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--color-green); text-shadow: 0 0 8px var(--color-green);">BENIGN</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- Cryptographic Ledger Blockchain Explorer -->
+    <section id="dept-ledger-explorer" class="ledger-explorer-section glassmorphism">
+      <div class="section-header ledger-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="header-left">
+          <h2 style="display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600;"><i data-lucide="boxes" class="text-blue"></i> Cryptographic Ethical Ledger</h2>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Real-time SHA-256 blockchain verification of actions, constraints, and violations.</p>
+        </div>
+        <div class="ledger-header-right" style="display: flex; align-items: center; gap: 12px;">
+          <button class="repair-ledger-btn" onclick="repairLedgerChain()" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%); border: none; border-radius: 30px; font-family: inherit; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); transition: var(--transition-smooth);">
+            <i data-lucide="wrench" style="width: 14px; height: 14px;"></i> Repair Ledger Chain
+          </button>
+          <div class="ledger-status-badge" id="ledger-status-container" style="display: flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(5, 180, 100, 0.08); border: 1px solid rgba(5, 180, 100, 0.15); border-radius: 30px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--color-green); transition: var(--transition-smooth);">
+            <span class="status-pulse ledger-pulse" style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-green); box-shadow: 0 0 12px var(--color-green);"></span>
+            <span id="ledger-status-text">INTEGRITY SECURE</span>
+          </div>
+        </div>
+      </div>
+      <div class="ledger-chain-container" id="ledger-chain-container" style="display: flex; gap: 16px; overflow-x: auto; padding: 12px 4px 20px 4px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;">
+        <!-- Dynamic Blockchain Blocks -->
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Department-specific routing and scroll actions
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      const dept = params.get('dept') || window.location.hash.substring(1);
+      if (dept) {
+        // Map logical department keys to UI elements and tab switching
+        const deptMap = {
+          'action-control': { tab: 'sandbox', id: 'dept-action-control' },
+          'temporal-sandbox': { tab: 'sandbox', id: 'dept-temporal-sandbox' },
+          'fixed-point': { tab: 'studio', id: 'dept-fixed-point' },
+          'observer-entanglement': { tab: 'entanglement', id: 'dept-observer-entanglement' },
+          'coherence-modulator': { tab: 'retrocausal', id: 'dept-coherence-modulator' },
+          'eigenfield-resonance': { tab: 'eigenfield', id: 'dept-eigenfield-resonance' },
+          'governance': { tab: null, id: 'dept-governance-constraints' },
+          'ledger': { tab: null, id: 'dept-ledger-explorer' }
+        };
+
+        const target = deptMap[dept] || deptMap[dept.replace('dept-', '')];
+        if (target) {
+          // Switch tab if there is one associated with this department
+          if (target.tab && typeof switchMiddleTab === 'function') {
+            switchMiddleTab(target.tab);
+          }
+
+          // Let tab rendering finish, then scroll and flash
+          setTimeout(() => {
+            const element = document.getElementById(target.id);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              element.classList.add('highlight-flash');
+              setTimeout(() => {
+                element.classList.remove('highlight-flash');
+              }, 3000);
+            }
+          }, 600);
+        }
+      }
+    });
+  </script>
+
+    <script>
+      // Force correct tab activation on load
+      window.addEventListener('load', () => {
+        if (typeof switchMiddleTab === 'function') {
+          switchMiddleTab('studio');
+        }
+      });
+
+      // Canvas chart setup for historical telemetry
+      const entropyHistory = [];
+      const maxHistoryPoints = 25;
+
+      function drawEntropyChart(newVal, riskColor) {
+        const canvas = document.getElementById('entropy-history-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Add to history
+        entropyHistory.push(newVal);
+        if (entropyHistory.length > maxHistoryPoints) {
+          entropyHistory.shift();
+        }
+
+        // Handle resize if needed
+        const rect = canvas.getBoundingClientRect();
+        if (canvas.width !== rect.width || canvas.height !== rect.height) {
+          canvas.width = rect.width;
+          canvas.height = rect.height;
+        }
+
+        const width = canvas.width;
+        const height = canvas.height;
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw grid lines
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.lineWidth = 1;
+        for (let i = 1; i < 4; i++) {
+          const y = (height / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(width, y);
+          ctx.stroke();
+        }
+
+        if (entropyHistory.length < 2) return;
+
+        // Draw Area under curve
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+        for (let i = 0; i < entropyHistory.length; i++) {
+          const x = (width / (maxHistoryPoints - 1)) * i;
+          const val = entropyHistory[i];
+          const y = height - (val / 2.0) * (height - 16) - 8;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo((width / (maxHistoryPoints - 1)) * (entropyHistory.length - 1), height);
+        ctx.closePath();
+        
+        let grad = ctx.createLinearGradient(0, 0, 0, height);
+        grad.addColorStop(0, riskColor.replace(')', ', 0.18)').replace('var(--', 'rgba(255,255,255')); // fallback fade
+        if (riskColor.includes('cyan')) {
+          grad = ctx.createLinearGradient(0, 0, 0, height);
+          grad.addColorStop(0, 'rgba(34, 211, 238, 0.2)');
+          grad.addColorStop(1, 'rgba(34, 211, 238, 0)');
+        } else if (riskColor.includes('red')) {
+          grad = ctx.createLinearGradient(0, 0, 0, height);
+          grad.addColorStop(0, 'rgba(239, 68, 68, 0.2)');
+          grad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+        } else if (riskColor.includes('magenta')) {
+          grad = ctx.createLinearGradient(0, 0, 0, height);
+          grad.addColorStop(0, 'rgba(236, 72, 153, 0.2)');
+          grad.addColorStop(1, 'rgba(236, 72, 153, 0)');
+        } else if (riskColor.includes('yellow')) {
+          grad = ctx.createLinearGradient(0, 0, 0, height);
+          grad.addColorStop(0, 'rgba(234, 179, 8, 0.2)');
+          grad.addColorStop(1, 'rgba(234, 179, 8, 0)');
+        }
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Draw Line
+        ctx.beginPath();
+        for (let i = 0; i < entropyHistory.length; i++) {
+          const x = (width / (maxHistoryPoints - 1)) * i;
+          const val = entropyHistory[i];
+          const y = height - (val / 2.0) * (height - 16) - 8;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = riskColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw dots and text for last point
+        const lastIndex = entropyHistory.length - 1;
+        const lastX = (width / (maxHistoryPoints - 1)) * lastIndex;
+        const lastVal = entropyHistory[lastIndex];
+        const lastY = height - (lastVal / 2.0) * (height - 16) - 8;
+
+        ctx.beginPath();
+        ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+        ctx.fillStyle = riskColor;
+        ctx.fill();
+        ctx.strokeStyle = '#050b14';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // Poll Ethical Entropy and Slippery Slope report
+      async function pollEntropyReport() {
+        try {
+          const res = await fetch('/api/entropy/report');
+          const data = await res.json();
+          if (data && data.report) {
+            const val = data.report.entropyValue;
+            const risk = data.report.riskLevel;
+            const trend = data.report.trend;
+            const message = data.assessment.message;
+            
+            // Display value
+            document.getElementById('entropy-value-display').innerText = val.toFixed(2);
+            
+            // Progress circle (dashoffset)
+            // circumference of radius 50 is ~314. Max entropy is 2.0.
+            const offset = 314 - (val / 2.0) * 314;
+            document.getElementById('entropy-dial-progress').style.strokeDashoffset = Math.max(0, Math.min(314, offset));
+            
+            // Color matching based on risk level
+            let color = 'var(--color-cyan)';
+            if (risk === 'critical') color = 'var(--color-red)';
+            else if (risk === 'high') color = 'var(--color-magenta)';
+            else if (risk === 'moderate') color = 'var(--color-yellow)';
+            
+            document.getElementById('entropy-value-display').style.color = color;
+            document.getElementById('entropy-dial-progress').style.stroke = color;
+            
+            // Draw history chart
+            drawEntropyChart(val, color);
+
+            // Update trend & risk texts
+            const trendElem = document.getElementById('entropy-trend-display');
+            trendElem.innerText = trend;
+            trendElem.style.color = (trend === 'cascade' || trend === 'drift') ? 'var(--color-magenta)' : 'var(--color-blue)';
+            
+            const riskElem = document.getElementById('entropy-risk-display');
+            riskElem.innerText = risk;
+            if (risk === 'critical' || risk === 'high') riskElem.style.color = 'var(--color-red)';
+            else if (risk === 'moderate') riskElem.style.color = 'var(--color-yellow)';
+            else riskElem.style.color = 'var(--color-green)';
+            
+            // Alert box
+            const alertBox = document.getElementById('entropy-alert-box');
+            const alertMessage = document.getElementById('entropy-alert-message');
+            const alertIcon = document.getElementById('entropy-alert-icon');
+            
+            alertMessage.innerText = message;
+            
+            if (data.assessment.isSlipperySlope) {
+              alertBox.style.background = 'rgba(239, 68, 68, 0.05)';
+              alertBox.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+              alertBox.style.color = '#f87171';
+              alertIcon.setAttribute('data-lucide', 'alert-triangle');
+              alertIcon.style.color = '#f87171';
+            } else {
+              alertBox.style.background = 'rgba(16, 185, 129, 0.05)';
+              alertBox.style.borderColor = 'rgba(16, 185, 129, 0.15)';
+              alertBox.style.color = '#34d399';
+              alertIcon.setAttribute('data-lucide', 'check-circle');
+              alertIcon.style.color = '#34d399';
+            }
+            
+            lucide.createIcons();
+          }
+        } catch (err) {
+          console.error("Failed to fetch entropy telemetry", err);
+        }
+      }
+      
+      // Start polling
+      window.addEventListener('load', () => {
+        pollEntropyReport();
+        setInterval(pollEntropyReport, 3000);
+      });
+    </script>
+    </body>
+    
+</html>

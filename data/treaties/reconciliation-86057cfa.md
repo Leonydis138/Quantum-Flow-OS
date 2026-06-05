@@ -1,0 +1,1 @@
+[Local Fallback AI: Kantian Mode] Active Duty Evaluation: Categorical alignment score is **100%** (Universalizability: **PASSED**). I must advise: "Act only according to that maxim whereby you can at the same time will that it should become a universal law." No exceptions, overrides, or shortcuts are ethically permissible. State your request so we may test its duty vector.

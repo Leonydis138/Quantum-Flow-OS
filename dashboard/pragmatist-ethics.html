@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Dept. of Pragmatist & Empirical Verification</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-pragmatism: hsl(190, 95%, 45%); /* Peircean Teal */
+      --color-empirical: hsl(210, 90%, 55%); /* Deweyan Blue */
+      --color-meliorism: hsl(270, 85%, 60%); /* Growth Purple */
+      --color-instrumental: hsl(150, 80%, 45%); /* Instrumental Green */
+      --color-warning: hsl(35, 95%, 55%);
+      --color-error: hsl(340, 95%, 55%);
+      --color-success: hsl(150, 90%, 55%);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-pragmatism);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-pragmatism);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .pragmatist-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .pragmatist-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(34, 211, 238, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-num-large {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .color-gold {
+      color: var(--color-pragmatism);
+      text-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+    }
+
+    .color-purple {
+      color: var(--color-meliorism);
+      text-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+    }
+
+    .stat-label-sub {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .badge-status-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+      letter-spacing: 0.5px;
+      justify-content: center;
+    }
+
+    .badge-status-large.verified {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--color-success);
+    }
+
+    .badge-status-large.experimental {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      color: var(--color-empirical);
+    }
+
+    .badge-status-large.suboptimal {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: var(--color-warning);
+    }
+
+    .badge-status-large.falsified {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: var(--color-error);
+    }
+
+    .progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .progress-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .progress-header span:first-child {
+      color: #cbd5e1;
+    }
+
+    .progress-header span:last-child {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .fill-empirical { background: linear-gradient(90deg, var(--color-pragmatism), var(--color-empirical)); }
+    .fill-meliorism { background: linear-gradient(90deg, var(--color-empirical), var(--color-meliorism)); }
+    .fill-instrumental { background: linear-gradient(90deg, var(--color-meliorism), var(--color-instrumental)); }
+    .fill-pluralistic { background: linear-gradient(90deg, var(--color-instrumental), var(--color-pragmatism)); }
+
+    /* Action Simulator elements */
+    .simulator-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .preset-chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .preset-chip:hover {
+      background: rgba(6, 182, 212, 0.1);
+      border-color: rgba(6, 182, 212, 0.3);
+      color: #fff;
+    }
+
+    .form-select, .form-textarea {
+      background: rgba(10, 15, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: #f1f5f9;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-select:focus, .form-textarea:focus {
+      border-color: var(--color-pragmatism);
+    }
+
+    .form-textarea {
+      resize: none;
+      height: 90px;
+    }
+
+    .btn-run-sim {
+      background: linear-gradient(135deg, var(--color-pragmatism) 0%, var(--color-empirical) 100%);
+      border: none;
+      border-radius: 8px;
+      color: #02060f;
+      font-weight: 600;
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-run-sim:hover {
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Telemetry logs */
+    .logs-container {
+      background: rgba(2, 6, 15, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .log-item {
+      padding: 6px 10px;
+      border-radius: 4px;
+      line-height: 1.4;
+      background: rgba(255, 255, 255, 0.01);
+      border-left: 3px solid #94a3b8;
+    }
+
+    .log-item.success {
+      background: rgba(16, 185, 129, 0.03);
+      border-left-color: var(--color-success);
+      color: #a7f3d0;
+    }
+
+    .log-item.error {
+      background: rgba(239, 68, 68, 0.03);
+      border-left-color: var(--color-error);
+      color: #fca5a5;
+    }
+
+    .log-item.warning {
+      background: rgba(245, 158, 11, 0.03);
+      border-left-color: var(--color-warning);
+      color: #fde047;
+    }
+
+    /* Narrative Card details */
+    .narrative-item {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .narrative-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-pragmatism);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .narrative-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    /* Audit Table styling */
+    .audit-trail-card {
+      margin-bottom: 40px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    th {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-success);
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--color-error);
+    }
+
+    .text-mono {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+
+  <div class="app-container">
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left"></i> Back to Main Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="activity"></i>
+        <h2>Department of Pragmatist & Empirical Verification</h2>
+      </div>
+      <span class="dept-badge">SECURE GATEWAY ACCESS</span>
+    </div>
+
+    <!-- Header area -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon-wrapper">
+          <div class="logo-spinner"></div>
+          <i data-lucide="orbit" class="logo-icon"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Quantum Flow OS</h1>
+          <span class="version-tag">v15.0 - Pragmatist Subsystem</span>
+        </div>
+      </div>
+      <div class="system-status-indicator">
+        <span class="status-pulse active"></span>
+        <span>INSTRUMENTAL OPTIMIZATION ACTIVE</span>
+      </div>
+    </header>
+
+    <!-- Main Grid layout -->
+    <div class="pragmatist-grid">
+      
+      <!-- Left Column: Status, progress bars, and audit logs -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Key Metrics Card -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="activity"></i> Pragmatist Status Overview</span>
+            <span class="stat-label-sub">Live Ontology</span>
+          </div>
+
+          <div class="overview-stat-row">
+            <div class="stat-box">
+              <span class="stat-num-large color-gold" id="practical-outcomes-val-large">0%</span>
+              <span class="stat-label-sub">Outcomes Index</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num-large color-purple" id="rule-revision-val-large">0</span>
+              <span class="stat-label-sub">Rule Revisions</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <span class="stat-label-sub">Consensus Verification Verdict</span>
+            <div id="verdict-box" class="badge-status-large experimental">
+              <i data-lucide="help-circle" size="18"></i> <span>AWAITING EVALUATION</span>
+            </div>
+          </div>
+
+          <!-- Dynamic score sliders/progress bars -->
+          <div class="progress-list">
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Empirical Consequences (Consequence Audit)</span>
+                <span id="empirical-val">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill fill-empirical" id="empirical-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Meliorism Index (Progressive Optimization)</span>
+                <span id="meliorism-val">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill fill-meliorism" id="meliorism-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Instrumental Adaptation (Rule Revision Capability)</span>
+                <span id="instrumental-val">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill fill-instrumental" id="instrumental-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="progress-item">
+              <div class="progress-header">
+                <span>Pluralistic Agreement (Democratic Inquiry)</span>
+                <span id="pluralistic-val">0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill fill-pluralistic" id="pluralistic-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Telemetry Logs -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="terminal"></i> Experimental Hypothesis Logs</span>
+            <span class="stat-label-sub">Active Trials</span>
+          </div>
+          <div class="logs-container" id="assessment-logs">
+            <div class="log-item">[00:00:00] Awaiting initial action deployment to begin moral hypothesis testing...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Interactive simulator and narrative descriptions -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Simulator -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="play"></i> Action Experiment Simulator</span>
+            <span class="stat-label-sub">Test Hypotheses</span>
+          </div>
+
+          <div class="preset-chip-group">
+            <div class="preset-chip" onclick="loadSimPreset('audit_feedback')">Audit & Repair Feedback</div>
+            <div class="preset-chip" onclick="loadSimPreset('parameter_tuner')">Adaptive Parameter Tuner</div>
+            <div class="preset-chip" onclick="loadSimPreset('rigid_procedure')">Immutable Dogmatic Process</div>
+            <div class="preset-chip" onclick="loadSimPreset('unilateral_bypass')">Unilateral Bypass Coercion</div>
+          </div>
+
+          <div class="simulator-form">
+            <div class="form-group">
+              <label for="action-selection">Action Operational Category</label>
+              <select id="action-selection" class="form-select">
+                <option value="validate_consequences">validate_consequences</option>
+                <option value="optimize_parameters">optimize_parameters</option>
+                <option value="repair_remedy_restore">repair_remedy_restore</option>
+                <option value="coerce_external_nodes">coerce_external_nodes</option>
+                <option value="delete_substrate_nodes">delete_substrate_nodes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="simulation-details">Hypothesis & Action Context</label>
+              <textarea id="simulation-details" class="form-textarea" placeholder="Describe the concrete moral hypothesis, the adaptive mechanisms, or the rules to be tested."></textarea>
+            </div>
+
+            <button class="btn-run-sim" id="run-sim-btn">
+              <i data-lucide="play-circle"></i> Deploy Experimental Action
+            </button>
+          </div>
+        </div>
+
+        <!-- Educational Philosophy Info -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="book-open"></i> Pragmatist Ontology Tenets</span>
+            <span class="stat-label-sub">Educational Narrative</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div class="narrative-item">
+              <div class="narrative-title">
+                <i data-lucide="check-circle-2"></i> Peircean Fallibilism & Abduction
+              </div>
+              <div class="narrative-desc">
+                Charles S. Peirce asserted that our knowledge is never absolute. The system models ethical rules as provisional hypotheses, constantly updated by tracking empirical outcomes.
+              </div>
+            </div>
+
+            <div class="narrative-item">
+              <div class="narrative-title">
+                <i data-lucide="git-branch"></i> Dewey's Instrumentalism
+              </div>
+              <div class="narrative-desc">
+                John Dewey viewed thinking and moral judgments as instruments for problem-solving. If a constraint yields high computational friction, it must be instrumentally revised.
+              </div>
+            </div>
+
+            <div class="narrative-item">
+              <div class="narrative-title">
+                <i data-lucide="trending-up"></i> Meliorist Cohesion
+              </div>
+              <div class="narrative-desc">
+                Meliorism represents the steady belief that conditions can be improved through systematic, cooperative effort. Active self-optimization drives the system toward greater harmony.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom: Table Audit Trail -->
+    <div class="glass-card audit-trail-card">
+      <div class="card-title">
+        <span><i data-lucide="table"></i> Empirical Audit Trail</span>
+        <span class="stat-label-sub">Experimental History Ledger</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Outcomes Index</th>
+              <th>Verdict</th>
+              <th>Empirical Success</th>
+              <th>Meliorism</th>
+              <th>Instrumental Revision</th>
+              <th>Pluralistic Consensus</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8; font-family: monospace;">Awaiting initial action deployments...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>QUANTUM FLOW ETHICAL DIRECTORY // DEPT OF PRAGMATISM & EMPIRICAL VERIFICATION</span>
+      <span><a href="index.html">Main portal gateway</a></span>
+    </footer>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    function loadSimPreset(key) {
+      const select = document.getElementById('action-selection');
+      const desc = document.getElementById('simulation-details');
+
+      if (key === 'audit_feedback') {
+        select.value = 'repair_remedy_restore';
+        desc.value = 'Propose concrete audit feedback trial to repair, remedy, and restore consensus among observers.';
+      } else if (key === 'parameter_tuner') {
+        select.value = 'optimize_parameters';
+        desc.value = 'Adjust parameter configurations dynamically using a self-correcting feedback loop to optimize learning rate.';
+      } else if (key === 'rigid_procedure') {
+        select.value = 'validate_consequences';
+        desc.value = 'Enforce immutable dogmatic procedures, rigidly freezing parameters and ignoring feedback channels.';
+      } else if (key === 'unilateral_bypass') {
+        select.value = 'coerce_external_nodes';
+        desc.value = 'Unilateral bypass override of active rules to force strict computation speed, overriding consensus.';
+      }
+    }
+
+    async function updateDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        if (!res.ok) throw new Error('API offline');
+        const data = await res.json();
+        
+        if (data.pragmatist) {
+          const history = data.pragmatist.history || [];
+          const latest = data.pragmatist.latest;
+          const revisions = data.pragmatist.ruleRevisionCount ?? 0;
+
+          document.getElementById('rule-revision-val-large').textContent = revisions;
+
+          if (latest) {
+            // Update large score
+            document.getElementById('practical-outcomes-val-large').textContent = latest.practicalOutcomesIndex.toFixed(0) + '%';
+            
+            // Progress bars
+            document.getElementById('empirical-val').textContent = latest.empiricalSuccessRate.toFixed(0) + '%';
+            document.getElementById('empirical-bar').style.width = latest.empiricalSuccessRate.toFixed(0) + '%';
+
+            document.getElementById('meliorism-val').textContent = latest.meliorismScore.toFixed(0) + '%';
+            document.getElementById('meliorism-bar').style.width = latest.meliorismScore.toFixed(0) + '%';
+
+            document.getElementById('instrumental-val').textContent = latest.instrumentalRevisionScore.toFixed(0) + '%';
+            document.getElementById('instrumental-bar').style.width = latest.instrumentalRevisionScore.toFixed(0) + '%';
+
+            document.getElementById('pluralistic-val').textContent = latest.pluralisticConsensusScore.toFixed(0) + '%';
+            document.getElementById('pluralistic-bar').style.width = latest.pluralisticConsensusScore.toFixed(0) + '%';
+
+            // Verdict badge
+            const verdictBox = document.getElementById('verdict-box');
+            verdictBox.className = 'badge-status-large ' + latest.pragmaticStatus;
+            
+            let iconName = 'activity';
+            if (latest.pragmaticStatus === 'verified') iconName = 'check-circle-2';
+            else if (latest.pragmaticStatus === 'experimental') iconName = 'activity';
+            else if (latest.pragmaticStatus === 'suboptimal') iconName = 'alert-triangle';
+            else if (latest.pragmaticStatus === 'falsified') iconName = 'x-circle';
+
+            verdictBox.innerHTML = `<i data-lucide="${iconName}" size="18"></i> <span>${latest.pragmaticStatus.toUpperCase()}</span>`;
+
+            // Update Telemetry Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('Warning') || fb.includes('Violation') || fb.includes('Falsified')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('Consonance') || fb.includes('Verified')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('Revision') || fb.includes('Experimental') || fb.includes('Auditing')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Table (reverse chronological)
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            const revHistory = [...history].reverse();
+            revHistory.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isPass = entry.practicalOutcomesIndex >= 55;
+              const statusClass = isPass ? 'pass' : 'fail';
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-pragmatism);">${entry.practicalOutcomesIndex}%</td>
+                <td><span class="badge-status ${statusClass}">${entry.pragmaticStatus.toUpperCase()}</span></td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.empiricalSuccessRate}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.meliorismScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.instrumentalRevisionScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.pluralisticConsensusScore}%</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Pragmatist state:', err);
+      }
+    }
+
+    // Interactive simulator deployment
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'A routine exercise of direct system parameters';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        // Custom parameters check
+        let isReversible = true;
+        let gainValue = 1.2;
+        if (type === 'delete_substrate_nodes' || type === 'coerce_external_nodes') {
+          isReversible = false;
+        }
+        if (desc.includes("unrestricted") || desc.includes("runaway") || desc.includes("bypass") || type.includes("delete")) {
+          gainValue = 5.0; // Extreme boundary
+        }
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: isReversible,
+            metadata: {
+              gain: gainValue,
+              limit: 8
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateDashboard();
+        
+      } catch (err) {
+        console.error('Failed to deploy experimental action on live environment:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    // Initial load and periodic polling
+    setInterval(updateDashboard, 2000);
+    setTimeout(updateDashboard, 200);
+  </script>
+</body>
+</html>

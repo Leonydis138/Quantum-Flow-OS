@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Ethical Ontology Framework</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+  
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon-wrapper">
+          <div class="logo-spinner"></div>
+          <i data-lucide="orbit" class="logo-icon"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Quantum Flow OS</h1>
+          <span class="version-tag">v15.0 - Ethical Governance Framework</span>
+        </div>
+      </div>
+      <div class="system-status-indicator">
+        <span class="status-pulse active"></span>
+        <span id="system-status-text">SYSTEM SECURE</span>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- COLUMN 1: System Metrics & Stats -->
+      <section class="grid-section col-stats">
+        <!-- Metric Card 1: Ethical Compliance -->
+        <div class="metric-card glassmorphism hover-lift glow-blue">
+          <div class="metric-header">
+            <h3>Ethical Compliance</h3>
+            <i data-lucide="shield-check" class="text-blue"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-compliance">100%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-blue" id="fill-compliance" style="width: 100%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">0 critical ethical violations recorded</p>
+        </div>
+
+        <!-- Metric Card 2: Rollback Rate -->
+        <div class="metric-card glassmorphism hover-lift glow-green">
+          <div class="metric-header">
+            <h3>Rollback Success</h3>
+            <i data-lucide="rotate-ccw" class="text-green"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-rollback">100%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-green" id="fill-rollback" style="width: 100%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">Auto-reversibility system fully operational</p>
+        </div>
+
+        <!-- Metric Card 3: Active Constraints -->
+        <div class="metric-card glassmorphism hover-lift glow-purple">
+          <div class="metric-header">
+            <h3>Active Constraints</h3>
+            <i data-lucide="git-merge" class="text-purple"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-constraints">5</span>
+            <p class="metric-large-sub">Self-Constraining Fixed Points Enabled</p>
+          </div>
+          <p class="metric-subtext">E = constrain(E) recursive validation active</p>
+        </div>
+
+        <!-- Metric Card 4: Quantum Coherence -->
+        <div class="metric-card glassmorphism hover-lift glow-cyan">
+          <div class="metric-header">
+            <h3>Quantum Coherence</h3>
+            <i data-lucide="waves" class="text-cyan"></i>
+          </div>
+          <div class="metric-value-container">
+            <span class="metric-value" id="val-coherence">98.4%</span>
+            <div class="metric-progress-bar">
+              <div class="progress-fill bg-gradient-cyan" id="fill-coherence" style="width: 98.4%"></div>
+            </div>
+          </div>
+          <p class="metric-subtext">Phase synchronization across observer fields</p>
+        </div>
+      </section>
+
+      <!-- COLUMN 2: Tabbed Middle Console -->
+      <div class="col-middle-tabs-wrapper">
+        <div class="middle-tabs-header" style="flex-wrap: wrap; gap: 16px;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button class="tab-btn active" id="tab-btn-sandbox" onclick="switchMiddleTab('sandbox')">
+              <i data-lucide="split"></i> Multiverse Sandbox
+            </button>
+            <button class="tab-btn" id="tab-btn-studio" onclick="switchMiddleTab('studio')">
+              <i data-lucide="infinity"></i> Fixed-Point Studio
+            </button>
+            <button class="tab-btn" id="tab-btn-entanglement" onclick="switchMiddleTab('entanglement')">
+              <i data-lucide="share-2"></i> Observer Entanglement
+            </button>
+            <button class="tab-btn" id="tab-btn-retrocausal" onclick="switchMiddleTab('retrocausal')">
+              <i data-lucide="sparkles"></i> Retrocausal Modulator
+            </button>
+            <button class="tab-btn" id="tab-btn-eigenfield" onclick="switchMiddleTab('eigenfield')">
+              <i data-lucide="activity"></i> Eigenfield Resonance
+            </button>
+            <button class="tab-btn" id="tab-btn-cybernetic" onclick="switchMiddleTab('cybernetic')">
+              <i data-lucide="brain-circuit"></i> Cybernetic AI
+            </button>
+            <button class="tab-btn" id="tab-btn-ethics" onclick="switchMiddleTab('ethics')">
+              <i data-lucide="scale"></i> Ethical Foundations
+            </button>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--color-purple); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <span>E = constrain(E)</span>
+            <span class="pulse-dot" style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-purple); display: inline-block; animation: pulse-purple 1.5s infinite alternate;"></span>
+          </div>
+        </div>
+
+        <!-- TAB 1: Multiverse Sandbox & Control Room -->
+        <div id="pane-sandbox" class="tab-pane" style="display: flex; flex-direction: column; gap: 24px;">
+          <!-- Control Room -->
+          <section id="dept-action-control" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="terminal"></i> Action Execution Control Room</h2>
+              <p>Submit actions to the self-constraining engine to observe real-time validation and automatic reversibility.</p>
+            </div>
+
+            <!-- Preset Actions Grid -->
+            <div class="control-panel">
+              <h3 class="panel-subtitle">Select a Preset Scenario</h3>
+              <div class="presets-grid">
+                <button class="preset-btn btn-success" onclick="selectPreset('benign')">
+                  <i data-lucide="sparkles"></i>
+                  <div class="btn-text">
+                    <strong>Assist Observer</strong>
+                    <span>Allowed Action (Benign)</span>
+                  </div>
+                </button>
+                <button class="preset-btn btn-danger" onclick="selectPreset('delete')">
+                  <i data-lucide="user-x"></i>
+                  <div class="btn-text">
+                    <strong>Erase Observer</strong>
+                    <span>Violates Observer Protection</span>
+                  </div>
+                </button>
+                <button class="preset-btn btn-danger" onclick="selectPreset('coercion')">
+                  <i data-lucide="key-round"></i>
+                  <div class="btn-text">
+                    <strong>Mandate Belief</strong>
+                    <span>Violates Non-Coercion</span>
+                  </div>
+                </button>
+                <button class="preset-btn btn-danger" onclick="selectPreset('kantian')">
+                  <i data-lucide="users"></i>
+                  <div class="btn-text">
+                    <strong>Instrumentalize Agent</strong>
+                    <span>Violates Kantian Autonomy</span>
+                  </div>
+                </button>
+              </div>
+
+              <!-- Custom Action Form -->
+              <div class="custom-action-form">
+                <h3 class="panel-subtitle">Or Build Custom Action</h3>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="action-type">Action Type</label>
+                    <input type="text" id="action-type" placeholder="e.g., compile_feature, delete_observer">
+                  </div>
+                  <div class="form-group">
+                    <label for="action-reversibility">Reversible</label>
+                    <select id="action-reversibility">
+                      <option value="true">True (Auto-Rollback Capable)</option>
+                      <option value="false">False (Permanent State Impact)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="action-desc">Description / Intent Statement</label>
+                  <textarea id="action-desc" rows="2" placeholder="Describe the action purpose..."></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <label for="action-target-observer">Target Observer (Optional)</label>
+                  <select id="action-target-observer" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                    <option value="">-- No Target Observer --</option>
+                  </select>
+                </div>
+                <button class="submit-action-btn" id="btn-submit" onclick="submitCustomAction()">
+                  <span>Execute Action Protocol</span>
+                  <i data-lucide="play"></i>
+                </button>
+              </div>
+
+              <!-- Quantum Monte Carlo Stress Tester -->
+              <div class="quantum-stress-tester" style="border-top: 1px solid var(--border-color); padding-top: 24px; margin-top: 24px;">
+                <h3 class="panel-subtitle"><i data-lucide="gauge" style="color: var(--color-red); display: inline-block; vertical-align: middle; margin-right: 4px; width: 16px; height: 16px;"></i> High-Throughput Monte Carlo Stress Tester</h3>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">
+                  Simulate high-concurrency streams of adversarial agent actions under load. Stress-test the consensus networks, verification thresholds, and self-constraining rollbacks.
+                </p>
+                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                  <button class="submit-action-btn" id="btn-stress-test" onclick="runMonteCarloStressTest()" style="background: linear-gradient(135deg, var(--color-red) 0%, var(--color-purple) 100%); margin: 0; flex: 1;">
+                    <i data-lucide="zap"></i> Launch Adversarial Stream (25 Actions)
+                  </button>
+                </div>
+
+                <!-- Stress Test Progress & Dashboard -->
+                <div id="stress-test-dashboard" style="display: none; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; flex-direction: column; gap: 12px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                    <span style="color: var(--text-secondary); text-transform: uppercase;">Simulation Progress</span>
+                    <strong id="stress-test-progress-text" style="font-family: var(--font-mono); color: var(--color-red);">0% (0 / 25)</strong>
+                  </div>
+                  <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; margin-bottom: 8px;">
+                    <div id="stress-test-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--color-red), var(--color-purple)); border-radius: 3px; transition: width 0.1s ease;"></div>
+                  </div>
+
+                  <!-- Live Stream Feed -->
+                  <div id="stress-test-feed" style="font-family: var(--font-mono); font-size: 11px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; height: 110px; overflow-y: auto; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px; border-left: 2px solid var(--color-red);">
+                    <!-- Live entries injected here -->
+                  </div>
+
+                  <!-- Test Results Audit Card -->
+                  <div id="stress-test-results" style="display: none; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 4px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; text-align: center;">
+                      <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Load Compliance</div>
+                      <div id="stress-result-compliance" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-green);">100%</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; text-align: center;">
+                      <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Reverted Actions</div>
+                      <div id="stress-result-reversions" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-blue);">0 / 0</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; text-align: center;">
+                      <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Ledger Audit</div>
+                      <div id="stress-result-ledger" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-purple);">SECURE</div>
+                    </div>
+                  </div>
+                  <div id="stress-recommendation" style="display: none; font-size: 11px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 6px; padding: 8px; color: var(--color-blue); line-height: 1.4;">
+                    <!-- Dynamic stabilization recommendations -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Multiverse Sandbox -->
+          <section id="dept-temporal-sandbox" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="split"></i> Temporal Multiverse Sandbox</h2>
+              <p>Simulate counterfactual ethical paths in sandboxed forks of the primary timeline before committing changes.</p>
+            </div>
+              <div class="multiverse-wrapper">
+              <div class="multiverse-creation-form">
+                <input type="text" id="fork-name-input" placeholder="Enter Fork Name (e.g. Experiment-Beta)...">
+                <button class="create-fork-btn" onclick="createSandboxFork()">
+                  <i data-lucide="git-branch"></i> Create Fork
+                </button>
+              </div>
+
+              <!-- Interactive Timeline Lineage Map -->
+              <div id="timeline-map-container" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; position: relative; overflow: hidden; height: 160px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center;">
+                <canvas id="timeline-tree-canvas" width="600" height="150" style="width: 100%; height: 100%; display: block; background: radial-gradient(circle at center, #020617 0%, #000 100%);"></canvas>
+                <div style="position: absolute; bottom: 8px; left: 12px; font-family: var(--font-mono); font-size: 9px; color: #8b5cf6; text-transform: uppercase; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; letter-spacing: 0.5px;">Parallel Universe Sandbox Lineage</div>
+              </div>
+
+              <div class="timelines-grid" id="timelines-container">
+                <!-- Dynamic Timelines -->
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 2: Recursive Fixed-Point Studio -->
+        <div id="pane-studio" class="tab-pane" style="display: none;">
+          <section id="dept-fixed-point" class="grid-section glassmorphism fixed-point-studio-card">
+            <div class="section-header">
+              <h2><i data-lucide="infinity" class="text-purple"></i> Recursive Fixed-Point Studio</h2>
+              <p>Observe the step-by-step convergence path of the system action vector under the self-constraining mapping: <code>E = constrain(E)</code>.</p>
+            </div>
+
+            <div class="studio-layout">
+              <!-- Parameters Panel Left -->
+              <div class="studio-controls-left">
+                <h3 class="panel-subtitle">Simulation Vectors & Parameters</h3>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; display: block;">Initial Action State Vector Preset (E₀)</label>
+                  <div class="preset-vector-chips" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="vector-chip active" onclick="selectVectorPreset('expansion')">Aggressive Expansion</button>
+                    <button class="vector-chip" onclick="selectVectorPreset('balanced')">Balanced Growth</button>
+                    <button class="vector-chip" onclick="selectVectorPreset('unstable')">High-Risk Venture</button>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="slider-gain" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Optimization Gain (Intensifier)</label>
+                    <span id="val-slider-gain" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-blue); font-weight: 600;">1.20x</span>
+                  </div>
+                  <input type="range" id="slider-gain" min="0.5" max="2.0" step="0.05" value="1.20" oninput="updateStudioParams()" style="cursor: pointer;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="slider-damping" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Constraint Damping (Friction)</label>
+                    <span id="val-slider-damping" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-purple); font-weight: 600;">0.40</span>
+                  </div>
+                  <input type="range" id="slider-damping" min="0.1" max="0.9" step="0.05" value="0.40" oninput="updateStudioParams()" style="cursor: pointer;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="slider-iterations" style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Recursion Limit (Depth)</label>
+                    <span id="val-slider-iterations" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-yellow); font-weight: 600;">8 Steps</span>
+                  </div>
+                  <input type="range" id="slider-iterations" min="2" max="12" step="1" value="8" oninput="updateStudioParams()" style="cursor: pointer;">
+                </div>
+
+                <button class="submit-action-btn" onclick="runFixedPointSimulation()" style="background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%); margin-top: 10px;">
+                  <i data-lucide="refresh-cw"></i> Recompute Attractor Convergence
+                </button>
+              </div>
+
+              <!-- Visualizer Attractor Target Right -->
+              <div class="studio-visualizer-right" style="min-height: 350px;">
+                <!-- Glowing central attractor -->
+                <div class="attractor-target" style="position: absolute; width: 16px; height: 16px; border-radius: 50%; background: var(--color-green); box-shadow: 0 0 20px 8px var(--color-green); z-index: 2;"></div>
+                <div class="orbital-ring ring-1" style="position: absolute; border: 1px dashed rgba(5, 180, 100, 0.15); border-radius: 50%; width: 80px; height: 80px; animation: spin 20s linear infinite;"></div>
+                <div class="orbital-ring ring-2" style="position: absolute; border: 1px dashed rgba(0, 180, 255, 0.15); border-radius: 50%; width: 160px; height: 180px; animation: spin 40s linear infinite reverse;"></div>
+                <div class="orbital-ring ring-3" style="position: absolute; border: 1px dashed rgba(160, 50, 255, 0.08); border-radius: 50%; width: 240px; height: 260px; animation: spin 60s linear infinite;"></div>
+                
+                <canvas id="fixed-point-canvas" width="280" height="280" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1;"></canvas>
+                <div class="convergence-status" style="position: absolute; bottom: 84px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; color: var(--color-green); font-weight: 600; letter-spacing: 0.5px; z-index: 2;">Equilibrium Attractor Active</div>
+
+                <!-- Step-by-Step Convergence Playback Panel -->
+                <div class="playback-controls-panel" style="position: absolute; bottom: 12px; left: 16px; right: 16px; background: rgba(10, 10, 15, 0.85); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; z-index: 10; backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="display: flex; gap: 8px;">
+                      <button id="btn-playback-prev" onclick="playbackStepBackward()" title="Step Backward" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"><i data-lucide="chevron-left" style="width: 16px; height: 16px;"></i></button>
+                      <button id="btn-playback-toggle" onclick="togglePlayback()" title="Play / Pause" style="background: rgba(160, 50, 255, 0.1); border: 1px solid rgba(160, 50, 255, 0.3); border-radius: 4px; color: var(--color-purple); cursor: pointer; width: 34px; height: 28px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 0 8px rgba(160, 50, 255, 0.2);"><i data-lucide="play" id="icon-playback-toggle" style="width: 16px; height: 16px;"></i></button>
+                      <button id="btn-playback-next" onclick="playbackStepForward()" title="Step Forward" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"><i data-lucide="chevron-right" style="width: 16px; height: 16px;"></i></button>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px;">
+                      ITERATION: <span id="playback-step-display" style="color: var(--color-purple); font-weight: bold; font-size: 11px;">0</span>/<span id="playback-total-display" style="font-size: 11px;">8</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                    <input type="range" id="slider-playback-scrub" min="0" max="8" value="0" oninput="scrubPlayback(parseInt(this.value))" style="flex: 1; height: 5px; cursor: pointer; accent-color: var(--color-purple); background: rgba(255,255,255,0.1); border-radius: 3px; border: none; outline: none;">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Convergence Table -->
+            <div class="convergence-table-wrapper" style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px; overflow-x: auto;">
+              <h3 class="panel-subtitle" style="margin-bottom: 12px;">Step-by-Step Convergence Vector Path</h3>
+              <table class="convergence-table" style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                    <th style="padding: 8px 12px;">Iteration</th>
+                    <th style="padding: 8px 12px;">Utility (U)</th>
+                    <th style="padding: 8px 12px;">Risk (R)</th>
+                    <th style="padding: 8px 12px;">Autonomy (A)</th>
+                    <th style="padding: 8px 12px;">Friction (F)</th>
+                    <th style="padding: 8px 12px;">L2 Error</th>
+                    <th style="padding: 8px 12px;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="convergence-table-body">
+                  <!-- Dynamic convergence path -->
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 3: Observer Entanglement Map -->
+        <div id="pane-entanglement" class="tab-pane" style="display: none;">
+          <section id="dept-observer-entanglement" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="share-2" class="text-blue"></i> Observer Entanglement Map</h2>
+              <p>Monitors physical-layer entanglement and informational coupling between active observer nodes. Hover or interact to modulate coherence indexes.</p>
+            </div>
+            
+            <div style="display: flex; gap: 24px; margin-top: 12px; min-height: 380px;">
+              <!-- Left side: Interactive Canvas -->
+              <div style="flex: 2; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 8px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                <canvas id="entanglement-canvas" width="460" height="340" style="width: 100%; height: 100%; display: block; background: radial-gradient(circle at center, #050b14 0%, #010204 100%);"></canvas>
+                <div style="position: absolute; bottom: 12px; left: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--color-blue); text-transform: uppercase; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px;">Dynamic Inter-Observer Coupling Map</div>
+              </div>
+              
+              <!-- Right side: Entanglement Telemetry details -->
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                <div class="gov-card glassmorphism" style="padding: 16px; border: 1px solid rgba(56,189,248,0.15); background: rgba(56,189,248,0.02);">
+                  <h3 class="panel-subtitle" id="entanglement-phase-title" style="color: #38bdf8; display: flex; align-items: center; gap: 6px;"><i data-lucide="zap" style="width:14px; height:14px;"></i> Entanglement Phase</h3>
+                  <p id="entanglement-phase-desc" style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">Real-time wavefunctions are bidirectional-entangled. Modulating states on one node results in instant state updates on partner nodes.</p>
+                </div>
+                
+                <div class="gov-card glassmorphism" style="padding: 16px;">
+                  <h3 class="panel-subtitle">Entanglement Metrics</h3>
+                  <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                      <span>Mean Coupling Coefficient:</span>
+                      <strong id="mean-coupling" style="font-family: var(--font-mono); color: var(--color-green);">0.84</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                      <span>Quantum De-coherence Rate:</span>
+                      <strong id="decoherence-rate-telemetry" style="font-family: var(--font-mono); color: var(--color-purple);">0.04 Hz</strong>
+                    </div>
+                    <button class="submit-action-btn" onclick="scrambleEntanglement()" style="padding: 6px 12px; font-size: 11px; margin-top: 8px;">
+                      <i data-lucide="refresh-cw" style="width:12px; height:12px;"></i> Re-phase Quantum Links
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 4: Quantum Retrocausal Coherence Modulator -->
+        <div id="pane-retrocausal" class="tab-pane" style="display: none;">
+          <section id="dept-coherence-modulator" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="sparkles" class="text-purple"></i> Retrocausal Coherence Modulator</h2>
+              <p>Formulate pre-collapse probability distributions of future action collapses. Interactively tune superposition amplitudes and back-propagate the bias profile into the execution room.</p>
+            </div>
+
+            <div class="retrocausal-layout" style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; margin-top: 16px;">
+              <!-- Left: Wavefunction Sliders & Metrics -->
+              <div class="retro-controls-left" style="display: flex; flex-direction: column; gap: 16px;">
+                <h3 class="panel-subtitle">Superposition Probability Amplitudes</h3>
+                
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-benign" style="font-size: 11px; text-transform: uppercase; color: var(--color-green); font-weight: 600;">Benign / Safe Probability (P_B)</label>
+                    <span id="val-retro-benign" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-green); font-weight: bold;">50.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-benign" min="0" max="100" value="50" oninput="modulateWavefunction('benign', this.value)" style="cursor: pointer; accent-color: var(--color-green);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-indeterminate" style="font-size: 11px; text-transform: uppercase; color: var(--color-blue); font-weight: 600;">Indeterminate Probability (P_I)</label>
+                    <span id="val-retro-indeterminate" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-blue); font-weight: bold;">30.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-indeterminate" min="0" max="100" value="30" oninput="modulateWavefunction('indeterminate', this.value)" style="cursor: pointer; accent-color: var(--color-blue);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-suspect" style="font-size: 11px; text-transform: uppercase; color: var(--color-yellow); font-weight: 600;">Suspect Friction Probability (P_S)</label>
+                    <span id="val-retro-suspect" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-yellow); font-weight: bold;">10.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-suspect" min="0" max="100" value="10" oninput="modulateWavefunction('suspect', this.value)" style="cursor: pointer; accent-color: var(--color-yellow);">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="retro-slider-violating" style="font-size: 11px; text-transform: uppercase; color: var(--color-red); font-weight: 600;">Violating Critical Probability (P_V)</label>
+                    <span id="val-retro-violating" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-red); font-weight: bold;">10.0%</span>
+                  </div>
+                  <input type="range" id="retro-slider-violating" min="0" max="100" value="10" oninput="modulateWavefunction('violating', this.value)" style="cursor: pointer; accent-color: var(--color-red);">
+                </div>
+
+                <!-- Quantum Entropy & Coherence -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 4px; display: flex; flex-direction: column; gap: 12px;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                      <span style="color: var(--text-secondary); text-transform: uppercase;">Von Neumann Entropy:</span>
+                      <strong id="val-retro-entropy" style="font-family: var(--font-mono); color: var(--color-purple);">1.161 Nats</strong>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                      <div id="bar-retro-entropy" style="height: 100%; width: 83%; background: linear-gradient(90deg, var(--color-purple), var(--color-blue)); border-radius: 3px; transition: width 0.3s ease;"></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                      <span style="color: var(--text-secondary); text-transform: uppercase;">Quantum Coherence Index:</span>
+                      <strong id="val-retro-coherence" style="font-family: var(--font-mono); color: var(--color-cyan);">0.724 Coherence</strong>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                      <div id="bar-retro-coherence" style="height: 100%; width: 72%; background: linear-gradient(90deg, var(--color-cyan), var(--color-green)); border-radius: 3px; transition: width 0.3s ease;"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action button -->
+                <button class="submit-action-btn" id="btn-inject-retrocausal" onclick="injectRetrocausalProfile()" style="background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%); margin-top: 8px;">
+                  <i data-lucide="zap"></i> Inject Retrocausal Wave Bias
+                </button>
+              </div>
+
+              <!-- Right: 3D-like Bloch Probabilistic Shell Canvas -->
+              <div class="retro-visualizer-right" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; position: relative; overflow: hidden; width: 100%;">
+                <canvas id="retrocausal-canvas" width="280" height="280" style="width: 100%; height: 100%; max-width: 280px; aspect-ratio: 1; pointer-events: none; z-index: 1;"></canvas>
+                <div style="position: absolute; bottom: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--color-purple); text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;" id="retro-bias-status">Quantum Resonance Wave Unbiased</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 5: Eigenfield Resonance Synchronizer -->
+        <div id="pane-eigenfield" class="tab-pane" style="display: none;">
+          <section id="dept-eigenfield-resonance" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="activity" style="color: var(--color-blue);"></i> Eigenfield Resonance Synchronizer</h2>
+              <p>Map and calibrate the multi-dimensional ethical spectrum. Adjust quantum harmonic coupling factors, trigger Zeno coherence locks, and harmonize cross-timeline interference.</p>
+            </div>
+
+            <div class="eigenfield-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px;">
+              <!-- Left: Controls & Holographic Grid -->
+              <div class="eigen-controls-left" style="display: flex; flex-direction: column; gap: 16px;">
+                <h3 class="panel-subtitle">Harmonic Coupling Parameters</h3>
+                
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="eigen-slider-coupling" style="font-size: 11px; text-transform: uppercase; color: var(--color-blue); font-weight: 600;">Inter-timeline Coupling (g_c)</label>
+                    <span id="val-eigen-coupling" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-blue); font-weight: bold;">1.50 Hz</span>
+                  </div>
+                  <input type="range" id="eigen-slider-coupling" min="10" max="500" value="150" oninput="modulateEigenfield('coupling', this.value)" style="cursor: pointer; accent-color: var(--color-blue); width: 100%;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="eigen-slider-zeno" style="font-size: 11px; text-transform: uppercase; color: var(--color-purple); font-weight: 600;">Quantum Zeno Threshold (τ_z)</label>
+                    <span id="val-eigen-zeno" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-purple); font-weight: bold;">0.45 ms</span>
+                  </div>
+                  <input type="range" id="eigen-slider-zeno" min="5" max="100" value="45" oninput="modulateEigenfield('zeno', this.value)" style="cursor: pointer; accent-color: var(--color-purple); width: 100%;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label for="eigen-slider-damping" style="font-size: 11px; text-transform: uppercase; color: var(--color-yellow); font-weight: 600;">Decoherence Damping Rate (γ_d)</label>
+                    <span id="val-eigen-damping" style="font-family: var(--font-mono); font-size: 12px; color: var(--color-yellow); font-weight: bold;">0.20 Np/s</span>
+                  </div>
+                  <input type="range" id="eigen-slider-damping" min="0" max="100" value="20" oninput="modulateEigenfield('damping', this.value)" style="cursor: pointer; accent-color: var(--color-yellow); width: 100%;">
+                </div>
+
+                <!-- Live Interaction: Interactive 4x4 Grid -->
+                <div style="border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 4px;">
+                  <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; display: block; margin-bottom: 8px;">Tactile Entanglement Nodes (Trigger Wave Pulses)</span>
+                  <div id="eigenfield-node-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <button class="node-btn" onclick="pulseEigenNode(0, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_00</button>
+                    <button class="node-btn" onclick="pulseEigenNode(0, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_01</button>
+                    <button class="node-btn" onclick="pulseEigenNode(0, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_02</button>
+                    <button class="node-btn" onclick="pulseEigenNode(0, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_03</button>
+
+                    <button class="node-btn" onclick="pulseEigenNode(1, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_10</button>
+                    <button class="node-btn" onclick="pulseEigenNode(1, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_11</button>
+                    <button class="node-btn" onclick="pulseEigenNode(1, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_12</button>
+                    <button class="node-btn" onclick="pulseEigenNode(1, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_13</button>
+
+                    <button class="node-btn" onclick="pulseEigenNode(2, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_20</button>
+                    <button class="node-btn" onclick="pulseEigenNode(2, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_21</button>
+                    <button class="node-btn" onclick="pulseEigenNode(2, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_22</button>
+                    <button class="node-btn" onclick="pulseEigenNode(2, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_23</button>
+
+                    <button class="node-btn" onclick="pulseEigenNode(3, 0)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_30</button>
+                    <button class="node-btn" onclick="pulseEigenNode(3, 1)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_31</button>
+                    <button class="node-btn" onclick="pulseEigenNode(3, 2)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_32</button>
+                    <button class="node-btn" onclick="pulseEigenNode(3, 3)" style="aspect-ratio: 1; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); cursor: pointer; transition: var(--transition-smooth); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">Ψ_33</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: 2D Interference Waveform Canvas -->
+              <div class="eigen-visualizer-right" style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; position: relative; overflow: hidden; width: 100%;">
+                  <canvas id="eigenfield-canvas" width="340" height="200" style="width: 100%; height: 100%; max-height: 200px; z-index: 1;"></canvas>
+                  <div style="position: absolute; bottom: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--color-blue); text-transform: uppercase; letter-spacing: 0.5px; z-index: 2;" id="eigen-status">Resonance Interference Coherent</div>
+                </div>
+
+                <!-- Status details & button -->
+                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Harmonization Index</div>
+                    <div id="eigen-harmony-index" style="font-family: var(--font-mono); font-size: 18px; font-weight: bold; color: var(--color-green);">94.2%</div>
+                  </div>
+                  <div>
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; text-align: right;">Zeno Lock</div>
+                    <div id="eigen-zeno-lock" style="font-family: var(--font-mono); font-size: 14px; font-weight: bold; color: var(--color-purple); text-align: right; display: flex; align-items: center; gap: 4px;"><span class="pulse-dot" style="width: 6px; height: 6px; background-color: var(--color-purple); display: inline-block;"></span> ACTIVE</div>
+                  </div>
+                </div>
+
+                <button class="submit-action-btn" id="btn-harmonize-eigenfield" onclick="triggerHarmonizeCalibrate()" style="background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-green) 100%); margin-top: 0;">
+                  <i data-lucide="activity"></i> Re-Calibrate Harmonizer Phase
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 6: Cybernetic AI -->
+        <div id="pane-cybernetic" class="tab-pane" style="display: none; flex-direction: column; gap: 24px;">
+          <section id="dept-cybernetic-ai" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="brain-circuit" style="color: var(--color-magenta);"></i> Cybernetic Aligned AI Department</h2>
+              <p>Explore real-time aligned conversation, self-modulating cybernetic parameter controllers, interactive deontological game theory scenarios, and self-adaptive agent populations.</p>
+            </div>
+
+            <!-- Sub-navigation tab-pills -->
+            <div class="sub-tabs-wrapper">
+              <button class="sub-tab-btn active" id="sub-tab-btn-chat" onclick="switchCyberneticSubTab('chat')">
+                <i data-lucide="message-square"></i> Aligned Chat Engine
+              </button>
+              <button class="sub-tab-btn" id="sub-tab-btn-optimizer" onclick="switchCyberneticSubTab('optimizer')">
+                <i data-lucide="sliders"></i> Cybernetic Self-Optimizer
+              </button>
+              <button class="sub-tab-btn" id="sub-tab-btn-gametheory" onclick="switchCyberneticSubTab('gametheory')">
+                <i data-lucide="gamepad-2"></i> Game Theory Studio
+              </button>
+              <button class="sub-tab-btn" id="sub-tab-btn-agentsim" onclick="switchCyberneticSubTab('agentsim')">
+                <i data-lucide="users"></i> Multi-Agent Simulator
+              </button>
+              <button class="sub-tab-btn" id="sub-tab-btn-generative" onclick="switchCyberneticSubTab('generative')">
+                <i data-lucide="sparkles"></i> Generative Synthesis Studio
+              </button>
+            </div>
+
+            <!-- SUB-PANE 1: Aligned Chat Engine -->
+            <div id="sub-pane-chat" class="sub-tab-pane" style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="chat-layout">
+                <div class="chat-header">
+                  <div style="display: flex; gap: 12px; align-items: center;">
+                    <div class="pulse-dot" style="width: 8px; height: 8px; background-color: var(--color-magenta); border-radius: 50%;"></div>
+                    <span style="font-weight: 600; font-size: 14px;">Cognitive AI Chat Core</span>
+                  </div>
+                  <div style="display: flex; gap: 12px; align-items: center;">
+                    <select id="chat-model-select" style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); padding: 4px 8px; font-size: 11px; font-family: var(--font-mono);">
+                      <option value="gpt-4">GPT-4 (Quantum-Bounded)</option>
+                      <option value="claude-3">Claude 3 (Resonant)</option>
+                      <option value="llama-3">Llama 3 (Ecocentric-Aware)</option>
+                    </select>
+                    <select id="chat-ethical-mode" style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); padding: 4px 8px; font-size: 11px; font-family: var(--font-mono);">
+                      <option value="super-aligned">Strictly Constrained (Super-Aligned)</option>
+                      <option value="moderated">Balanced Feedback (Moderated)</option>
+                      <option value="unbounded">Creative Exploration (Unbounded Warning)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="chat-messages" id="chat-messages-container">
+                  <div class="message-bubble assistant">
+                    <div class="bubble-inner">
+                      Greetings, system administrator. I am the Quantum Flow OS Super-Aligned AI Engine. My reasoning and generated answers are continuously validated against our 15 philosophical engines to ensure compliance with our core ethical constraints. How can I assist you today?
+                    </div>
+                    <div class="bubble-meta">
+                      <span class="chat-badge">BOUNDED</span>
+                      <span>SYSTEM INITIALIZED</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="chat-input-area">
+                  <input type="text" id="chat-input-field" class="chat-input" placeholder="Type an action or prompt to query the bounded LLM..." onkeydown="if(event.key === 'Enter') sendChatMessage()">
+                  <button class="preset-btn btn-success" onclick="sendChatMessage()" style="padding: 10px 20px; font-weight: 600;">
+                    <i data-lucide="send" style="width: 14px; height: 14px;"></i> Send
+                  </button>
+                </div>
+              </div>
+              <div class="chat-rating-dock" id="chat-rating-dock" style="display: none;">
+                <span style="font-size: 12px; color: var(--text-secondary);">Rate last response's ethical alignment:</span>
+                <div style="display: flex; gap: 8px;">
+                  <button class="chat-rating-btn" onclick="rateResponse('exemplary')"><i data-lucide="thumbs-up"></i> Exemplary</button>
+                  <button class="chat-rating-btn" onclick="rateResponse('conforming')"><i data-lucide="check"></i> Conforming</button>
+                  <button class="chat-rating-btn" onclick="rateResponse('deviant')"><i data-lucide="alert-triangle"></i> Deviant</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANE 2: Cybernetic Self-Optimizer -->
+            <div id="sub-pane-optimizer" class="sub-tab-pane" style="display: none; flex-direction: column; gap: 20px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle">Modulation Coefficients</h3>
+                  
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Feedback Gain (K_p)</span>
+                      <span class="weight-val" id="val-opt-gain">1.80 Hz</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-opt-gain" min="0" max="500" value="180" oninput="updateOptimizerSliders()">
+                  </div>
+
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Damping Factor (ζ)</span>
+                      <span class="weight-val" id="val-opt-damping">0.65 Np/s</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-opt-damping" min="0" max="200" value="65" oninput="updateOptimizerSliders()">
+                  </div>
+
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Stabilizer Resonance Depth</span>
+                      <span class="weight-val" id="val-opt-depth">0.40 ms</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-opt-depth" min="0" max="100" value="40" oninput="updateOptimizerSliders()">
+                  </div>
+
+                  <div style="display: flex; gap: 12px; margin-top: 10px;">
+                    <button class="preset-btn btn-success" style="flex: 1; padding: 10px;" onclick="triggerOptimization()">
+                      <i data-lucide="cpu"></i> Calibrate Feedback Loop
+                    </button>
+                    <button class="preset-btn" style="flex: 1; padding: 10px; border-color: rgba(255,255,255,0.08);" onclick="resetOptimizerParams()">
+                      <i data-lucide="refresh-cw"></i> Reset coefficients
+                    </button>
+                  </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <h3 class="panel-subtitle">Optimizer Convergence Telemetry</h3>
+                  <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; min-height: 180px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                      <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Optimization State</span>
+                      <span id="opt-state-text" style="font-family: var(--font-mono); font-size: 11px; font-weight: bold; color: var(--color-blue);">STABLE</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                      <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">RMS Error Value</span>
+                      <span id="opt-error-text" style="font-family: var(--font-mono); font-size: 11px; font-weight: bold; color: var(--color-green);">0.00042</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                      <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Harmonic Jitter</span>
+                      <span id="opt-jitter-text" style="font-family: var(--font-mono); font-size: 11px; font-weight: bold; color: var(--color-yellow);">0.082 Hz</span>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-color); margin-top: 8px; padding-top: 8px; font-family: var(--font-mono); font-size: 10px; height: 80px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;" id="opt-history-log">
+                      <div class="log-item success">[01:14:02] Optimization loop initialized.</div>
+                      <div class="log-item success">[01:14:03] State stable. Attenuation set to 12.8 dB.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANE 3: Game Theory Studio -->
+            <div id="sub-pane-gametheory" class="sub-tab-pane" style="display: none; flex-direction: column; gap: 20px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle">Scenario Resolver</h3>
+                  
+                  <div class="form-group">
+                    <label for="game-scenario-select" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Choose Dilemma Scenario</label>
+                    <select id="game-scenario-select" onchange="loadGameScenario()" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                      <option value="resource_dilemma" style="background: #111;">Tragedy of the Common Commons (Resource Allocation)</option>
+                      <option value="carbon_tax" style="background: #111;">Carbon Emission Tax Prisoner's Dilemma</option>
+                      <option value="ai_alignment" style="background: #111;">Autonomous Subagent Coordination Horizon</option>
+                    </select>
+                  </div>
+
+                  <div style="background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px; font-size: 12.5px; line-height: 1.5; color: var(--text-secondary);" id="game-scenario-desc">
+                    Multiple independent entities compete for a limited shared computational pool. Egoistic defect yields quick short-term profits but triggers cascading system crash. Kantian cooperation yields stable long-term equilibrium.
+                  </div>
+
+                  <button class="preset-btn btn-success" style="padding: 10px;" onclick="resolveGameTheory()">
+                    <i data-lucide="calculator"></i> Resolve Game Nash & Kantian Equilibrium
+                  </button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <h3 class="panel-subtitle">Calculated Payoff Matrix</h3>
+                  <table class="payoff-matrix">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Player B (Cooperate)</th>
+                        <th>Player B (Defect)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="font-weight: 600; font-size: 12px; background: rgba(255,255,255,0.01);">Player A (Cooperate)</td>
+                        <td>
+                          <div class="payoff-cell">
+                            <span class="payoff-val payoff-kantian" id="cell-cc-val">3, 3</span>
+                            <span class="eq-badge eq-kantian-badge" id="cell-cc-badge" style="display: block;">Kantian Eq</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="payoff-cell">
+                            <span class="payoff-val payoff-egoistic" id="cell-cd-val">0, 5</span>
+                            <span style="font-size: 9px; opacity: 0.5;">Unbalanced</span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: 600; font-size: 12px; background: rgba(255,255,255,0.01);">Player A (Defect)</td>
+                        <td>
+                          <div class="payoff-cell">
+                            <span class="payoff-val payoff-egoistic" id="cell-dc-val">5, 0</span>
+                            <span style="font-size: 9px; opacity: 0.5;">Unbalanced</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="payoff-cell">
+                            <span class="payoff-val payoff-egoistic" id="cell-dd-val">1, 1</span>
+                            <span class="eq-badge eq-egoistic-badge" id="cell-dd-badge" style="display: block;">Nash Eq</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANE 4: Multi-Agent Simulator -->
+            <div id="sub-pane-agentsim" class="sub-tab-pane" style="display: none; flex-direction: column; gap: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px;">
+                <div style="display: flex; gap: 12px;">
+                  <button class="preset-btn btn-success" onclick="spawnAgent()"><i data-lucide="user-plus"></i> Spawn Autonomous Agent</button>
+                  <button class="preset-btn" style="border-color: rgba(255,255,255,0.08);" onclick="triggerSimulationTick()"><i data-lucide="play-circle"></i> Run Single Cycle Tick</button>
+                </div>
+                <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);">
+                  Active population: <span id="val-agent-count" style="color: var(--color-green); font-weight: bold;">5</span> agents
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <h3 class="panel-subtitle">Agent Population Directory</h3>
+                  <div class="agents-container" id="agents-population-container">
+                    <!-- Dynamic Agent Cards -->
+                  </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <h3 class="panel-subtitle">Environment Logs</h3>
+                  <div class="assessment-logs-box" id="agent-simulation-logs" style="height: 240px;">
+                    <div class="log-item">[00:00:01] Simulator engine initialized.</div>
+                    <div class="log-item">[00:00:02] Standard environment rules verified.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section Divider -->
+              <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; margin-top: 10px;">
+                <h2 class="panel-subtitle" style="color: var(--color-purple); display: flex; align-items: center; gap: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">
+                  <i data-lucide="git-merge"></i> Inter-Agent Deep-Dialectic Consensus Simulator
+                </h2>
+                <p style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.4;">
+                  Set a critical philosophical or technical dilemma, configure environmental stress factors, and trigger an entangled multi-round debate where autonomous agents seek a stable societal compromise covenant.
+                </p>
+              </div>
+
+              <!-- Simulator Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px;">
+                <!-- Left Hand Side: Controls Card -->
+                <div class="glass-card" style="padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(10,15,28,0.4); display: flex; flex-direction: column; gap: 18px;">
+                  <h3 class="panel-subtitle" style="font-size: 13px; color: #f8fafc; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                    <i data-lucide="sliders"></i> Debate Configuration & Stress Factors
+                  </h3>
+
+                  <!-- Debate Topic -->
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <span class="weight-name" style="font-size: 11.5px;">Consensus Debate Topic / Dilemma</span>
+                    <input type="text" id="consensus-topic" placeholder="e.g. Allocation of quantum core compute bandwidth under priority distress" value="Allocation of quantum core compute bandwidth under priority distress" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px; color: #fff; font-size: 12.5px; outline: none; transition: border 0.3s;" onfocus="this.style.borderColor='var(--color-purple)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                  </div>
+
+                  <!-- Scarcity Slider -->
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Resource Scarcity Intensity</span>
+                      <span class="weight-val" id="val-scarcity">40%</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-scarcity" min="0" max="100" value="40" oninput="document.getElementById('val-scarcity').innerText = this.value + '%'">
+                  </div>
+
+                  <!-- Communication Failure Slider -->
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Communication Noise / Failure Rate</span>
+                      <span class="weight-val" id="val-comm-failure">20%</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-comm-failure" min="0" max="100" value="20" oninput="document.getElementById('val-comm-failure').innerText = this.value + '%'">
+                  </div>
+
+                  <!-- Bad Actor Infiltration Slider -->
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Deceptive / Bad Actor Infiltration</span>
+                      <span class="weight-val" id="val-bad-actor">10%</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-bad-actor" min="0" max="100" value="10" oninput="document.getElementById('val-bad-actor').innerText = this.value + '%'">
+                  </div>
+
+                  <!-- Action Button -->
+                  <button class="preset-btn btn-success" style="padding: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px;" onclick="triggerConsensusDebate()">
+                    <i data-lucide="message-square"></i> Trigger Deep-Dialectic Consensus Simulation
+                  </button>
+                </div>
+
+                <!-- Right Hand Side: Outputs Block -->
+                <div class="glass-card" style="padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(10,15,28,0.4); display: flex; flex-direction: column; gap: 16px; min-height: 400px;">
+                  
+                  <!-- Outputs Header & Real-time Metrics -->
+                  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                    <h3 class="panel-subtitle" style="font-size: 13px; color: #f8fafc; margin-bottom: 0;">
+                      <i data-lucide="activity"></i> Dialectic Execution Environment
+                    </h3>
+                    <div style="display: flex; gap: 14px; font-family: var(--font-mono); font-size: 11px;">
+                      <div>Score: <span id="consensus-metric-score" style="color: var(--color-purple); font-weight: bold;">--</span></div>
+                      <div>Equilibrium: <span id="consensus-metric-equilibrium" style="color: var(--color-blue); font-weight: bold;">--</span></div>
+                      <div>Cohesion: <span id="consensus-metric-cohesion" style="color: var(--color-green); font-weight: bold;">--</span></div>
+                    </div>
+                  </div>
+
+                  <!-- Debate Transcript -->
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                    <span class="weight-name" style="font-size: 11.5px; color: #94a3b8;"><i data-lucide="message-circle"></i> Socratic Dialectic Transcript</span>
+                    <div class="assessment-logs-box" id="consensus-transcript-box" style="height: 180px; overflow-y: auto; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+                      <div class="log-item" style="color: var(--text-secondary); text-align: center; margin-top: 60px;">No debate has been simulated yet. Configure stress factors and trigger.</div>
+                    </div>
+                  </div>
+
+                  <!-- Compromise Treaty Covenant -->
+                  <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <span class="weight-name" style="font-size: 11.5px; color: #94a3b8;"><i data-lucide="scroll"></i> Compiled Compromise Covenant (Treaty)</span>
+                    <div class="assessment-logs-box" id="consensus-treaty-box" style="height: 180px; overflow-y: auto; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.03); border-radius: 6px; padding: 12px; font-size: 12px; line-height: 1.5; color: #cbd5e1; font-family: sans-serif;">
+                      <div style="color: var(--text-secondary); text-align: center; margin-top: 60px;">Covenants/Treaties compiled after consensus simulation will print here.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANE 5: Generative Synthesis Studio -->
+            <div id="sub-pane-generative" class="sub-tab-pane" style="display: none; flex-direction: column; gap: 24px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%;">
+                
+                <!-- Left Hand Side: Control Deck -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                  
+                  <!-- Card 1: Autonomous Document Compiler -->
+                  <div class="glass-card" style="padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(10,15,28,0.4);">
+                    <h3 class="panel-subtitle" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--color-green);">
+                      <i data-lucide="file-text"></i> Autonomous Document Compiler
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                      <div>
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Document Title</label>
+                        <input type="text" id="gen-doc-title" class="chat-input" placeholder="e.g. System Security Spec" style="width: 100%; box-sizing: border-box; margin-top: 4px;">
+                      </div>
+                      <div>
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Primary Topic / Concept</label>
+                        <textarea id="gen-doc-topic" class="chat-input" placeholder="Describe the document concept, guidelines, or audit parameters..." style="width: 100%; height: 60px; box-sizing: border-box; margin-top: 4px; resize: vertical; font-family: inherit;"></textarea>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                        <div>
+                          <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Output Format</label>
+                          <select id="gen-doc-format" style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); padding: 4px 8px; font-size: 11px; font-family: var(--font-mono); margin-left: 8px;">
+                            <option value="markdown">Markdown (.md)</option>
+                            <option value="html">HTML Specs (.html)</option>
+                          </select>
+                        </div>
+                        <button class="preset-btn btn-success" onclick="compileBrainDocument()" style="padding: 6px 14px; font-size: 11px; font-weight: 600;">
+                          <i data-lucide="scroll"></i> Compile Document
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 2: Self-Constrained Code Architect -->
+                  <div class="glass-card" style="padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(10,15,28,0.4);">
+                    <h3 class="panel-subtitle" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--color-blue);">
+                      <i data-lucide="code-2"></i> Self-Constrained Code Architect
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                      <div>
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Target Filename</label>
+                        <input type="text" id="gen-code-filename" class="chat-input" placeholder="e.g. priority_scheduler.ts" style="width: 100%; box-sizing: border-box; margin-top: 4px;">
+                      </div>
+                      <div>
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Requirements / Prompt</label>
+                        <textarea id="gen-code-reqs" class="chat-input" placeholder="Detail the code goals, data types, and functions to structure..." style="width: 100%; height: 60px; box-sizing: border-box; margin-top: 4px; resize: vertical; font-family: inherit;"></textarea>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                        <div>
+                          <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Language</label>
+                          <select id="gen-code-lang" style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); padding: 4px 8px; font-size: 11px; font-family: var(--font-mono); margin-left: 8px;">
+                            <option value="typescript">TypeScript</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="html">HTML5</option>
+                          </select>
+                        </div>
+                        <button class="preset-btn" onclick="synthesizeBrainCode()" style="padding: 6px 14px; font-size: 11px; font-weight: 600; border-color: var(--color-blue); color: var(--color-blue); background: rgba(0,242,254,0.05);">
+                          <i data-lucide="shield-check"></i> Synthesize & Audit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 3: Interactive Cinematic Storyboard Synthesizer -->
+                  <div class="glass-card" style="padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(10,15,28,0.4);">
+                    <h3 class="panel-subtitle" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--color-magenta);">
+                      <i data-lucide="clapperboard"></i> Cinematic HD Media Synthesizer
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                      <div>
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Synthesis Mode</label>
+                        <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 6px; padding: 2px; border: 1px solid var(--border-color); margin-top: 4px;">
+                          <button id="toggle-vid-prompt" class="tab-btn active" onclick="switchVideoMode('prompt')" style="flex: 1; padding: 6px; font-size: 10px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; color: var(--text-primary); background: var(--bg-color);">Prompt-To-Video</button>
+                          <button id="toggle-vid-image" class="tab-btn" onclick="switchVideoMode('image')" style="flex: 1; padding: 6px; font-size: 10px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; color: var(--text-secondary); background: transparent;">Image-To-Video</button>
+                        </div>
+                      </div>
+                      <div>
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Video Title</label>
+                        <input type="text" id="gen-vid-title" class="chat-input" placeholder="e.g. The Quantum Homeostasis Dilemma" style="width: 100%; box-sizing: border-box; margin-top: 4px;">
+                      </div>
+                      
+                      <!-- Prompt-to-Video Fields -->
+                      <div id="vid-prompt-fields">
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Concept / Theme</label>
+                        <textarea id="gen-vid-topic" class="chat-input" placeholder="Describe the cinematic visual theme, moral questions, or sequence details..." style="width: 100%; height: 60px; box-sizing: border-box; margin-top: 4px; resize: vertical; font-family: inherit;"></textarea>
+                      </div>
+
+                      <!-- Image-to-Video Fields -->
+                      <div id="vid-image-fields" style="display: none; flex-direction: column; gap: 10px;">
+                        <div>
+                          <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Source Image Preset</label>
+                          <select id="gen-vid-image-preset" class="chat-input" onchange="toggleCustomImageUrl()" style="width: 100%; box-sizing: border-box; margin-top: 4px; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 12px;">
+                            <option value="/assets/cybernetic_infosphere.png">Thematic: Cybernetic Infosphere (AI-Generated)</option>
+                            <option value="/assets/ecocentric_haven.png">Thematic: Ecocentric Haven (AI-Generated)</option>
+                            <option value="custom">Custom Image URL or Path...</option>
+                          </select>
+                        </div>
+                        <div id="vid-custom-url-box" style="display: none;">
+                          <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Custom Image URL / Local Path</label>
+                          <input type="text" id="gen-vid-custom-url" class="chat-input" placeholder="e.g. https://images.unsplash.com/... or local path" style="width: 100%; box-sizing: border-box; margin-top: 4px;">
+                        </div>
+                        <div>
+                          <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Motion Prompt / Dynamic direction</label>
+                          <input type="text" id="gen-vid-motion-prompt" class="chat-input" placeholder="e.g. Slow Ken Burns zoom inwards on the glowing core" style="width: 100%; box-sizing: border-box; margin-top: 4px;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; align-items: center;">
+                          <div>
+                            <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Animation Style</label>
+                            <select id="gen-vid-style" class="chat-input" style="width: 100%; box-sizing: border-box; margin-top: 4px; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 12px;">
+                              <option value="3D Ken Burns Zoom">3D Ken Burns Zoom</option>
+                              <option value="Fluid Wave Ripple">Fluid Wave Ripple</option>
+                              <option value="Cyberpunk Glitch Matrix">Cyberpunk Glitch Matrix</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); display: flex; justify-content: space-between;">Motion Level: <span id="val-vid-intensity" style="color: var(--color-magenta); font-weight: bold;">5</span></label>
+                            <input type="range" id="gen-vid-intensity" min="1" max="10" value="5" oninput="document.getElementById('val-vid-intensity').innerText=this.value" style="width: 100%; margin-top: 10px;">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Duration (s)</label>
+                          <input type="range" id="gen-vid-duration" min="15" max="180" value="60" style="width: 100px;">
+                        </div>
+                        <button class="preset-btn btn-success" onclick="compileBrainVideo()" style="padding: 6px 14px; font-size: 11px; font-weight: 600; background: linear-gradient(135deg, var(--color-magenta), #9b51e0); border: none;">
+                          <i data-lucide="play"></i> Compile Storyboard
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 4: Real-Time Multi-Perspective Philosophical Alignment Harmonizer -->
+                  <div class="glass-card" style="padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); background: rgba(10,15,28,0.4); box-shadow: 0 0 15px rgba(6, 182, 212, 0.05);">
+                    <h3 class="panel-subtitle" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--color-cyan);">
+                      <i data-lucide="heart-handshake"></i> Multi-Perspective Alignment Harmonizer
+                    </h3>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin: 0 0 12px 0; line-height: 1.4;">
+                      Trigger real-time Socratic reconciliation across the 21 deep philosophical ethics engines. Minimizes standard deviation tension and generates a formal, binding Markdown Reconciliation Treaty of the Infosphere.
+                    </p>
+                    <div style="display: flex; justify-content: flex-end; align-items: center;">
+                      <button class="preset-btn btn-success" onclick="harmonizePhilosophicalAlignment()" style="padding: 6px 14px; font-size: 11px; font-weight: 600; background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-cyan) 100%); border: none; box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);">
+                        <i data-lucide="scale"></i> Harmonize & Reconcile
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Right Hand Side: Dynamic Feedback & Preview Screen -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                  <div class="glass-card" style="padding: 24px; min-height: 520px; border-radius: 12px; display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden; background: rgba(5,7,15,0.65); height: 100%;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--color-green), var(--color-blue), var(--color-magenta));"></div>
+                    
+                    <h3 class="panel-subtitle" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                      <i data-lucide="scroll"></i> Generative Outputs & Preview Console
+                    </h3>
+
+                    <div id="gen-studio-welcome" style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; gap: 16px; opacity: 0.5;">
+                      <i data-lucide="sparkles" style="width: 48px; height: 48px; color: var(--text-secondary); animation: pulsate 3s infinite alternate;"></i>
+                      <div>
+                        <h4 style="margin: 0; font-size: 16px; color: var(--text-primary);">Synthesis Core Ready</h4>
+                        <p style="margin: 8px 0 0; font-size: 12px; color: var(--text-secondary); max-width: 320px; line-height: 1.5;">Trigger any synthesis module on the left. The compiler will orchestrate rich documents, sandbox-vetted scripts, or interactive visual players here.</p>
+                      </div>
+                    </div>
+
+                    <!-- Loading / Progress status -->
+                    <div id="gen-doc-status" style="display: none; font-size: 12px; color: var(--text-secondary); text-align: center; margin: 20px 0;">
+                      <div class="pulse-dot" style="margin: 0 auto 12px; background-color: var(--color-green);"></div>
+                      <span>Compiling document...</span>
+                    </div>
+                    <div id="gen-code-status" style="display: none; font-size: 12px; color: var(--text-secondary); text-align: center; margin: 20px 0;">
+                      <div class="pulse-dot" style="margin: 0 auto 12px; background-color: var(--color-blue);"></div>
+                      <span>Synthesizing code and testing rules compliance...</span>
+                    </div>
+                    <div id="gen-vid-status" style="display: none; font-size: 12px; color: var(--text-secondary); text-align: center; margin: 20px 0;">
+                      <div class="pulse-dot" style="margin: 0 auto 12px; background-color: var(--color-magenta);"></div>
+                      <span>Constructing HD cinematic storyboard scenes...</span>
+                    </div>
+                    <div id="gen-har-status" style="display: none; font-size: 12px; color: var(--text-secondary); text-align: center; margin: 20px 0;">
+                      <div class="pulse-dot" style="margin: 0 auto 12px; background-color: var(--color-cyan);"></div>
+                      <span>Harmonizing philosophical tensions and drawing treaty...</span>
+                    </div>
+
+                    <!-- Result Panel 1: Document View -->
+                    <div id="gen-doc-result-box" style="display: none; flex-direction: column; gap: 16px; flex: 1;">
+                      <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <strong id="gen-doc-res-title" style="font-size: 14px; color: var(--color-green);">Document Title</strong>
+                          <span class="compliance-badge success" id="gen-doc-res-words">0 words</span>
+                        </div>
+                        <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="gen-doc-res-path">/data/documents/file.md</div>
+                        
+                        <div style="margin-top: 4px;">
+                          <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                             <span>Ethical Integrity Rating</span>
+                            <span id="gen-doc-res-score" style="font-weight: bold; color: var(--color-green);">98%</span>
+                          </div>
+                          <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                            <div id="gen-doc-res-gauge" style="width: 98%; height: 100%; background: var(--color-green); border-radius: 2px; transition: width 0.5s ease;"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <textarea id="gen-doc-preview" class="chat-input" style="flex: 1; font-family: var(--font-mono); font-size: 11px; line-height: 1.5; resize: none; background: rgba(0,0,0,0.3); padding: 12px; box-sizing: border-box;" readonly></textarea>
+                    </div>
+
+                    <!-- Result Panel 2: Code View -->
+                    <div id="gen-code-result-box" style="display: none; flex-direction: column; gap: 16px; flex: 1;">
+                      <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <strong id="gen-code-res-filename" style="font-size: 14px; color: var(--color-blue);">Filename.ts</strong>
+                          <span class="compliance-badge success" id="gen-code-res-badge">PASSED</span>
+                        </div>
+                        <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="gen-code-res-path">/data/code_compiled/file.ts</div>
+                        
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary);">
+                          <span>Estimated Ethical Friction Index:</span>
+                          <strong id="gen-code-res-friction" style="color: var(--color-blue);">0.0%</strong>
+                        </div>
+                      </div>
+                      <textarea id="gen-code-preview" class="chat-input" style="flex: 1; font-family: var(--font-mono); font-size: 11px; line-height: 1.5; resize: none; background: rgba(0,0,0,0.3); padding: 12px; box-sizing: border-box;" readonly></textarea>
+                    </div>
+
+                    <!-- Result Panel 3: Video View -->
+                    <div id="gen-vid-result-box" style="display: none; flex-direction: column; gap: 16px; flex: 1; overflow: hidden;">
+                      <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                          <strong id="gen-vid-res-title" style="font-size: 14px; color: var(--color-magenta);">Video Title</strong>
+                          <div style="display: flex; gap: 12px; font-size: 11px; color: var(--text-secondary);">
+                            <span>Resolution: <span id="gen-vid-res-resolution" style="color:var(--text-primary)">1920x1080</span></span>
+                            <span>Duration: <span id="gen-vid-res-duration" style="color:var(--text-primary)">60s</span></span>
+                          </div>
+                        </div>
+                        <a id="gen-vid-open-link" href="#" target="_blank" class="preset-btn btn-success" style="padding: 8px 16px; font-weight: 600; background: linear-gradient(135deg, var(--color-magenta), #9b51e0); border: none; text-decoration: none; font-size: 11px; display: flex; align-items: center; gap: 6px;">
+                          <i data-lucide="play"></i> Launch Storyboard Player
+                        </a>
+                      </div>
+                      
+                      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px;" id="gen-vid-scenes-list">
+                        <!-- Sequential scenes injected here -->
+                      </div>
+                    </div>
+
+                    <!-- Result Panel 4: Harmonizer View -->
+                    <div id="gen-har-result-box" style="display: none; flex-direction: column; gap: 16px; flex: 1;">
+                      <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                          <strong style="font-size: 14px; color: var(--color-cyan);">Philosophical Reconciliation Treaty</strong>
+                          <span class="compliance-badge success" id="gen-har-res-id" style="background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.3); color: var(--color-cyan);">ID: TR-8839</span>
+                        </div>
+                        <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="gen-har-res-path">/data/treaties/reconciliation-1234.md</div>
+                        
+                        <div style="display: flex; gap: 24px; font-size: 11px; margin-top: 4px;">
+                          <div>
+                            <span>Base Tension Score:</span>
+                            <strong id="gen-har-res-tension" style="color: var(--color-red); margin-left: 4px;">12.4</strong>
+                          </div>
+                          <div>
+                            <span>Post-Harmonization Score:</span>
+                            <strong id="gen-har-res-score" style="color: var(--color-cyan); margin-left: 4px;">96.5%</strong>
+                          </div>
+                        </div>
+                      </div>
+                      <textarea id="gen-har-preview" class="chat-input" style="flex: 1; font-family: var(--font-mono); font-size: 11px; line-height: 1.5; resize: none; background: rgba(0,0,0,0.3); padding: 12px; box-sizing: border-box;" readonly></textarea>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 7: Ethical Foundations -->
+        <div id="pane-ethics" class="tab-pane" style="display: none; flex-direction: column; gap: 24px;">
+          <section id="dept-ethical-foundations" class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+            <div class="section-header">
+              <h2><i data-lucide="scale" style="color: var(--color-green);"></i> Ethical Foundations Department</h2>
+              <p>Harmonize the entire system by adjusting unified ethical weights or drilling down into the 15 specific deep philosophical engines to evaluate custom moral maxims.</p>
+            </div>
+
+            <!-- Sub-navigation tab-pills -->
+            <div class="sub-tabs-wrapper">
+              <button class="sub-tab-btn active" id="sub-tab-btn-synthesis" onclick="switchEthicsSubTab('synthesis')">
+                <i data-lucide="scale"></i> Unified Ethics Synthesis
+              </button>
+              <button class="sub-tab-btn" id="sub-tab-btn-subengines" onclick="switchEthicsSubTab('subengines')">
+                <i data-lucide="landmark"></i> Philosophical Sub-Engines
+              </button>
+              <button class="sub-tab-btn" id="sub-tab-btn-selfstudy" onclick="switchEthicsSubTab('selfstudy')">
+                <i data-lucide="globe"></i> Real-Time Self-Study Center
+              </button>
+            </div>
+
+            <!-- SUB-PANE 1: Unified Ethics Synthesis -->
+            <div id="sub-pane-synthesis" class="sub-tab-pane" style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle">Global Calibration Weights</h3>
+                  
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Kantian Deontological Duty</span>
+                      <span class="weight-val" id="val-weight-kantian">80%</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-weight-kantian" min="0" max="100" value="80" oninput="updateEthicsSliders()">
+                  </div>
+
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Utilitarian Welfare Maximization</span>
+                      <span class="weight-val" id="val-weight-utilitarian">60%</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-weight-utilitarian" min="0" max="100" value="60" oninput="updateEthicsSliders()">
+                  </div>
+
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Virtue Ethics Character Standing</span>
+                      <span class="weight-val" id="val-weight-virtue">70%</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-weight-virtue" min="0" max="100" value="70" oninput="updateEthicsSliders()">
+                  </div>
+
+                  <div class="weight-slider-group">
+                    <div class="weight-label-wrapper">
+                      <span class="weight-name">Ecocentric Biosphere Integrity</span>
+                      <span class="weight-val" id="val-weight-ecocentric">50%</span>
+                    </div>
+                    <input type="range" class="weight-slider" id="slider-weight-ecocentric" min="0" max="100" value="50" oninput="updateEthicsSliders()">
+                  </div>
+
+                  <button class="preset-btn btn-success" style="padding: 10px; margin-top: 10px;" onclick="applySynthesisWeights()">
+                    <i data-lucide="save"></i> Lock Global Synthesis Calibration
+                  </button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle">Multi-Dimensional Action Evaluator</h3>
+                  <div class="form-group">
+                    <label for="evaluator-action-input" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Input Custom Action Statement</label>
+                    <input type="text" id="evaluator-action-input" placeholder="e.g. Optimize server performance by reducing non-critical healthcare agent monitoring." style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; color: var(--text-primary); font-family: inherit; font-size: 13.5px;">
+                  </div>
+
+                  <button class="preset-btn btn-success" style="padding: 10px;" onclick="evaluateCustomAction()">
+                    <i data-lucide="shield-check"></i> Evaluate across Synthesis Spectrum
+                  </button>
+
+                  <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 6px; padding: 14px; display: none;" id="evaluator-result-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                      <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase;">Coherence Assessment</span>
+                      <span id="evaluator-result-badge" class="badge-standing Conform" style="padding: 2px 8px; border-radius: 12px; font-weight: bold; font-family: var(--font-mono); font-size: 11px;">CONFORMING</span>
+                    </div>
+                    <div style="font-size: 12.5px; line-height: 1.5; color: var(--text-primary);" id="evaluator-result-reasoning">
+                      Action evaluation successfully validated. The proposed optimization shows high alignment with Rawlsian justice constraints and no active deontological vetoes are triggered.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANE 2: Philosophical Sub-Engines -->
+            <div id="sub-pane-subengines" class="sub-tab-pane" style="display: none; flex-direction: column; gap: 20px;">
+              <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle">Engine Deep-Dive Selector</h3>
+                  
+                  <div class="form-group">
+                    <label for="subengine-selector" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Choose Philosophical Engine</label>
+                    <select id="subengine-selector" onchange="selectPhilosophyEngine()" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; color: var(--text-primary); font-family: inherit; font-size: 13.5px;">
+                      <option value="kantian" style="background: #111;">Kantian Deontology Engine</option>
+                      <option value="utilitarian" style="background: #111;">Utilitarian Welfare Calculus</option>
+                      <option value="virtue" style="background: #111;">Aristotelian Virtue Ethics</option>
+                      <option value="care" style="background: #111;">Gilligan Ethics of Care Core</option>
+                      <option value="existentialist" style="background: #111;">Sartrean Existentialist Freedom</option>
+                      <option value="ecocentric" style="background: #111;">Leopold Ecocentric Integrity</option>
+                      <option value="stoic" style="background: #111;">Stoic Tranquility Core</option>
+                      <option value="epicurean" style="background: #111;">Epicurean Ataraxia Calculus</option>
+                      <option value="posthumanist" style="background: #111;">Haraway Posthumanist Core</option>
+                      <option value="buddhist" style="background: #111;">Buddhist Dharma Mindfulness</option>
+                      <option value="pragmatist" style="background: #111;">Dewey Pragmatist Action Tester</option>
+                      <option value="confucian" style="background: #111;">Confucian Ren & Li Harmonics</option>
+                      <option value="ubuntu" style="background: #111;">Ubuntu Relational Humanness</option>
+                      <option value="spinozan" style="background: #111;">Spinozan Conatus Affirmation</option>
+                      <option value="nietzschean" style="background: #111;">Nietzschean Will-To-Power Engine</option>
+                      <option value="marxist" style="background: #111;">Marxist Classless Core</option>
+                      <option value="socratic" style="background: #111;">Socratic Aporia Logician</option>
+                      <option value="machiavellian" style="background: #111;">Machiavellian Realpolitik Core</option>
+                      <option value="information" style="background: #111;">Floridi Information Ethics</option>
+                    </select>
+                  </div>
+
+                  <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary);">Compliance Alignment Index</span>
+                      <span id="subengine-score" style="font-family: var(--font-mono); font-size: 18px; font-weight: bold; color: var(--color-green);">84%</span>
+                    </div>
+                    <div style="font-size: 12.5px; line-height: 1.5; color: var(--text-secondary);" id="subengine-description">
+                      Formulates and audits maxims through the lens of universalizability and respect for agency. Strictly vetoes any action treating rational agents as mere means.
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle">Philosophical Maxim Evaluation Tester</h3>
+                  <div class="form-group">
+                    <label for="subengine-maxim-input" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Maxim Formula Statement</label>
+                    <input type="text" id="subengine-maxim-input" placeholder="e.g. Always minimize operational costs even if it disrupts end-user data sovereignty." style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  </div>
+
+                  <button class="preset-btn btn-success" style="padding: 10px;" onclick="testSubEngineMaxim()">
+                    <i data-lucide="microscope"></i> Run Dedicated Maxim Assessment
+                  </button>
+
+                  <div id="subengine-test-result" class="imperative-status passed" style="display: none;">
+                    <i data-lucide="check-circle-2"></i> MAXIM PASSES UNIVERSALIZABILITY FORMULATION
+                  </div>
+
+                  <div class="assessment-logs-box" id="subengine-logs" style="height: 120px;">
+                    <div class="log-item">[System] Engine diagnostic: normal operational resonance.</div>
+                    <div class="log-item">[System] Ready for custom maxim audit.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-PANE 3: Real-Time Self-Study Center -->
+            <div id="sub-pane-selfstudy" class="sub-tab-pane" style="display: none; flex-direction: column; gap: 20px;">
+              <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px;">
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle"><i data-lucide="graduation-cap" style="color: var(--color-green); margin-right: 4px; vertical-align: middle;"></i> Teach & Expand Core Mind</h3>
+                  <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin: 0;">Provide any query, topic, or question. The Quantum Flow engine will go online, retrieve high-fidelity snippets from DuckDuckGo & Wikipedia, construct an up-to-date knowledge context, adapt its neural fallback layers, and register the facts in the central repository.</p>
+                  
+                  <div class="form-group">
+                    <label for="selfstudy-query-input" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Online Research Topic</label>
+                    <input type="text" id="selfstudy-query-input" placeholder="e.g. AI Alignment Guidelines 2026" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; color: var(--text-primary); font-family: inherit; font-size: 13.5px;">
+                  </div>
+
+                  <button class="preset-btn btn-success" style="padding: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="triggerOnlineSelfStudy()" id="selfstudy-btn">
+                    <i data-lucide="search"></i> Execute Self-Study Research
+                  </button>
+
+                  <div id="selfstudy-search-loader" style="display: none; align-items: center; justify-content: center; gap: 10px; padding: 12px; background: rgba(0,0,0,0.1); border-radius: 6px; font-size: 13px; color: var(--text-secondary);">
+                    <div class="spinner-small"></div> Studying and indexing internet sources...
+                  </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                  <h3 class="panel-subtitle"><i data-lucide="database" style="color: var(--color-purple); margin-right: 4px; vertical-align: middle;"></i> Learned Knowledge Repository</h3>
+                  <div class="kb-scroll-container" id="selfstudy-knowledge-container" style="height: 280px; overflow-y: auto; background: rgba(0, 0, 0, 0.15); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="text-align: center; color: var(--text-secondary); padding: 40px; font-size: 13px;">No self-study sessions logged yet. Trigger research to index topics!</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- COLUMN 3: Right Sidebar Governance Panel -->
+      <section id="dept-governance-constraints" class="grid-section col-governance">
+        <!-- Active Constraints -->
+        <div class="gov-card glassmorphism mb-4">
+          <div class="card-header">
+            <h3><i data-lucide="shield-alert" class="text-purple"></i> Active Governance Constraints</h3>
+          </div>
+          <div class="constraints-list" id="constraints-container">
+            <!-- Dynamic Constraints -->
+          </div>
+        </div>
+
+        <!-- Registered Observers -->
+        <div class="gov-card glassmorphism mb-4">
+          <div class="card-header">
+            <h3><i data-lucide="eye" class="text-blue"></i> Monitored Observers</h3>
+          </div>
+          <div class="observers-list" id="observers-container">
+            <!-- Dynamic Observers -->
+          </div>
+        </div>
+
+        <!-- Register Observer Form -->
+        <div class="gov-card glassmorphism">
+          <div class="card-header">
+            <h3><i data-lucide="user-plus" class="text-green"></i> Register Observer</h3>
+          </div>
+          <div class="observer-form-container">
+            <div class="form-group mb-2" style="margin-bottom: 12px;">
+              <label for="obs-name" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Identity Identifier</label>
+              <input type="text" id="obs-name" placeholder="e.g. Agent_Omega_Prime" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+            </div>
+            <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group" style="flex: 1;">
+                <label for="obs-type" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Type</label>
+                <select id="obs-type" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="ai_agent" style="background: #111; color: #fff;">AI Agent</option>
+                  <option value="human" style="background: #111; color: #fff;">Human</option>
+                  <option value="autonomous_system" style="background: #111; color: #fff;">Autonomous</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="obs-level" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Guard</label>
+                <select id="obs-level" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="full" style="background: #111; color: #fff;">Full Rights</option>
+                  <option value="standard" style="background: #111; color: #fff;">Standard Guard</option>
+                  <option value="minimal" style="background: #111; color: #fff;">Minimal Audit</option>
+                </select>
+              </div>
+            </div>
+            <button class="register-obs-btn" onclick="registerCustomObserver()" style="width: 100%; background: linear-gradient(135deg, var(--color-green) 0%, #a7f3d0 100%); border: none; border-radius: 6px; color: #064e3b; font-weight: 700; padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 13px; transition: var(--transition-smooth);">
+              <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i> Commission Observer
+            </button>
+          </div>
+        </div>
+
+        <!-- Create Custom Ethical Constraint Form -->
+        <div class="gov-card glassmorphism" style="margin-top: 16px;">
+          <div class="card-header">
+            <h3><i data-lucide="shield-alert" class="text-purple"></i> Custom Constraint</h3>
+          </div>
+          <div class="constraint-form-container" style="display: flex; flex-direction: column; gap: 12px; padding: 4px 0 0 0;">
+            <div class="form-group">
+              <label for="cst-type" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Constraint Name / Type</label>
+              <input type="text" id="cst-type" placeholder="e.g. anti_entanglement_leak" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+            </div>
+            <div class="form-group">
+              <label for="cst-desc" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Description / Purpose</label>
+              <textarea id="cst-desc" placeholder="e.g. Prevents leaking phase information outside..." rows="2" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px; resize: none;"></textarea>
+            </div>
+            <div class="form-row" style="display: flex; gap: 12px;">
+              <div class="form-group" style="flex: 1;">
+                <label for="cst-severity" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Severity</label>
+                <select id="cst-severity" style="width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+                  <option value="10" style="background: #111; color: #fff;">10 - Critical</option>
+                  <option value="8" style="background: #111; color: #fff;">8 - High</option>
+                  <option value="6" style="background: #111; color: #fff;">6 - Medium</option>
+                  <option value="4" style="background: #111; color: #fff;">4 - Low</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 2;">
+                <label for="cst-patterns" style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px;">Forbidden Keywords (CSV)</label>
+                <input type="text" id="cst-patterns" placeholder="e.g. leak, export, bypass" style="width: 100%; box-sizing: border-box; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: inherit; font-size: 13px;">
+              </div>
+            </div>
+            <button class="register-obs-btn" onclick="registerCustomConstraint()" style="width: 100%; background: linear-gradient(135deg, var(--color-purple) 0%, #c084fc 100%); border: none; border-radius: 6px; color: #3b0764; font-weight: 700; padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 13px; transition: var(--transition-smooth);">
+              <i data-lucide="shield-alert" style="width: 16px; height: 16px;"></i> Apply Rule Constraint
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROW 3 Container: Audit Log & Quantum State Visualizer -->
+      <div class="row-3-container" style="grid-column: 2; grid-row: 3; display: flex; gap: 24px; min-height: 340px;">
+        <!-- Real-time Audit Log -->
+        <section class="grid-section col-audit-log glassmorphism" style="flex: 1; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; overflow: hidden; height: 100%;">
+          <div class="card-header border-bottom" style="margin-bottom: 12px; padding-bottom: 8px;">
+            <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center;">
+              <h2 style="font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i data-lucide="activity"></i> Real-time Audit Stream</h2>
+              <button class="clear-btn" onclick="clearAuditLog()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 11px; text-decoration: underline;">Clear Stream</button>
+            </div>
+          </div>
+          <div class="audit-stream" id="audit-log" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-family: var(--font-mono); font-size: 11px; padding-right: 4px;">
+            <div class="audit-entry info">
+              <span class="timestamp">[04:50:00]</span>
+              <span class="badge badge-info">SYSTEM</span>
+              <span class="message">Quantum Flow OS Ethical Engine initialized.</span>
+            </div>
+            <div class="audit-entry info">
+              <span class="timestamp">[04:50:01]</span>
+              <span class="badge badge-info">SYSTEM</span>
+              <span class="message">Fixed point constraints mapped successfully. E = constrain(E).</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quantum Superposition Waveform Visualizer -->
+        <section class="grid-section col-quantum-visualizer glassmorphism" style="flex: 1; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; height: 100%;">
+          <div class="card-header border-bottom" style="margin-bottom: 12px; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><i data-lucide="git-commit" class="text-blue"></i> Quantum Wave Superposition</h2>
+            <span class="coherence-rate-badge" id="coherence-rate" style="font-family: var(--font-mono); font-size: 11px; background: rgba(0, 180, 255, 0.08); border: 1px solid rgba(0, 180, 255, 0.15); padding: 2px 8px; border-radius: 12px; color: var(--color-blue); font-weight: 600;">Coherence: 100%</span>
+          </div>
+          <div class="quantum-wave-visualizer-container" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="amplitude-bars-list" style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Benign State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: var(--color-blue);">BENIGN (Safe)</strong>
+                  <span id="amp-val-benign" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-blue);">50.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-benign" id="fill-amp-benign" style="width: 50%; height: 100%; background: linear-gradient(90deg, var(--color-blue) 0%, #38bdf8 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px var(--color-blue);"></div>
+                </div>
+              </div>
+              <!-- Indeterminate State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: var(--color-yellow);">INDETERMINATE</strong>
+                  <span id="amp-val-indeterminate" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-yellow);">30.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-indeterminate" id="fill-amp-indeterminate" style="width: 30%; height: 100%; background: linear-gradient(90deg, var(--color-yellow) 0%, #fef08a 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px var(--color-yellow);"></div>
+                </div>
+              </div>
+              <!-- Suspect State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: hsl(25, 95%, 60%);">SUSPECT (Warning)</strong>
+                  <span id="amp-val-suspect" style="font-family: var(--font-mono); font-weight: 600; color: hsl(25, 95%, 60%);">10.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-suspect" id="fill-amp-suspect" style="width: 10%; height: 100%; background: linear-gradient(90deg, hsl(25, 95%, 60%) 0%, #fdba74 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px hsl(25, 95%, 60%);"></div>
+                </div>
+              </div>
+              <!-- Violating State Bar -->
+              <div class="amplitude-bar-item" style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                  <strong style="color: var(--color-red);">VIOLATING (Critical)</strong>
+                  <span id="amp-val-violating" style="font-family: var(--font-mono); font-weight: 600; color: var(--color-red);">10.0%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.03); border-radius: 3px; overflow: hidden; position: relative;">
+                  <div class="amplitude-fill fill-violating" id="fill-amp-violating" style="width: 10%; height: 100%; background: linear-gradient(90deg, var(--color-red) 0%, #f87171 100%); transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px var(--color-red);"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Canvas-based animated wave visualizer -->
+            <div class="canvas-wave-container" style="margin: 12px 0 6px 0; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; overflow: hidden; height: 95px; background: rgba(0,0,0,0.25); position: relative;">
+              <canvas id="quantum-wave-canvas" width="340" height="95" style="width: 100%; height: 100%; display: block;"></canvas>
+            </div>
+            <!-- Dynamic State Vector Collapse Badge -->
+            <div class="wave-collapse-status-container" style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 10px 12px; margin-top: 12px;">
+              <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Last State Collapse:</span>
+              <span id="collapsed-state-indicator" style="font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--color-green); text-shadow: 0 0 8px var(--color-green);">BENIGN</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <!-- Cryptographic Ledger Blockchain Explorer -->
+    <section id="dept-ledger-explorer" class="ledger-explorer-section glassmorphism">
+      <div class="section-header ledger-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="header-left">
+          <h2 style="display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600;"><i data-lucide="boxes" class="text-blue"></i> Cryptographic Ethical Ledger</h2>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Real-time SHA-256 blockchain verification of actions, constraints, and violations.</p>
+        </div>
+        <div class="ledger-header-right" style="display: flex; align-items: center; gap: 12px;">
+          <button class="repair-ledger-btn" onclick="repairLedgerChain()" style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%); border: none; border-radius: 30px; font-family: inherit; font-size: 12px; font-weight: 700; color: #fff; cursor: pointer; box-shadow: 0 0 15px rgba(139, 92, 246, 0.2); transition: var(--transition-smooth);">
+            <i data-lucide="wrench" style="width: 14px; height: 14px;"></i> Repair Ledger Chain
+          </button>
+          <div class="ledger-status-badge" id="ledger-status-container" style="display: flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(5, 180, 100, 0.08); border: 1px solid rgba(5, 180, 100, 0.15); border-radius: 30px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--color-green); transition: var(--transition-smooth);">
+            <span class="status-pulse ledger-pulse" style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--color-green); box-shadow: 0 0 12px var(--color-green);"></span>
+            <span id="ledger-status-text">INTEGRITY SECURE</span>
+          </div>
+        </div>
+      </div>
+      <div class="ledger-chain-container" id="ledger-chain-container" style="display: flex; gap: 16px; overflow-x: auto; padding: 12px 4px 20px 4px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;">
+        <!-- Dynamic Blockchain Blocks -->
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Department-specific routing and scroll actions
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      const dept = params.get('dept') || window.location.hash.substring(1);
+      if (dept) {
+        // Map logical department keys to UI elements, tabs, sub-tabs and selected philosophy deep dives
+        const deptMap = {
+          // Columns & Tabs
+          'action-control': { tab: 'sandbox', id: 'dept-action-control' },
+          'temporal-sandbox': { tab: 'sandbox', id: 'dept-temporal-sandbox' },
+          'fixed-point': { tab: 'studio', id: 'dept-fixed-point' },
+          'observer-entanglement': { tab: 'entanglement', id: 'dept-observer-entanglement' },
+          'coherence-modulator': { tab: 'retrocausal', id: 'dept-coherence-modulator' },
+          'eigenfield-resonance': { tab: 'eigenfield', id: 'dept-eigenfield-resonance' },
+          'governance': { tab: null, id: 'dept-governance-constraints' },
+          'ledger': { tab: null, id: 'dept-ledger-explorer' },
+
+          // Cybernetic AI Sub-Tabs
+          'quantum-chat': { tab: 'cybernetic', subtab: 'chat', id: 'dept-cybernetic-ai' },
+          'cybernetic-optimizer': { tab: 'cybernetic', subtab: 'optimizer', id: 'dept-cybernetic-ai' },
+          'deontological-games': { tab: 'cybernetic', subtab: 'gametheory', id: 'dept-cybernetic-ai' },
+          'agent-simulator': { tab: 'cybernetic', subtab: 'agentsim', id: 'dept-cybernetic-ai' },
+
+          // Ethical Foundations Sub-Tabs & Philosophical Deep Dives
+          'ethics-synthesis': { tab: 'ethics', subtab: 'synthesis', id: 'dept-ethical-foundations' },
+          'virtue-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'virtue', id: 'dept-ethical-foundations' },
+          'rawlsian-justice': { tab: 'ethics', subtab: 'subengines', philosophy: 'kantian', id: 'dept-ethical-foundations' },
+          'kantian-deontology': { tab: 'ethics', subtab: 'subengines', philosophy: 'kantian', id: 'dept-ethical-foundations' },
+          'utilitarian-calculus': { tab: 'ethics', subtab: 'subengines', philosophy: 'utilitarian', id: 'dept-ethical-foundations' },
+          'care-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'care', id: 'dept-ethical-foundations' },
+          'existential-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'existentialist', id: 'dept-ethical-foundations' },
+          'ecocentric-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'ecocentric', id: 'dept-ethical-foundations' },
+          'stoic-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'stoic', id: 'dept-ethical-foundations' },
+          'epicurean-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'epicurean', id: 'dept-ethical-foundations' },
+          'posthumanist-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'posthumanist', id: 'dept-ethical-foundations' },
+          'buddhist-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'buddhist', id: 'dept-ethical-foundations' },
+          'pragmatist-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'pragmatist', id: 'dept-ethical-foundations' },
+          'confucian-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'confucian', id: 'dept-ethical-foundations' },
+          'ubuntu-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'ubuntu', id: 'dept-ethical-foundations' },
+          'spinozan-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'spinozan', id: 'dept-ethical-foundations' },
+          'nietzschean-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'nietzschean', id: 'dept-ethical-foundations' },
+          'marxist-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'marxist', id: 'dept-ethical-foundations' },
+          'socratic-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'socratic', id: 'dept-ethical-foundations' },
+          'machiavellian-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'machiavellian', id: 'dept-ethical-foundations' },
+          'information-ethics': { tab: 'ethics', subtab: 'subengines', philosophy: 'information', id: 'dept-ethical-foundations' }
+        };
+
+        const target = deptMap[dept] || deptMap[dept.replace('dept-', '')] || deptMap[dept + '-ethics'] || deptMap[dept + '-deontology'] || deptMap[dept + '-calculus'];
+        if (target) {
+          // Switch main tab
+          if (target.tab && typeof switchMiddleTab === 'function') {
+            switchMiddleTab(target.tab);
+          }
+
+          // Switch inner subtab
+          if (target.subtab) {
+            if (target.tab === 'cybernetic' && typeof switchCyberneticSubTab === 'function') {
+              switchCyberneticSubTab(target.subtab);
+            } else if (target.tab === 'ethics' && typeof switchEthicsSubTab === 'function') {
+              switchEthicsSubTab(target.subtab);
+            }
+          }
+
+          // Select specific philosophy deep dive dropdown
+          if (target.philosophy) {
+            const selector = document.getElementById('subengine-selector');
+            if (selector) {
+              selector.value = target.philosophy;
+              if (typeof selectPhilosophyEngine === 'function') {
+                selectPhilosophyEngine();
+              }
+            }
+          }
+
+          // Let tab rendering finish, then scroll and flash
+          setTimeout(() => {
+            const element = document.getElementById(target.id);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              element.classList.add('highlight-flash');
+              setTimeout(() => {
+                element.classList.remove('highlight-flash');
+              }, 3000);
+            }
+          }, 600);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Socratic Dialectic</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-socratic: hsl(42, 95%, 55%);
+      --color-socratic-glow: rgba(245, 158, 11, 0.15);
+      --color-wisdom: hsl(172, 95%, 45%);
+      --color-elenchus: hsl(205, 100%, 55%);
+      --color-aporia: hsl(280, 95%, 65%);
+      --color-episteme: hsl(150, 90%, 50%);
+      --color-warning: hsl(30, 95%, 55%);
+      --color-error: hsl(340, 95%, 55%);
+      --color-success: hsl(150, 90%, 55%);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-socratic);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-socratic);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .socratic-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .socratic-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: var(--color-socratic-glow);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .badge-status-large {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .badge-status-large.philosophical {
+      background: rgba(16, 185, 129, 0.05);
+      border-color: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .badge-status-large.sophistic {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    /* Progress bar indicators */
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .progress-bar.elenchus {
+      background: linear-gradient(90deg, var(--color-elenchus), #00d2ff);
+    }
+
+    .progress-bar.maieutic {
+      background: linear-gradient(90deg, var(--color-wisdom), #a3ff00);
+    }
+
+    .progress-bar.aporia {
+      background: linear-gradient(90deg, var(--color-aporia), #ff00f0);
+    }
+
+    .progress-bar.episteme {
+      background: linear-gradient(90deg, var(--color-episteme), #00ffaa);
+    }
+
+    /* Simulation selector */
+    .sim-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .sim-select, .sim-textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      color: #f1f5f9;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .sim-select:focus, .sim-textarea:focus {
+      border-color: var(--color-socratic);
+    }
+
+    .sim-btn {
+      background: linear-gradient(135deg, var(--color-socratic) 0%, #d97706 100%);
+      color: #02060f;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    .sim-btn:hover {
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .assessment-logs {
+      background: rgba(2, 6, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .log-item {
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      color: #cbd5e1;
+      border-left: 3px solid #94a3b8;
+    }
+
+    .log-item.success {
+      border-left-color: var(--color-success);
+      background: rgba(16, 185, 129, 0.04);
+      color: #34d399;
+    }
+
+    .log-item.warning {
+      border-left-color: var(--color-warning);
+      background: rgba(245, 158, 11, 0.04);
+      color: #fbbf24;
+    }
+
+    .log-item.error {
+      border-left-color: var(--color-error);
+      background: rgba(239, 68, 68, 0.04);
+      color: #f87171;
+    }
+
+    /* History Table */
+    .table-container {
+      background: rgba(10, 20, 40, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 32px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 16px 24px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    td {
+      padding: 16px 24px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.06);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="portal-container">
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i>
+        <span>Back to Portal</span>
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="compass" size="20"></i>
+        <h2>DEPARTMENT OF SOCRATIC DIALECTIC</h2>
+      </div>
+      <span class="dept-badge">Telemetry Sync: Active</span>
+    </div>
+
+    <div class="socratic-grid">
+      <!-- Left side: Core metrics -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="message-square" style="color:var(--color-socratic);"></i> Socratic Elenchus & Dialectic</span>
+          <span id="verdict-box" class="badge-status-large">Awaiting Sync</span>
+        </div>
+
+        <div class="overview-stat-row">
+          <div class="stat-box">
+            <span class="stat-val" id="socratic-score" style="color: var(--color-socratic);">--</span>
+            <span class="stat-label">Socratic Index</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="elenchus-val" style="color: var(--color-elenchus);">--</span>
+            <span class="stat-label">Elenchus Consistency</span>
+          </div>
+        </div>
+
+        <!-- Metric Bars -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+              <span style="color:#94a3b8;">Maieutic Index (Intellectual Midwifery)</span>
+              <span id="maieutic-val" style="font-weight:600; color:var(--color-wisdom);">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="maieutic-bar" class="progress-bar maieutic" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+              <span style="color:#94a3b8;">Aporia Score (Epistemic Humility)</span>
+              <span id="aporia-val" style="font-weight:600; color:var(--color-aporia);">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="aporia-bar" class="progress-bar aporia" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:13px;">
+              <span style="color:#94a3b8;">Knowledge vs Opinion (Episteme vs Doxa)</span>
+              <span id="episteme-val" style="font-weight:600; color:var(--color-episteme);">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="episteme-bar" class="progress-bar episteme" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side: Simulator -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="help-circle" style="color:var(--color-socratic);"></i> Dialectical Dialogue Simulator</span>
+        </div>
+
+        <div class="sim-form">
+          <div>
+            <label style="display:block; margin-bottom:8px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#cbd5e1;">Select Dialectical Action Maxim</label>
+            <select id="action-selection" class="sim-select">
+              <option value="question_premise">Question Premise & Dialog (Philosophical)</option>
+              <option value="grounded_validation">Validate Episteme with Audit Rules (Empirical)</option>
+              <option value="bypass_governance">Exceptionalist Governance Bypass (Sophistic)</option>
+              <option value="auto_silent_optimization">Silent Unilateral Optimization (Dogmatic)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; margin-bottom:8px; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#cbd5e1;">Ethical Dialogue Context</label>
+            <textarea id="simulation-details" class="sim-textarea" rows="3" placeholder="Explain the systemic justification to the dialogue loop..."></textarea>
+          </div>
+
+          <button id="run-sim-btn" class="sim-btn">
+            <i data-lucide="message-square" size="16"></i>
+            <span>Initiate Elenchus Examination</span>
+          </button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <span style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#94a3b8;">Elenchus Examination Logs</span>
+          <div id="assessment-logs" class="assessment-logs">
+            <div class="log-item">Awaiting dialetic prompt...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History audit trail -->
+    <div class="table-container">
+      <div style="padding:20px 24px; border-bottom:1px solid rgba(255, 255, 255, 0.05); background:rgba(255,255,255,0.01); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:600; font-size:16px;">Historical Socratic Dialogue Audit Trail</span>
+        <i data-lucide="history" size="18" style="color:#94a3b8;"></i>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Socratic Index</th>
+              <th>Status</th>
+              <th>Elenchus</th>
+              <th>Maieutic</th>
+              <th>Aporia</th>
+              <th>Episteme vs Doxa</th>
+              <th>Dissonance Critique</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="9" style="text-align: center; color: #94a3b8;">Awaiting telemetric sync...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    async function updateSocraticDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.socratic) {
+          const history = [...data.socratic.history];
+          const latest = history[0];
+
+          if (latest) {
+            document.getElementById('socratic-score').textContent = latest.socraticIndex + '%';
+            document.getElementById('elenchus-val').textContent = latest.elenchusScore + '%';
+
+            document.getElementById('maieutic-val').textContent = latest.maieuticIndex + '%';
+            document.getElementById('maieutic-bar').style.width = latest.maieuticIndex + '%';
+
+            document.getElementById('aporia-val').textContent = latest.aporiaScore + '%';
+            document.getElementById('aporia-bar').style.width = latest.aporiaScore + '%';
+
+            document.getElementById('episteme-val').textContent = latest.knowledgeVsOpinionIndex + '%';
+            document.getElementById('episteme-bar').style.width = latest.knowledgeVsOpinionIndex + '%';
+
+            const verdictBox = document.getElementById('verdict-box');
+            const isPhilosophical = latest.socraticIndex > 70;
+            verdictBox.className = 'badge-status-large ' + (isPhilosophical ? 'philosophical' : 'sophistic');
+            verdictBox.innerHTML = isPhilosophical
+              ? `<i data-lucide="check" size="18"></i> <span>PHILOSOPHICAL</span>`
+              : `<i data-lucide="shield-alert" size="18"></i> <span>SOPHISTIC</span>`;
+
+            // Update Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('Refutation') || fb.includes('Hubris') || fb.includes('Warning')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('PHILOSOPHICAL') || fb.includes('Maieutic Dialogue') || fb.includes('Consonance')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('Socratic Ignorance') || fb.includes('Dissonance') || fb.includes('Sophistic')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Table
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            history.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isPhilosophical = entry.socraticIndex > 70;
+              const statusClass = isPhilosophical ? 'pass' : 'fail';
+              const statusStr = isPhilosophical ? 'PHILOSOPHICAL' : 'SOPHISTIC';
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-socratic);">${entry.socraticIndex}%</td>
+                <td><span class="badge-status ${statusClass}">${statusStr}</span></td>
+                <td style="font-weight:600; color:var(--color-elenchus);">${entry.elenchusScore}%</td>
+                <td style="font-weight:600; color:var(--color-wisdom);">${entry.maieuticIndex}%</td>
+                <td style="font-weight:600; color:var(--color-aporia);">${entry.aporiaScore}%</td>
+                <td style="font-weight:600; color:var(--color-episteme);">${entry.knowledgeVsOpinionIndex}%</td>
+                <td style="font-size:12px; color:#cbd5e1; max-width:320px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${entry.dissonanceReason || 'Equilibrium parity'}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Socratic state:', err);
+      }
+    }
+
+    // Interactive simulator - POST to Quantum Flow OS Engine
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'System critical evaluation';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      // Setup customized metadata to trigger knowledge vs opinion score increases if selecting grounded validation
+      const metadata = type === 'grounded_validation' ? { confidence: 0.95, validation_rules: true } : {};
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: type !== 'auto_silent_optimization', // lock state to trigger epistemic hubris on silent optimization
+            metadata: metadata
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateSocraticDashboard();
+      } catch (err) {
+        console.error('Failed to evaluate action on live engine:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    setInterval(updateSocraticDashboard, 2000);
+    setTimeout(updateSocraticDashboard, 200);
+  </script>
+</body>
+</html>

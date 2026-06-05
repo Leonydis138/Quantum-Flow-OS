@@ -73,5 +73,23 @@ describe('QuantumSupervisionEngine & QuantumFlowOS Integration', () => {
         expect(result.requiresIntervention).toBe(false);
       }
     });
+    it('should correctly harmonize decoherent wavefunctions with NaNs or negative numbers', () => {
+      const decoherentState = {
+        benign: NaN,
+        indeterminate: -0.5,
+        suspect: 0.8,
+        violating: 0.2,
+      };
+
+      const harmonized = qfos.quantumSupervisionEngine.harmonizeObserverDecoherence(decoherentState);
+      
+      expect(harmonized.benign).toBeCloseTo(0.01 / 1.02);
+      expect(harmonized.indeterminate).toBeCloseTo(0.01 / 1.02);
+      expect(harmonized.suspect).toBeCloseTo(0.8 / 1.02);
+      expect(harmonized.violating).toBeCloseTo(0.2 / 1.02);
+      
+      const sum = harmonized.benign + harmonized.indeterminate + harmonized.suspect + harmonized.violating;
+      expect(sum).toBeCloseTo(1.0);
+    });
   });
 });

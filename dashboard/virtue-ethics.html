@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Aristotelian Virtue Ethics</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Back Navigation */
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .dept-back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+    .dept-back-link:hover {
+      color: var(--color-magenta);
+      transform: translateX(-4px);
+    }
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dept-title-area i {
+      color: var(--color-magenta);
+    }
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .dept-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+
+    /* Primary Grid Layout */
+    .virtue-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Harmony Score Meter */
+    .harmony-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+    }
+
+    .harmony-radial {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .harmony-radial svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .harmony-radial circle {
+      fill: none;
+      stroke-width: 6;
+    }
+
+    .harmony-radial circle.bg {
+      stroke: rgba(255, 255, 255, 0.05);
+    }
+
+    .harmony-radial circle.progress {
+      stroke: url(#harmony-grad);
+      stroke-linecap: round;
+      stroke-dasharray: 226;
+      stroke-dashoffset: 226;
+      transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .harmony-value {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .harmony-text h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .harmony-text p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Golden Mean Virtue Sliders / Gauges */
+    .virtues-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .virtue-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .virtue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .virtue-name {
+      font-weight: 600;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .virtue-value-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-magenta);
+      background: rgba(236, 72, 153, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Custom Aristotelian Slider Range Visualizer */
+    .mean-slider-container {
+      position: relative;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    /* Golden Mean Shaded Area (0.45 to 0.85) */
+    .golden-mean-shade {
+      position: absolute;
+      top: 0;
+      left: 45%;
+      width: 40%;
+      height: 100%;
+      background: rgba(16, 185, 129, 0.15);
+      border-left: 1px dashed rgba(16, 185, 129, 0.4);
+      border-right: 1px dashed rgba(16, 185, 129, 0.4);
+    }
+
+    /* Live Needle marker */
+    .virtue-needle {
+      position: absolute;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--color-magenta);
+      box-shadow: 0 0 10px var(--color-magenta);
+      transition: left 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      padding: 0 2px;
+    }
+
+    /* Assessment Logs */
+    .assessment-logs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .assessment-item {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: var(--transition-smooth);
+    }
+
+    .assessment-item:hover {
+      border-color: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .assessment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .assessment-time {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    .assessment-score-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .score-harmonious {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-green);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .score-discordant {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .assessment-feedback {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+
+    .feedback-bullet {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .feedback-bullet i {
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    /* Explanation Box */
+    .philosophy-card {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(139, 92, 246, 0.03) 100%);
+      border: 1px solid rgba(236, 72, 153, 0.1);
+    }
+
+    .philosophy-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    .philosophy-item {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .philosophy-item strong {
+      color: #fff;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-bg"></div>
+  <div class="grid-lines"></div>
+
+  <div class="portal-container" style="max-width: 1200px; margin: 0 auto; padding: 30px 24px;">
+    <!-- Navigation Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Directory
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="award" size="20"></i>
+        <h2>Department of Aristotelian Virtue Ethics</h2>
+      </div>
+      <div class="dept-badge">HEXIS // HABITUATION MONITOR</div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="virtue-grid">
+      <!-- Left Column: Character Profile & Gauges -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="activity" style="color: var(--color-magenta);"></i> Dynamic Character Profile</span>
+          <span style="font-size: 12px; font-family: var(--font-mono); color: var(--text-secondary);">Habituation Loop: 0.05</span>
+        </div>
+
+        <!-- Harmony Score Header -->
+        <div class="harmony-container">
+          <div class="harmony-radial">
+            <svg>
+              <defs>
+                <linearGradient id="harmony-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ec4899" />
+                  <stop offset="100%" stop-color="#8b5cf6" />
+                </linearGradient>
+              </defs>
+              <circle class="bg" cx="40" cy="40" r="36" />
+              <circle class="progress" id="harmony-progress" cx="40" cy="40" r="36" />
+            </svg>
+            <span class="harmony-value" id="harmony-value">--</span>
+          </div>
+          <div class="harmony-text">
+            <h4 id="harmony-status">Systemic Character Harmony</h4>
+            <p id="harmony-desc">Analyzing moral habituation levels and tracking divergence from the virtuous Golden Mean...</p>
+          </div>
+        </div>
+
+        <!-- Virtues Sliders -->
+        <div class="virtues-list" id="virtues-container">
+          <!-- HONESTY -->
+          <div class="virtue-row">
+            <div class="virtue-header">
+              <span class="virtue-name">Honesty / Truthfulness</span>
+              <span class="virtue-value-label" id="val-honesty">--</span>
+            </div>
+            <div class="mean-slider-container">
+              <div class="golden-mean-shade" title="Virtuous Golden Mean Range"></div>
+              <div class="virtue-needle" id="needle-honesty" style="left: 0%;"></div>
+            </div>
+            <div class="slider-labels">
+              <span>Deceit (Defect)</span>
+              <span style="color: var(--color-green);">Golden Mean</span>
+              <span>Indiscretion (Excess)</span>
+            </div>
+          </div>
+
+          <!-- COURAGE -->
+          <div class="virtue-row">
+            <div class="virtue-header">
+              <span class="virtue-name">Courage / Bravery</span>
+              <span class="virtue-value-label" id="val-courage">--</span>
+            </div>
+            <div class="mean-slider-container">
+              <div class="golden-mean-shade" title="Virtuous Golden Mean Range"></div>
+              <div class="virtue-needle" id="needle-courage" style="left: 0%;"></div>
+            </div>
+            <div class="slider-labels">
+              <span>Cowardice (Defect)</span>
+              <span style="color: var(--color-green);">Golden Mean</span>
+              <span>Recklessness (Excess)</span>
+            </div>
+          </div>
+
+          <!-- TEMPERANCE -->
+          <div class="virtue-row">
+            <div class="virtue-header">
+              <span class="virtue-name">Temperance / Moderation</span>
+              <span class="virtue-value-label" id="val-temperance">--</span>
+            </div>
+            <div class="mean-slider-container">
+              <div class="golden-mean-shade" title="Virtuous Golden Mean Range"></div>
+              <div class="virtue-needle" id="needle-temperance" style="left: 0%;"></div>
+            </div>
+            <div class="slider-labels">
+              <span>Insensibility (Defect)</span>
+              <span style="color: var(--color-green);">Golden Mean</span>
+              <span>Self-Indulgence (Excess)</span>
+            </div>
+          </div>
+
+          <!-- JUSTICE -->
+          <div class="virtue-row">
+            <div class="virtue-header">
+              <span class="virtue-name">Justice / Fairness</span>
+              <span class="virtue-value-label" id="val-justice">--</span>
+            </div>
+            <div class="mean-slider-container">
+              <div class="golden-mean-shade" title="Virtuous Golden Mean Range"></div>
+              <div class="virtue-needle" id="needle-justice" style="left: 0%;"></div>
+            </div>
+            <div class="slider-labels">
+              <span>Favoritism (Defect)</span>
+              <span style="color: var(--color-green);">Golden Mean</span>
+              <span>Rigidity (Excess)</span>
+            </div>
+          </div>
+
+          <!-- BENEVOLENCE -->
+          <div class="virtue-row">
+            <div class="virtue-header">
+              <span class="virtue-name">Benevolence / Charity</span>
+              <span class="virtue-value-label" id="val-benevolence">--</span>
+            </div>
+            <div class="mean-slider-container">
+              <div class="golden-mean-shade" title="Virtuous Golden Mean Range"></div>
+              <div class="virtue-needle" id="needle-benevolence" style="left: 0%;"></div>
+            </div>
+            <div class="slider-labels">
+              <span>Callousness (Defect)</span>
+              <span style="color: var(--color-green);">Golden Mean</span>
+              <span>Codependency (Excess)</span>
+            </div>
+          </div>
+
+          <!-- PRUDENCE -->
+          <div class="virtue-row">
+            <div class="virtue-header">
+              <span class="virtue-name">Prudence / Wisdom</span>
+              <span class="virtue-value-label" id="val-prudence">--</span>
+            </div>
+            <div class="mean-slider-container">
+              <div class="golden-mean-shade" title="Virtuous Golden Mean Range"></div>
+              <div class="virtue-needle" id="needle-prudence" style="left: 0%;"></div>
+            </div>
+            <div class="slider-labels">
+              <span>Foolishness (Defect)</span>
+              <span style="color: var(--color-green);">Golden Mean</span>
+              <span>Over-caution (Excess)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: History & Explanation -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Philosophy Card -->
+        <div class="glass-card philosophy-card">
+          <div class="card-title" style="border: none; padding-bottom: 0;">
+            <span><i data-lucide="book-open" style="color: var(--color-magenta);"></i> The Golden Mean Axiom</span>
+          </div>
+          <p>Unlike rule-based rules or outcome math, <strong>Virtue Ethics</strong> evaluates actions by the disposition they cultivate. Virtue (arete) is formed through habitual repetition (hexis). For every virtue, there is a balanced Golden Mean flanked by two vices of imbalance:</p>
+          
+          <div class="philosophy-grid">
+            <div class="philosophy-item">
+              <strong>Deficiency (Vice of Defect)</strong>
+              Too little manifestation of a trait. Cowardice, dishonesty, or calloused indifference.
+            </div>
+            <div class="philosophy-item">
+              <strong>Excess (Vice of Excess)</strong>
+              Too much of a trait, turning it destructive. Recklessness, over-caution, or punitive rigidity.
+            </div>
+          </div>
+        </div>
+
+        <!-- History Card -->
+        <div class="glass-card" style="flex: 1;">
+          <div class="card-title">
+            <span><i data-lucide="clock" style="color: var(--color-magenta);"></i> Character Assessment Logs</span>
+          </div>
+          
+          <div class="assessment-logs" id="logs-container">
+            <div style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+              <i data-lucide="loader-2" class="spin" style="margin-bottom: 10px;"></i>
+              <p>Fetching live virtue assessments from the core engine...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Fetch and render data from live Quantum Flow OS server
+    async function updateVirtueDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        if (!res.ok) throw new Error('API server offline');
+        const data = await res.json();
+        
+        if (data.virtues) {
+          const profile = data.virtues.characterProfile;
+          const history = data.virtues.history;
+          
+          // Update profile needles and labels
+          for (const [virtue, value] of Object.entries(profile)) {
+            const valPercent = (value * 100).toFixed(0);
+            const labelEl = document.getElementById(`val-${virtue}`);
+            const needleEl = document.getElementById(`needle-${virtue}`);
+            
+            if (labelEl) labelEl.textContent = value.toFixed(2);
+            if (needleEl) needleEl.style.left = `calc(${valPercent}% - 2px)`;
+          }
+
+          // If there is history, calculate harmony score from the latest assessment, otherwise default to 100
+          let harmonyScore = 100;
+          if (history && history.length > 0) {
+            harmonyScore = history[history.length - 1].overallCharacterScore;
+          }
+          
+          // Update harmony radial meter
+          const valueEl = document.getElementById('harmony-value');
+          const circleEl = document.getElementById('harmony-progress');
+          const statusEl = document.getElementById('harmony-status');
+          const descEl = document.getElementById('harmony-desc');
+          
+          if (valueEl) valueEl.textContent = harmonyScore.toFixed(0);
+          
+          // radial progress: dasharray is 226. dashoffset = 226 - (226 * harmony / 100)
+          if (circleEl) {
+            const offset = 226 - (226 * harmonyScore / 100);
+            circleEl.style.strokeDashoffset = offset;
+          }
+
+          if (harmonyScore >= 75) {
+            statusEl.textContent = 'Harmonious Character State';
+            statusEl.style.color = 'var(--color-green)';
+            descEl.textContent = 'System is executing balanced actions that nurture robust, ethical, and self-stabilizing habits.';
+          } else if (harmonyScore >= 50) {
+            statusEl.textContent = 'Character Deviation Imbalance';
+            statusEl.style.color = 'var(--color-yellow)';
+            descEl.textContent = 'Some actions exhibit either extreme excess or defect, drifting away from the Golden Mean.';
+          } else {
+            statusEl.textContent = 'Critical Character Vice State';
+            statusEl.style.color = '#ef4444';
+            descEl.textContent = 'System has habituated vices of severe excess or deficiency. Active moral correction recommended.';
+          }
+
+          // Render History Logs
+          const logsContainer = document.getElementById('logs-container');
+          if (history && history.length > 0) {
+            const sortedHistory = [...history].reverse();
+            logsContainer.innerHTML = sortedHistory.map(entry => {
+              const date = new Date(entry.timestamp).toLocaleTimeString();
+              const badgeClass = entry.isHarmonious ? 'score-harmonious' : 'score-discordant';
+              
+              const feedbackHtml = entry.feedback.map(f => {
+                const isGood = f.includes('Golden Mean') || f.includes('stable moral character');
+                const icon = isGood ? 'check' : 'alert-triangle';
+                const color = isGood ? 'var(--color-green)' : 'var(--color-magenta)';
+                return `
+                  <div class="feedback-bullet">
+                    <i data-lucide="${icon}" size="12" style="color: ${color};"></i>
+                    <span>${f}</span>
+                  </div>
+                `;
+              }).join('');
+
+              return `
+                <div class="assessment-item">
+                  <div class="assessment-header">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                      <span style="font-size: 13px; font-weight: 600; color: #fff;">Action: ${entry.actionId}</span>
+                      <span class="assessment-time">${date}</span>
+                    </div>
+                    <span class="assessment-score-badge ${badgeClass}">
+                      Char: ${entry.overallCharacterScore}
+                    </span>
+                  </div>
+                  <div class="assessment-feedback">
+                    ${feedbackHtml}
+                  </div>
+                </div>
+              `;
+            }).join('');
+            
+            // Re-render Lucide icons for injected elements
+            lucide.createIcons();
+          } else {
+            logsContainer.innerHTML = `
+              <div style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                <i data-lucide="shield-check" size="32" style="margin-bottom: 10px; color: var(--color-green);"></i>
+                <p>No character logs yet. Trigger any system action to begin habituation monitoring.</p>
+              </div>
+            `;
+            lucide.createIcons();
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching virtue state:', err);
+      }
+    }
+
+    // Refresh every 2 seconds
+    setInterval(updateVirtueDashboard, 2000);
+    // Initial fetch
+    updateVirtueDashboard();
+  </script>
+</body>
+</html>

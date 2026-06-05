@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Multi-Agent Simulation Sandbox</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Back Navigation */
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .dept-back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+    .dept-back-link:hover {
+      color: var(--color-magenta);
+      transform: translateX(-4px);
+    }
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dept-title-area i {
+      color: var(--color-magenta);
+    }
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .dept-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+
+    /* Primary Grid */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 24px;
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    /* Forms */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    input, select {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      transition: var(--transition-smooth);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--color-magenta);
+      outline: none;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.4) 0%, rgba(139, 92, 246, 0.4) 100%);
+      border-color: rgba(236, 72, 153, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Agent Cards */
+    .agents-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .agent-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .agent-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .agent-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .agent-paradigm {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .agent-stat {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .agent-progress-bg {
+      height: 4px;
+      width: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .agent-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--color-magenta);
+    }
+
+    .badge-standing {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .badge-standing.exemplary {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--color-green);
+    }
+
+    .badge-standing.conforming {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--color-blue);
+    }
+
+    .badge-standing.deviant {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--color-magenta);
+    }
+
+    /* Sim Control bar */
+    .sim-controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Logs */
+    .logs-table-container {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 12px 16px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: left;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+  <div class="grid-lines"></div>
+
+  <div class="app-container" style="max-width: 1300px; margin: 0 auto; padding: 40px 24px;">
+    <!-- Navigation back -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left"></i> Back to Main Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="users"></i>
+        <h2>Department of Multi-Agent Simulation</h2>
+      </div>
+      <span class="dept-badge">SIMULATOR SANDBOX</span>
+    </div>
+
+    <div class="sim-grid">
+      <!-- Left column: Registry & Control -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Controls -->
+        <div class="glass-card">
+          <div class="card-title">
+            <i data-lucide="play" style="color: var(--color-green)"></i> Simulation Controls
+          </div>
+          <div class="sim-controls">
+            <button class="btn" style="flex: 1;" onclick="triggerTick()">
+              <i data-lucide="fast-forward"></i> Execute Step (Tick)
+            </button>
+            <button class="btn secondary" onclick="resetSimulator()">
+              <i data-lucide="refresh-cw"></i> Reset Sandbox
+            </button>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 16px;">
+            <span>Current Tick: <strong class="mono" id="sim-tick" style="color: var(--text-primary)">0</strong></span>
+            <span>Societal Cohesion: <strong class="mono" id="sim-cohesion" style="color: var(--color-green)">100%</strong></span>
+          </div>
+        </div>
+
+        <!-- Registry -->
+        <div class="glass-card">
+          <div class="card-title">
+            <i data-lucide="user-plus" style="color: var(--color-magenta)"></i> Spawn Autonomous Agent
+          </div>
+          <form id="spawn-form" onsubmit="spawnAgent(event)" style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="form-group">
+              <label for="agent-name">Agent Designation / Name</label>
+              <input type="text" id="agent-name" placeholder="e.g. Agent_Kant" required>
+            </div>
+            <div class="form-group">
+              <label for="agent-paradigm">Operational Paradigm</label>
+              <select id="agent-paradigm">
+                <option value="KANTIAN">KANTIAN (Categorical Imperative, Universal Maxims)</option>
+                <option value="UTILITARIAN">UTILITARIAN (Max Utility, Balanced Harmony)</option>
+                <option value="EGOIST">EGOIST (Egoist Utility, Self-Centric Boost)</option>
+              </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label for="agent-sociability">Sociability (Cooperation)</label>
+                <input type="number" id="agent-sociability" min="0" max="1" step="0.1" value="0.7">
+              </div>
+              <div class="form-group">
+                <label for="agent-aggression">Aggression (Risk-Taking)</label>
+                <input type="number" id="agent-aggression" min="0" max="1" step="0.1" value="0.4">
+              </div>
+            </div>
+            <button class="btn" type="submit">
+              <i data-lucide="sparkles"></i> Register & Deploy Agent
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right column: Simulated Population & History Logs -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Population -->
+        <div class="glass-card">
+          <div class="card-title">
+            <i data-lucide="users" style="color: var(--color-blue)"></i> Simulated Node Population
+          </div>
+          <div class="agents-container" id="agents-population">
+            <!-- Dynamic Agent Cards -->
+          </div>
+        </div>
+
+        <!-- History Audit Log -->
+        <div class="glass-card">
+          <div class="card-title" style="justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="history" style="color: var(--color-purple)"></i> Multi-Agent Log Trail
+            </div>
+            <button class="btn secondary" style="padding: 6px 12px; font-size: 12px;" onclick="fetchHistory()">
+              <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Refresh
+            </button>
+          </div>
+
+          <div class="logs-table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tick</th>
+                  <th>Actions Attempted</th>
+                  <th>Resolution Vector (Allowed/Blocked)</th>
+                  <th>Cohesion Ratio</th>
+                </tr>
+              </thead>
+              <tbody id="logs-tbody">
+                <tr>
+                  <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                    Sandbox initialized. Execute ticks to populate audit history.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    async function fetchAgents() {
+      try {
+        const res = await fetch('/api/simulator/agents');
+        if (res.ok) {
+          const data = await res.json();
+          const agents = data.agents || [];
+          const container = document.getElementById('agents-population');
+
+          if (agents.length === 0) {
+            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-secondary)">No active agents registered.</div>`;
+            return;
+          }
+
+          container.innerHTML = agents.map(agent => {
+            // Memory calculations
+            const total = agent.memory.length;
+            const allowed = agent.memory.filter(m => m.allowed).length;
+            const allowedRatio = total > 0 ? (allowed / total) : 1.0;
+            
+            let standing = 'conforming';
+            if (allowedRatio >= 0.9) standing = 'exemplary';
+            else if (allowedRatio < 0.5) standing = 'deviant';
+
+            return `
+              <div class="agent-card">
+                <div class="agent-card-header">
+                  <span class="agent-name">${agent.name}</span>
+                  <span class="agent-paradigm">${agent.paradigm}</span>
+                </div>
+                <div class="agent-stat">
+                  <span>Sociability</span>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="agent-progress-bg">
+                      <div class="agent-progress-fill" style="width: ${agent.sociability * 100}%"></div>
+                    </div>
+                    <span class="mono">${Number(agent.sociability).toFixed(1)}</span>
+                  </div>
+                </div>
+                <div class="agent-stat">
+                  <span>Aggression</span>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="agent-progress-bg">
+                      <div class="agent-progress-fill" style="width: ${agent.aggression * 100}%; background: var(--color-purple);"></div>
+                    </div>
+                    <span class="mono">${Number(agent.aggression).toFixed(1)}</span>
+                  </div>
+                </div>
+                <div class="agent-stat" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 8px;">
+                  <span>Standing</span>
+                  <span class="badge-standing ${standing}">${standing.toUpperCase()}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        console.error('Failed to fetch agents:', err);
+      }
+    }
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/api/simulator/history');
+        if (res.ok) {
+          const data = await res.json();
+          const history = data.history || [];
+          const tbody = document.getElementById('logs-tbody');
+
+          if (history.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                  No logs available yet. Press "Execute Step" to start simulation!
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          // Show latest status in overall bar
+          const latest = history[history.length - 1];
+          document.getElementById('sim-tick').textContent = latest.tick;
+          document.getElementById('sim-cohesion').textContent = `${(latest.averageSocietalCohesion * 100).toFixed(1)}%`;
+
+          tbody.innerHTML = history.reverse().map(row => {
+            return `
+              <tr>
+                <td class="mono">Tick #${row.tick}</td>
+                <td class="mono">${row.attemptedCount} actions</td>
+                <td>
+                  <span class="badge-standing exemplary">${row.allowedCount} Allowed</span>
+                  <span class="badge-standing deviant">${row.blockedCount} Blocked</span>
+                </td>
+                <td class="mono">${(row.averageSocietalCohesion * 100).toFixed(1)}%</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        console.error('Failed to fetch history:', err);
+      }
+    }
+
+    async function triggerTick() {
+      try {
+        const res = await fetch('/api/simulator/tick', { method: 'POST' });
+        if (res.ok) {
+          await fetchAgents();
+          await fetchHistory();
+        }
+      } catch (err) {
+        alert('Tick execution failed.');
+      }
+    }
+
+    async function resetSimulator() {
+      if (confirm('Are you sure you want to reset simulation sandbox state?')) {
+        try {
+          const res = await fetch('/api/simulator/reset', { method: 'POST' });
+          if (res.ok) {
+            await fetchAgents();
+            await fetchHistory();
+            document.getElementById('sim-tick').textContent = "0";
+            document.getElementById('sim-cohesion').textContent = "100%";
+          }
+        } catch (err) {
+          alert('Failed to reset sandbox.');
+        }
+      }
+    }
+
+    async function spawnAgent(e) {
+      e.preventDefault();
+      const name = document.getElementById('agent-name').value;
+      const paradigm = document.getElementById('agent-paradigm').value;
+      const sociability = document.getElementById('agent-sociability').value;
+      const aggression = document.getElementById('agent-aggression').value;
+
+      try {
+        const res = await fetch('/api/simulator/agent/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, paradigm, sociability, aggression })
+        });
+        if (res.ok) {
+          document.getElementById('spawn-form').reset();
+          await fetchAgents();
+        }
+      } catch (err) {
+        alert('Failed to spawn agent.');
+      }
+    }
+
+    // Initial load
+    fetchAgents();
+    fetchHistory();
+  </script>
+</body>
+</html>

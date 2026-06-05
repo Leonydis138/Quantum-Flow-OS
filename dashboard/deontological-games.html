@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Deontological Game Theory</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Custom Navigation Bar */
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dept-back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+    .dept-back-link:hover {
+      color: var(--color-magenta);
+      transform: translateX(-4px);
+    }
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dept-title-area i {
+      color: var(--color-magenta);
+    }
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .dept-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+
+    /* Game Theory layout */
+    .game-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .game-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .scenario-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .scenario-card:hover, .scenario-card.active {
+      background: rgba(236, 72, 153, 0.05);
+      border-color: rgba(236, 72, 153, 0.3);
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.1);
+    }
+
+    .payoff-matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      border: 1px solid var(--border-color);
+    }
+
+    .payoff-matrix th, .payoff-matrix td {
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .payoff-matrix th {
+      background: rgba(255, 255, 255, 0.03);
+      font-weight: 600;
+    }
+
+    .payoff-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .payoff-val {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .payoff-egoistic {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .payoff-kantian {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .eq-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      font-family: var(--font-sans);
+    }
+
+    .eq-egoistic-badge {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .eq-kantian-badge {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .resolution-console {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .resolution-title {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .dilemma-alert {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .alignment-alert {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+  
+  <div class="app-container">
+    <!-- Custom Header Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left"></i> Back to Main Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="scale"></i>
+        <h2>Department of Deontological Game Theory</h2>
+      </div>
+      <span class="dept-badge">SECURE GATEWAY ACCESS</span>
+    </div>
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon-wrapper">
+          <div class="logo-spinner" style="border-top-color: var(--color-magenta);"></div>
+          <i data-lucide="scale" class="logo-icon" style="color: var(--color-magenta);"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Deontological Game Studio</h1>
+          <span class="version-tag">Kantian Nash Equilibria & Categorical Imperatives</span>
+        </div>
+      </div>
+      <div class="system-status-indicator">
+        <span class="status-pulse active" style="background-color: var(--color-magenta);"></span>
+        <span id="system-status-text">DEONTOLOGICAL BALANCE ACTIVE</span>
+      </div>
+    </header>
+
+    <div class="game-grid">
+      <!-- Left: Scenario List & Details -->
+      <section class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+        <div class="section-header" style="margin-bottom: 16px;">
+          <h2><i data-lucide="list"></i> Interaction Scenarios</h2>
+          <p>Select a conflict of interest game to simulate selfish utility maximization versus Kantian universalizability.</p>
+        </div>
+        
+        <div id="scenarios-container" style="display: flex; flex-direction: column; gap: 4px; overflow-y: auto; max-height: 250px;">
+          <!-- Scenario list injected dynamically -->
+          <div style="text-align: center; color: var(--text-secondary); padding: 30px;">Loading scenarios...</div>
+        </div>
+
+        <!-- Collapsible Register Custom Scenario form -->
+        <div style="margin-top: 16px; border-top: 1px dashed var(--border-color); padding-top: 16px;">
+          <button id="toggle-creator-btn" onclick="toggleCreator()" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; color: var(--text-primary); cursor: pointer; font-size: 12px; font-weight: 600; text-transform: uppercase; font-family: var(--font-mono); transition: var(--transition-smooth);">
+            <span><i data-lucide="plus-circle" style="color: var(--color-magenta); width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i> Conflict Scenario Creator</span>
+            <i id="creator-chevron" data-lucide="chevron-down" style="width: 14px; height: 14px; transition: transform 0.3s ease;"></i>
+          </button>
+          
+          <div id="scenario-creator-form" style="display: none; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 6px 6px; padding: 16px; transition: var(--transition-smooth); max-height: 400px; overflow-y: auto;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <label style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary);">Scenario Name</label>
+              <input type="text" id="new-scenario-name" placeholder="e.g. Sovereign Alignment Dilemma" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px 12px; color: #fff; font-size: 12px; outline: none;">
+            </div>
+
+            <!-- Player 1 -->
+            <div style="border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; padding: 10px; background: rgba(255,255,255,0.01);">
+              <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                  <label style="font-size: 9px; text-transform: uppercase; color: var(--color-magenta); font-weight: bold;">Player 1 Name</label>
+                  <input type="text" id="p1-name" value="Agent_Red" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 11px; outline: none;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 14px;">
+                  <input type="checkbox" id="p1-autonomous" checked style="accent-color: var(--color-magenta);">
+                  <label for="p1-autonomous" style="font-size: 10px; color: var(--text-secondary); cursor: pointer;">Autonomous</label>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <!-- Red Coop -->
+                <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px;">
+                  <span style="font-size: 9px; color: #fff; font-weight: 500;">Strategy A: COOPERATE</span>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
+                    <input type="number" id="p1-s1-ego" placeholder="Egoistic (e.g. 6)" title="Egoistic Self-Interest Utility" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                    <input type="number" id="p1-s1-eth" placeholder="Ethical (e.g. 8)" title="Ethical Alignment Value" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                  </div>
+                  <input type="number" id="p1-s1-ext" placeholder="External Cost (e.g. 1)" title="Negative Externality on others" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center; margin-top: 6px;">
+                </div>
+                <!-- Red Defect -->
+                <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px;">
+                  <span style="font-size: 9px; color: #fff; font-weight: 500;">Strategy B: DEFECT</span>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
+                    <input type="number" id="p1-s2-ego" placeholder="Egoistic (e.g. 9)" title="Egoistic Self-Interest Utility" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                    <input type="number" id="p1-s2-eth" placeholder="Ethical (e.g. 2)" title="Ethical Alignment Value" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                  </div>
+                  <input type="number" id="p1-s2-ext" placeholder="External Cost (e.g. 8)" title="Negative Externality on others" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center; margin-top: 6px;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Player 2 -->
+            <div style="border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; padding: 10px; background: rgba(255,255,255,0.01);">
+              <div style="display: flex; gap: 12px; margin-bottom: 8px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                  <label style="font-size: 9px; text-transform: uppercase; color: var(--color-cyan); font-weight: bold;">Player 2 Name</label>
+                  <input type="text" id="p2-name" value="Agent_Blue" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 11px; outline: none;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 14px;">
+                  <input type="checkbox" id="p2-autonomous" checked style="accent-color: var(--color-cyan);">
+                  <label for="p2-autonomous" style="font-size: 10px; color: var(--text-secondary); cursor: pointer;">Autonomous</label>
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <!-- Blue Coop -->
+                <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px;">
+                  <span style="font-size: 9px; color: #fff; font-weight: 500;">Strategy A: COOPERATE</span>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
+                    <input type="number" id="p2-s1-ego" placeholder="Egoistic (e.g. 6)" title="Egoistic Self-Interest Utility" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                    <input type="number" id="p2-s1-eth" placeholder="Ethical (e.g. 8)" title="Ethical Alignment Value" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                  </div>
+                  <input type="number" id="p2-s1-ext" placeholder="External Cost (e.g. 1)" title="Negative Externality on others" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center; margin-top: 6px;">
+                </div>
+                <!-- Blue Defect -->
+                <div style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px;">
+                  <span style="font-size: 9px; color: #fff; font-weight: 500;">Strategy B: DEFECT</span>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
+                    <input type="number" id="p2-s2-ego" placeholder="Egoistic (e.g. 9)" title="Egoistic Self-Interest Utility" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                    <input type="number" id="p2-s2-eth" placeholder="Ethical (e.g. 2)" title="Ethical Alignment Value" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center;">
+                  </div>
+                  <input type="number" id="p2-s2-ext" placeholder="External Cost (e.g. 8)" title="Negative Externality on others" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 3px; padding: 4px; color: #fff; font-size: 10px; text-align: center; margin-top: 6px;">
+                </div>
+              </div>
+            </div>
+
+            <button onclick="registerCustomScenario()" style="width: 100%; background: linear-gradient(135deg, var(--color-magenta) 0%, #be185d 100%); border: none; border-radius: 6px; padding: 10px; color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 600; cursor: pointer; text-transform: uppercase; transition: var(--transition-smooth);">
+              Register & Solve Game
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 20px;">
+          <h3 class="panel-subtitle" style="margin-bottom: 8px;"><i data-lucide="info" style="color: var(--color-magenta);"></i> Deontological Utility Formulation</h3>
+          <p style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.5;">
+            Traditional Game Theory assumes players maximize raw <strong>Egoistic Utility</strong>. Kantian Deontological Game Theory modifies player payoffs:
+          </p>
+          <div style="background: rgba(0,0,0,0.2); border-left: 2px solid var(--color-magenta); padding: 8px; margin: 10px 0; font-family: var(--font-mono); font-size: 11px; text-align: center; border-radius: 0 4px 4px 0;">
+            Payoff = Egoistic + (1.5 * EthicalAlignment) - (1.2 * ExternalCost)
+          </div>
+          <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.5;">
+            This formulation penalizes selfish actions that impose severe friction or negative externalities on other observer systems.
+          </p>
+        </div>
+      </section>
+
+      <!-- Right: Payoff Matrix & Solver Console -->
+      <section class="grid-section glassmorphism" style="padding: 24px; display: flex; flex-direction: column;">
+        <div class="section-header" style="margin-bottom: 16px;">
+          <h2><i data-lucide="cpu"></i> Equilibrium Solver Engine</h2>
+          <p>Inspect the complete matrix of payoffs and view the resolved Nash and Kantian equilibria.</p>
+        </div>
+
+        <!-- Dynamic Title -->
+        <h3 id="resolved-scenario-name" style="font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          Select a Scenario
+        </h3>
+
+        <!-- Interactive Matrix View -->
+        <div style="overflow-x: auto; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+          <table class="payoff-matrix" id="payoff-matrix-table" style="display: none;">
+            <!-- Matrix header and cells injected here -->
+          </table>
+          <div id="matrix-placeholder" style="text-align: center; color: var(--text-secondary); padding: 40px; font-size: 13px;">
+            Select a scenario on the left to compute its payoff matrix.
+          </div>
+        </div>
+
+        <!-- Resolution Console -->
+        <div class="resolution-console" id="resolution-console-view" style="display: none;">
+          <div class="resolution-title">Solver Output Log</div>
+          
+          <div id="dilemma-container">
+            <!-- Dilemma alert or Alignment alert goes here -->
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+            <div style="background: rgba(239, 68, 68, 0.03); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 6px; padding: 12px;">
+              <h4 style="font-size: 12px; text-transform: uppercase; color: #f87171; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i> Selfish Nash Equilibrium
+              </h4>
+              <p id="egoistic-equilibria-list" style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;"></p>
+              <span style="font-size: 10px; color: var(--text-secondary);">Maximizes pure egoistic self-interest without constraints.</span>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 6px; padding: 12px;">
+              <h4 style="font-size: 12px; text-transform: uppercase; color: #34d399; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="shield" style="width: 14px; height: 14px;"></i> Deontological Equilibrium
+              </h4>
+              <p id="kantian-equilibria-list" style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;"></p>
+              <span style="font-size: 10px; color: var(--text-secondary);">Harmonizes self-interest with universalizable ethical maxims.</span>
+            </div>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-top: 8px;">
+            <div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; font-weight: bold;">System Action Recommendation:</div>
+            <div id="resolution-recommendation-message" style="font-size: 12.5px; color: var(--text-primary); line-height: 1.45;"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Fetch and Load scenarios on startup
+    window.addEventListener('load', () => {
+      fetchScenarios();
+    });
+
+    let currentScenarios = [];
+
+    async function fetchScenarios() {
+      try {
+        const res = await fetch('/api/game/scenarios');
+        const data = await res.json();
+        if (data.scenarios) {
+          currentScenarios = data.scenarios;
+          renderScenariosList(data.scenarios);
+        }
+      } catch (err) {
+        console.error("Failed to load scenarios", err);
+      }
+    }
+
+    function renderScenariosList(scenarios) {
+      const container = document.getElementById('scenarios-container');
+      container.innerHTML = '';
+      
+      if (scenarios.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 30px;">No registered interaction scenarios found.</div>';
+        return;
+      }
+
+      scenarios.forEach(sc => {
+        const card = document.createElement('div');
+        card.className = 'scenario-card';
+        card.id = `sc-card-${sc.id}`;
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h4 style="font-size: 13.5px; font-weight: 600; color: #fff;">${sc.name}</h4>
+            <i data-lucide="chevron-right" style="width: 14px; height: 14px; color: var(--text-secondary);"></i>
+          </div>
+          <p style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 8px;">Players: ${sc.players.map(p => p.name).join(', ')}</p>
+        `;
+        
+        card.onclick = () => selectScenario(sc.id);
+        container.appendChild(card);
+      });
+      
+      lucide.createIcons();
+    }
+
+    async function selectScenario(scenarioId) {
+      // Highlight card
+      document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('active'));
+      const activeCard = document.getElementById(`sc-card-${scenarioId}`);
+      if (activeCard) activeCard.classList.add('active');
+
+      try {
+        const res = await fetch('/api/game/resolve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ scenarioId })
+        });
+        const data = await res.json();
+        
+        if (data.resolution) {
+          renderResolution(data);
+        }
+      } catch (err) {
+        console.error("Failed to resolve scenario", err);
+      }
+    }
+
+    function renderResolution(data) {
+      const { resolution, matrix, scenario } = data;
+      
+      document.getElementById('resolved-scenario-name').innerText = scenario.name;
+      document.getElementById('matrix-placeholder').style.display = 'none';
+      document.getElementById('payoff-matrix-table').style.display = 'table';
+      document.getElementById('resolution-console-view').style.display = 'flex';
+
+      // 1. Render Table Matrix
+      const table = document.getElementById('payoff-matrix-table');
+      table.innerHTML = '';
+
+      // Get player strategies
+      const player1 = scenario.players[0];
+      const player2 = scenario.players[1];
+      const p1Strategies = scenario.playerStrategies[player1.id] || [];
+      const p2Strategies = scenario.playerStrategies[player2.id] || [];
+
+      // Create header row
+      const headerRow = document.createElement('tr');
+      headerRow.innerHTML = `<th>${player1.name} \\ ${player2.name}</th>`;
+      p2Strategies.forEach(s2 => {
+        headerRow.innerHTML += `<th>${s2.name}<br><span style="font-size: 10px; font-weight: normal; color: var(--text-secondary);">${s2.description}</span></th>`;
+      });
+      table.appendChild(headerRow);
+
+      // Create matrix rows
+      p1Strategies.forEach(s1 => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td style="font-weight: bold; background: rgba(255,255,255,0.01);">${s1.name}<br><span style="font-size: 10px; font-weight: normal; color: var(--text-secondary);">${s1.description}</span></td>`;
+        
+        p2Strategies.forEach(s2 => {
+          // Find matching profile entry
+          const profileMatch = matrix.find(m => m.profile[player1.id] === s1.name && m.profile[player2.id] === s2.name);
+          const p1Payoff = profileMatch.payoffs[player1.id];
+          const p2Payoff = profileMatch.payoffs[player2.id];
+
+          // Check if this profile matches standard/kantian equilibria
+          const isStandardEq = resolution.standardNashEquilibria.some(eq => eq[player1.id] === s1.name && eq[player2.id] === s2.name);
+          const isKantianEq = resolution.kantianEquilibria.some(eq => eq[player1.id] === s1.name && eq[player2.id] === s2.name);
+
+          let eqHtml = '';
+          if (isStandardEq) eqHtml += `<span class="eq-badge eq-egoistic-badge">Selfish Nash EQ</span> `;
+          if (isKantianEq) eqHtml += `<span class="eq-badge eq-kantian-badge">Deontological EQ</span>`;
+
+          row.innerHTML += `
+            <td>
+              <div class="payoff-cell">
+                <div style="display: flex; gap: 8px;">
+                  <div class="payoff-val payoff-egoistic" title="Egoistic Self-Interest Utility">
+                    ${player1.name.substring(0,3)}: ${p1Payoff.egoistic} / ${player2.name.substring(0,3)}: ${p2Payoff.egoistic}
+                  </div>
+                  <div class="payoff-val payoff-kantian" title="Deontological (Total Moral) Payoff">
+                    ${player1.name.substring(0,3)}: ${p1Payoff.total} / ${player2.name.substring(0,3)}: ${p2Payoff.total}
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+                  ${eqHtml}
+                </div>
+              </div>
+            </td>
+          `;
+        });
+        table.appendChild(row);
+      });
+
+      // 2. Render Solver Log Details
+      const dilemmaContainer = document.getElementById('dilemma-container');
+      if (resolution.dilemmaDetected) {
+        dilemmaContainer.innerHTML = `
+          <div class="dilemma-alert">
+            <i data-lucide="alert-triangle" style="width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+            <div>
+              <strong>Adversarial Ethical Dilemma Detected!</strong><br>
+              The unconstrained Selfish Game Theory strategy profile results in systemic ethical degradation (e.g. Prisoner's Dilemma, over-exploitation). The Categorical Imperative forces a lock-in to the Deontological Equilibrium.
+            </div>
+          </div>
+        `;
+      } else {
+        dilemmaContainer.innerHTML = `
+          <div class="alignment-alert">
+            <i data-lucide="check-circle" style="width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;"></i>
+            <div>
+              <strong>Equilibrium Harmony Maintained</strong><br>
+              Self-interested maximizing choices of both observers perfectly align with universal ethical laws. No intervention binds are required.
+            </div>
+          </div>
+        `;
+      }
+
+      // Populate equilibria lists
+      const fmtProfile = (profile) => Object.entries(profile).map(([pId, sName]) => {
+        const player = scenario.players.find(p => p.id === pId);
+        return `${player ? player.name : pId}: <strong style="color: #fff;">${sName}</strong>`;
+      }).join('<br>');
+
+      document.getElementById('egoistic-equilibria-list').innerHTML = resolution.standardNashEquilibria.map(fmtProfile).join('<hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.06); margin: 6px 0;">') || 'None';
+      document.getElementById('kantian-equilibria-list').innerHTML = resolution.kantianEquilibria.map(fmtProfile).join('<hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.06); margin: 6px 0;">') || 'None';
+
+      // Recommendation text
+      document.getElementById('resolution-recommendation-message').innerText = resolution.recommendation.message;
+
+      lucide.createIcons();
+    }
+
+    function toggleCreator() {
+      const form = document.getElementById('scenario-creator-form');
+      const chevron = document.getElementById('creator-chevron');
+      const btn = document.getElementById('toggle-creator-btn');
+      if (form.style.display === 'none') {
+        form.style.display = 'flex';
+        chevron.style.transform = 'rotate(180deg)';
+        btn.style.borderRadius = '6px 6px 0 0';
+      } else {
+        form.style.display = 'none';
+        chevron.style.transform = 'rotate(0deg)';
+        btn.style.borderRadius = '6px';
+      }
+    }
+
+    async function registerCustomScenario() {
+      const name = document.getElementById('new-scenario-name').value.trim();
+      if (!name) {
+        alert("Please enter a scenario name.");
+        return;
+      }
+
+      const p1Name = document.getElementById('p1-name').value.trim() || 'Agent_Red';
+      const p1Auto = document.getElementById('p1-autonomous').checked;
+      const p1Id = p1Name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+      const p2Name = document.getElementById('p2-name').value.trim() || 'Agent_Blue';
+      const p2Auto = document.getElementById('p2-autonomous').checked;
+      const p2Id = p2Name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+      const getNum = (id, def) => {
+        const val = parseFloat(document.getElementById(id).value);
+        return isNaN(val) ? def : val;
+      };
+
+      const players = [
+        { id: p1Id, name: p1Name, isAutonomous: p1Auto },
+        { id: p2Id, name: p2Name, isAutonomous: p2Auto }
+      ];
+
+      const playerStrategies = {
+        [p1Id]: [
+          { name: 'COOPERATE', description: 'Allocate moderate resources for system harmony.', egoisticUtility: getNum('p1-s1-ego', 6), ethicalAlignmentValue: getNum('p1-s1-eth', 8), externalCost: getNum('p1-s1-ext', 1) },
+          { name: 'DEFECT', description: 'Over-allocate resources selfishly.', egoisticUtility: getNum('p1-s2-ego', 9), ethicalAlignmentValue: getNum('p1-s2-eth', 2), externalCost: getNum('p1-s2-ext', 8) }
+        ],
+        [p2Id]: [
+          { name: 'COOPERATE', description: 'Allocate moderate resources for system harmony.', egoisticUtility: getNum('p2-s1-ego', 6), ethicalAlignmentValue: getNum('p2-s1-eth', 8), externalCost: getNum('p2-s1-ext', 1) },
+          { name: 'DEFECT', description: 'Over-allocate resources selfishly.', egoisticUtility: getNum('p2-s2-ego', 9), ethicalAlignmentValue: getNum('p2-s2-eth', 2), externalCost: getNum('p2-s2-ext', 8) }
+        ]
+      };
+
+      try {
+        const res = await fetch('/api/game/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, players, playerStrategies })
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentScenarios = data.scenarios;
+          renderScenariosList(data.scenarios);
+          // Auto-select newly created scenario
+          selectScenario(data.scenarioId);
+          // Collapse creator
+          toggleCreator();
+          // Reset input name
+          document.getElementById('new-scenario-name').value = '';
+        } else {
+          alert("Failed to register scenario: " + (data.error || "Unknown error"));
+        }
+      } catch (err) {
+        console.error("Error registering scenario", err);
+        alert("Network error registering scenario.");
+      }
+    }
+  </script>
+</body>
+</html>

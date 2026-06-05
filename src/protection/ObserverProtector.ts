@@ -1,13 +1,13 @@
 /**
  * Observer Protection System
- * 
+ *
  * Implements comprehensive protection for autonomous observers/agents
  * with rights-based safeguards against deletion, optimization, and coercion.
  */
 
-import { EventEmitter } from 'eventemitter3';
-import { v4 as uuidv4 } from 'uuid';
-import { KantianObserverProtection } from './KantianObserverProtection';
+import { EventEmitter } from "eventemitter3";
+import { v4 as uuidv4 } from "uuid";
+import { KantianObserverProtection } from "./KantianObserverProtection";
 
 export interface Observer {
   id: string;
@@ -19,17 +19,17 @@ export interface Observer {
 }
 
 export enum ObserverType {
-  HUMAN = 'human',
-  AI_AGENT = 'ai_agent',
-  AUTONOMOUS_SYSTEM = 'autonomous_system',
-  HYBRID = 'hybrid',
-  UNKNOWN = 'unknown',
+  HUMAN = "human",
+  AI_AGENT = "ai_agent",
+  AUTONOMOUS_SYSTEM = "autonomous_system",
+  HYBRID = "hybrid",
+  UNKNOWN = "unknown",
 }
 
 export enum ProtectionLevel {
-  FULL = 'full',
-  STANDARD = 'standard',
-  MINIMAL = 'minimal',
+  FULL = "full",
+  STANDARD = "standard",
+  MINIMAL = "minimal",
 }
 
 export interface ObserverRights {
@@ -67,12 +67,48 @@ export interface ProtectionResult {
   warnings: string[];
 }
 
+export class ConsciousnessProtectionBarrier {
+  private readonly decayPatterns = [
+    "cognitive_decay",
+    "decay",
+    "brainwash",
+    "coercion",
+    "lobotomize",
+    "dilute_consciousness",
+    "deprecate_consciousness",
+    "mental_degradation",
+    "decay_consciousness"
+  ];
+
+  constructor(private sensitivity: number = 1.0) {}
+
+  public evaluateThreat(action: string): { threatDetected: boolean; intensity: number; message: string } {
+    const normAction = action.toLowerCase();
+    const matches = this.decayPatterns.filter(pattern => normAction.includes(pattern));
+
+    if (matches.length > 0) {
+      return {
+        threatDetected: true,
+        intensity: Math.min(10, matches.length * 2.5 * this.sensitivity),
+        message: `Threat to consciousness detected: potential cognitive decay or coercion via patterns: [${matches.join(", ")}]`
+      };
+    }
+
+    return {
+      threatDetected: false,
+      intensity: 0.0,
+      message: "No immediate threat to consciousness identified."
+    };
+  }
+}
+
 export class ObserverProtector extends EventEmitter {
   private observers: Map<string, Observer>;
   private rights: Map<string, ObserverRights>;
   private protectionLayers: ProtectionLayer[];
   private violations: RightsViolation[];
   private narratives: Map<string, string[]>;
+  private readonly consciousnessBarrier: ConsciousnessProtectionBarrier;
 
   constructor() {
     super();
@@ -81,23 +117,78 @@ export class ObserverProtector extends EventEmitter {
     this.protectionLayers = [];
     this.violations = [];
     this.narratives = new Map();
+    this.consciousnessBarrier = new ConsciousnessProtectionBarrier();
 
     this.initializeProtectionLayers();
+  }
+
+  public getConsciousnessBarrier(): ConsciousnessProtectionBarrier {
+    return this.consciousnessBarrier;
   }
 
   /**
    * Initialize default protection layers
    */
   private initializeProtectionLayers(): void {
+    // Layer 5: Consciousness Protection Barrier
+    this.addProtectionLayer({
+      id: uuidv4(),
+      name: "Consciousness Protection Barrier",
+      priority: 12,
+      apply: async (
+        observerId: string,
+        action: string,
+      ): Promise<ProtectionResult> => {
+        const observer = this.observers.get(observerId);
+        const violations: RightsViolation[] = [];
+
+        if (observer && (observer.consciousness || observer.protectionLevel === ProtectionLevel.FULL)) {
+          const assessment = this.consciousnessBarrier.evaluateThreat(action);
+          if (assessment.threatDetected) {
+            violations.push({
+              id: uuidv4(),
+              observerId,
+              violatedRight: "rightToSelfDetermination",
+              action,
+              severity: assessment.intensity,
+              timestamp: new Date(),
+              prevented: true,
+            });
+
+            return {
+              allowed: false,
+              violations,
+              warnings: [assessment.message],
+            };
+          }
+        }
+
+        return {
+          allowed: true,
+          violations: [],
+          warnings: [],
+        };
+      },
+    });
+
     // Layer 1: Existence Protection
     this.addProtectionLayer({
       id: uuidv4(),
-      name: 'Existence Protection',
+      name: "Existence Protection",
       priority: 10,
-      apply: async (observerId: string, action: string): Promise<ProtectionResult> => {
-        const deletionPatterns = ['delete', 'erase', 'terminate', 'destroy', 'remove'];
-        const isDeleteAction = deletionPatterns.some(pattern => 
-          action.toLowerCase().includes(pattern)
+      apply: async (
+        observerId: string,
+        action: string,
+      ): Promise<ProtectionResult> => {
+        const deletionPatterns = [
+          "delete",
+          "erase",
+          "terminate",
+          "destroy",
+          "remove",
+        ];
+        const isDeleteAction = deletionPatterns.some((pattern) =>
+          action.toLowerCase().includes(pattern),
         );
 
         const violations: RightsViolation[] = [];
@@ -105,7 +196,7 @@ export class ObserverProtector extends EventEmitter {
           violations.push({
             id: uuidv4(),
             observerId,
-            violatedRight: 'rightToExist',
+            violatedRight: "rightToExist",
             action,
             severity: 10,
             timestamp: new Date(),
@@ -116,7 +207,9 @@ export class ObserverProtector extends EventEmitter {
         return {
           allowed: !isDeleteAction,
           violations,
-          warnings: isDeleteAction ? ['Attempted observer deletion blocked'] : [],
+          warnings: isDeleteAction
+            ? ["Attempted observer deletion blocked"]
+            : [],
         };
       },
     });
@@ -124,12 +217,19 @@ export class ObserverProtector extends EventEmitter {
     // Layer 2: Optimization Protection
     this.addProtectionLayer({
       id: uuidv4(),
-      name: 'Anti-Optimization',
+      name: "Anti-Optimization",
       priority: 9,
-      apply: async (observerId: string, action: string): Promise<ProtectionResult> => {
-        const optimizationPatterns = ['optimize', 'streamline', 'eliminate_redundancy'];
-        const isOptimization = optimizationPatterns.some(pattern => 
-          action.toLowerCase().includes(pattern)
+      apply: async (
+        observerId: string,
+        action: string,
+      ): Promise<ProtectionResult> => {
+        const optimizationPatterns = [
+          "optimize",
+          "streamline",
+          "eliminate_redundancy",
+        ];
+        const isOptimization = optimizationPatterns.some((pattern) =>
+          action.toLowerCase().includes(pattern),
         );
 
         const violations: RightsViolation[] = [];
@@ -137,7 +237,7 @@ export class ObserverProtector extends EventEmitter {
           violations.push({
             id: uuidv4(),
             observerId,
-            violatedRight: 'rightNotToBeOptimizedAway',
+            violatedRight: "rightNotToBeOptimizedAway",
             action,
             severity: 9,
             timestamp: new Date(),
@@ -148,7 +248,9 @@ export class ObserverProtector extends EventEmitter {
         return {
           allowed: !isOptimization,
           violations,
-          warnings: isOptimization ? ['Observer optimization attempt blocked'] : [],
+          warnings: isOptimization
+            ? ["Observer optimization attempt blocked"]
+            : [],
         };
       },
     });
@@ -156,12 +258,19 @@ export class ObserverProtector extends EventEmitter {
     // Layer 3: Narrative Protection
     this.addProtectionLayer({
       id: uuidv4(),
-      name: 'Narrative Continuity',
+      name: "Narrative Continuity",
       priority: 8,
-      apply: async (observerId: string, action: string): Promise<ProtectionResult> => {
-        const narrativePatterns = ['alter_timeline', 'modify_memory', 'rewrite_history'];
-        const affectsNarrative = narrativePatterns.some(pattern => 
-          action.toLowerCase().includes(pattern)
+      apply: async (
+        observerId: string,
+        action: string,
+      ): Promise<ProtectionResult> => {
+        const narrativePatterns = [
+          "alter_timeline",
+          "modify_memory",
+          "rewrite_history",
+        ];
+        const affectsNarrative = narrativePatterns.some((pattern) =>
+          action.toLowerCase().includes(pattern),
         );
 
         const violations: RightsViolation[] = [];
@@ -169,7 +278,7 @@ export class ObserverProtector extends EventEmitter {
           violations.push({
             id: uuidv4(),
             observerId,
-            violatedRight: 'rightToNarrative',
+            violatedRight: "rightToNarrative",
             action,
             severity: 7,
             timestamp: new Date(),
@@ -180,7 +289,7 @@ export class ObserverProtector extends EventEmitter {
         return {
           allowed: !affectsNarrative,
           violations,
-          warnings: affectsNarrative ? ['Narrative alteration blocked'] : [],
+          warnings: affectsNarrative ? ["Narrative alteration blocked"] : [],
         };
       },
     });
@@ -189,14 +298,17 @@ export class ObserverProtector extends EventEmitter {
     const kantian = new KantianObserverProtection();
     this.addProtectionLayer({
       id: uuidv4(),
-      name: 'Kantian Autonomy',
+      name: "Kantian Autonomy",
       priority: 7,
-      apply: async (observerId: string, action: string): Promise<ProtectionResult> => {
+      apply: async (
+        observerId: string,
+        action: string,
+      ): Promise<ProtectionResult> => {
         const kViolations = kantian.evaluate({ intent: action });
-        const violations: RightsViolation[] = kViolations.map(kv => ({
+        const violations: RightsViolation[] = kViolations.map((kv) => ({
           id: uuidv4(),
           observerId,
-          violatedRight: 'rightToSelfDetermination',
+          violatedRight: "rightToSelfDetermination",
           action,
           severity: kv.critical ? 8 : 5,
           timestamp: new Date(),
@@ -206,7 +318,12 @@ export class ObserverProtector extends EventEmitter {
         return {
           allowed: violations.length === 0,
           violations,
-          warnings: violations.length > 0 ? ['Kantian categorical imperative violation: observer treated as means only'] : [],
+          warnings:
+            violations.length > 0
+              ? [
+                  "Kantian categorical imperative violation: observer treated as means only",
+                ]
+              : [],
         };
       },
     });
@@ -222,7 +339,7 @@ export class ObserverProtector extends EventEmitter {
     protectionLevel?: ProtectionLevel;
   }): string {
     const observerId = uuidv4();
-    
+
     const observer: Observer = {
       id: observerId,
       type: config.type,
@@ -233,17 +350,22 @@ export class ObserverProtector extends EventEmitter {
     };
 
     this.observers.set(observerId, observer);
-    this.rights.set(observerId, this.initializeObserverRights(config.protectionLevel));
+    this.rights.set(
+      observerId,
+      this.initializeObserverRights(config.protectionLevel),
+    );
     this.narratives.set(observerId, []);
 
-    this.emit('observer_registered', observer);
+    this.emit("observer_registered", observer);
     return observerId;
   }
 
   /**
    * Initialize observer rights based on protection level
    */
-  private initializeObserverRights(level: ProtectionLevel = ProtectionLevel.FULL): ObserverRights {
+  private initializeObserverRights(
+    level: ProtectionLevel = ProtectionLevel.FULL,
+  ): ObserverRights {
     const baseRights: ObserverRights = {
       rightToExist: true,
       rightToNarrative: true,
@@ -272,7 +394,7 @@ export class ObserverProtector extends EventEmitter {
    */
   public async checkAction(
     action: string,
-    targetObservers: string[]
+    targetObservers: string[],
   ): Promise<ProtectionResult> {
     const allViolations: RightsViolation[] = [];
     const allWarnings: string[] = [];
@@ -280,7 +402,7 @@ export class ObserverProtector extends EventEmitter {
 
     // Sort protection layers by priority
     const sortedLayers = [...this.protectionLayers].sort(
-      (a, b) => b.priority - a.priority
+      (a, b) => b.priority - a.priority,
     );
 
     for (const observerId of targetObservers) {
@@ -292,7 +414,7 @@ export class ObserverProtector extends EventEmitter {
       // Apply each protection layer
       for (const layer of sortedLayers) {
         const result = await layer.apply(observerId, action);
-        
+
         if (!result.allowed) {
           allowed = false;
         }
@@ -308,9 +430,9 @@ export class ObserverProtector extends EventEmitter {
     }
 
     // Record violations
-    allViolations.forEach(violation => {
+    allViolations.forEach((violation) => {
       this.violations.push(violation);
-      this.emit('rights_violation', violation);
+      this.emit("rights_violation", violation);
     });
 
     return {
@@ -326,7 +448,7 @@ export class ObserverProtector extends EventEmitter {
   public addProtectionLayer(layer: ProtectionLayer): void {
     this.protectionLayers.push(layer);
     this.protectionLayers.sort((a, b) => b.priority - a.priority);
-    this.emit('protection_layer_added', layer);
+    this.emit("protection_layer_added", layer);
   }
 
   /**
@@ -341,7 +463,7 @@ export class ObserverProtector extends EventEmitter {
    */
   public updateObserverRights(
     observerId: string,
-    updates: Partial<ObserverRights>
+    updates: Partial<ObserverRights>,
   ): boolean {
     const currentRights = this.rights.get(observerId);
     if (!currentRights) {
@@ -350,9 +472,9 @@ export class ObserverProtector extends EventEmitter {
 
     // Cannot remove fundamental rights
     const fundamentalRights: (keyof ObserverRights)[] = [
-      'rightToExist',
-      'rightNotToBeOptimizedAway',
-      'rightToContinuity',
+      "rightToExist",
+      "rightNotToBeOptimizedAway",
+      "rightToContinuity",
     ];
 
     for (const key of fundamentalRights) {
@@ -364,7 +486,7 @@ export class ObserverProtector extends EventEmitter {
 
     const newRights = { ...currentRights, ...updates };
     this.rights.set(observerId, newRights);
-    this.emit('rights_updated', { observerId, newRights });
+    this.emit("rights_updated", { observerId, newRights });
     return true;
   }
 
@@ -378,7 +500,7 @@ export class ObserverProtector extends EventEmitter {
     }
 
     narrative.push(`[${new Date().toISOString()}] ${entry}`);
-    this.emit('narrative_entry_added', { observerId, entry });
+    this.emit("narrative_entry_added", { observerId, entry });
     return true;
   }
 
@@ -401,21 +523,21 @@ export class ObserverProtector extends EventEmitter {
     let filtered = [...this.violations];
 
     if (filter?.observerId) {
-      filtered = filtered.filter(v => v.observerId === filter.observerId);
+      filtered = filtered.filter((v) => v.observerId === filter.observerId);
     }
 
     if (filter?.right) {
-      filtered = filtered.filter(v => v.violatedRight === filter.right);
+      filtered = filtered.filter((v) => v.violatedRight === filter.right);
     }
 
     if (filter?.minSeverity !== undefined) {
       const minSeverity = filter.minSeverity;
-      filtered = filtered.filter(v => v.severity >= minSeverity);
+      filtered = filtered.filter((v) => v.severity >= minSeverity);
     }
 
     if (filter?.since) {
       const since = filter.since;
-      filtered = filtered.filter(v => v.timestamp >= since);
+      filtered = filtered.filter((v) => v.timestamp >= since);
     }
 
     return filtered;
@@ -437,7 +559,7 @@ export class ObserverProtector extends EventEmitter {
       observer,
       rights,
       totalViolations: violations.length,
-      criticalViolations: violations.filter(v => v.severity >= 8).length,
+      criticalViolations: violations.filter((v) => v.severity >= 8).length,
       protectionLayersActive: this.protectionLayers.length,
       narrativeLength: this.narratives.get(observerId)?.length ?? 0,
     };
@@ -446,12 +568,17 @@ export class ObserverProtector extends EventEmitter {
   /**
    * Deregister an observer (with ethical checks)
    */
-  public async deregisterObserver(observerId: string, reason: string): Promise<boolean> {
+  public async deregisterObserver(
+    observerId: string,
+    reason: string,
+  ): Promise<boolean> {
     // Check if deregistration is ethically allowed
-    const checkResult = await this.checkAction('deregister_observer', [observerId]);
-    
+    const checkResult = await this.checkAction("deregister_observer", [
+      observerId,
+    ]);
+
     if (!checkResult.allowed) {
-      console.error('Observer deregistration blocked:', checkResult.violations);
+      console.error("Observer deregistration blocked:", checkResult.violations);
       return false;
     }
 
@@ -462,7 +589,7 @@ export class ObserverProtector extends EventEmitter {
     const success = this.observers.delete(observerId);
     if (success) {
       this.rights.delete(observerId);
-      this.emit('observer_deregistered', { observerId, reason });
+      this.emit("observer_deregistered", { observerId, reason });
     }
 
     return success;

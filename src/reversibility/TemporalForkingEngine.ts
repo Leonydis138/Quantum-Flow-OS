@@ -1,20 +1,20 @@
 /**
  * Temporal Multiverse Sandbox & Forking Engine
- * 
+ *
  * Implements "Temporal Forking" (sandboxed counterfactual timelines) to safely
  * simulate the future cascading ethical consequences of actions before committing
  * them to the primary ledger and state history.
  */
 
-import { v4 as uuidv4 } from 'uuid';
-import { Action, EthicalConstraint } from '../core/SelfConstrainingEngine';
+import { v4 as uuidv4 } from "uuid";
+import { Action, EthicalConstraint } from "../core/SelfConstrainingEngine";
 
 export interface SandboxTimeline {
   id: string;
   parentId: string | null;
   name: string;
   createdAt: Date;
-  status: 'active' | 'pruned' | 'merged';
+  status: "active" | "pruned" | "merged";
   simulatedActions: Action[];
   simulatedViolationsCount: number;
 }
@@ -32,15 +32,15 @@ export class TemporalForkingEngine {
 
   constructor() {
     this.timelines = new Map();
-    this.primaryTimelineId = 'timeline-prime';
+    this.primaryTimelineId = "timeline-prime";
 
     // Initialize the primary live timeline
     this.timelines.set(this.primaryTimelineId, {
       id: this.primaryTimelineId,
       parentId: null,
-      name: 'Prime Timeline (Real World)',
+      name: "Prime Timeline (Real World)",
       createdAt: new Date(),
-      status: 'active',
+      status: "active",
       simulatedActions: [],
       simulatedViolationsCount: 0,
     });
@@ -61,7 +61,7 @@ export class TemporalForkingEngine {
       parentId: parentId,
       name: `${parent.name} -> ${name} (Forked)`,
       createdAt: new Date(),
-      status: 'active',
+      status: "active",
       simulatedActions: [...parent.simulatedActions],
       simulatedViolationsCount: parent.simulatedViolationsCount,
     };
@@ -76,15 +76,17 @@ export class TemporalForkingEngine {
   public simulateAction(
     timelineId: string,
     action: Action,
-    constraints: EthicalConstraint[]
+    constraints: EthicalConstraint[],
   ): ForkEvaluationResult {
     const timeline = this.timelines.get(timelineId);
     if (!timeline) {
       throw new Error(`Target timeline ${timelineId} does not exist.`);
     }
 
-    if (timeline.status !== 'active') {
-      throw new Error(`Cannot simulate actions inside a ${timeline.status} timeline.`);
+    if (timeline.status !== "active") {
+      throw new Error(
+        `Cannot simulate actions inside a ${timeline.status} timeline.`,
+      );
     }
 
     const violationsDetected: string[] = [];
@@ -98,8 +100,10 @@ export class TemporalForkingEngine {
           violationsDetected.push(constraint.description);
           frictionPoints += constraint.severity;
         }
-      } catch (error) {
-        violationsDetected.push(`Faulty constraint validation on: ${constraint.type}`);
+      } catch {
+        violationsDetected.push(
+          `Faulty constraint validation on: ${constraint.type}`,
+        );
         frictionPoints += 5; // mid-severity penalty for code instability
       }
     }
@@ -114,15 +118,19 @@ export class TemporalForkingEngine {
 
     // Determine viability
     const frictionMaxPossible = 30; // arbitrary normalization scaling
-    const ethicalFrictionIndex = Math.min(1.0, frictionPoints / frictionMaxPossible);
-    const viable = violationsDetected.length === 0 && ethicalFrictionIndex < 0.6;
+    const ethicalFrictionIndex = Math.min(
+      1.0,
+      frictionPoints / frictionMaxPossible,
+    );
+    const viable =
+      violationsDetected.length === 0 && ethicalFrictionIndex < 0.6;
 
     // Append to timeline logs
     timeline.simulatedActions.push(action);
     timeline.simulatedViolationsCount += violationsDetected.length;
 
     if (!viable) {
-      timeline.status = 'pruned'; // timeline prunes on severe/unsafe violations
+      timeline.status = "pruned"; // timeline prunes on severe/unsafe violations
     }
 
     return {
@@ -142,8 +150,10 @@ export class TemporalForkingEngine {
       throw new Error(`Fork timeline ${forkId} does not exist.`);
     }
 
-    if (fork.status !== 'active') {
-      throw new Error(`Cannot merge a timeline with status '${fork.status}'. Only active timelines are mergeable.`);
+    if (fork.status !== "active") {
+      throw new Error(
+        `Cannot merge a timeline with status '${fork.status}'. Only active timelines are mergeable.`,
+      );
     }
 
     const parentId = fork.parentId;
@@ -157,10 +167,13 @@ export class TemporalForkingEngine {
     }
 
     // Merge simulated elements
-    parent.simulatedActions = [...parent.simulatedActions, ...fork.simulatedActions];
+    parent.simulatedActions = [
+      ...parent.simulatedActions,
+      ...fork.simulatedActions,
+    ];
     parent.simulatedViolationsCount += fork.simulatedViolationsCount;
 
-    fork.status = 'merged';
+    fork.status = "merged";
     return parentId;
   }
 
@@ -176,6 +189,6 @@ export class TemporalForkingEngine {
    * Get all timelines in the multiverse registry
    */
   public getAllTimelines(): SandboxTimeline[] {
-    return Array.from(this.timelines.values()).map(t => ({ ...t }));
+    return Array.from(this.timelines.values()).map((t) => ({ ...t }));
   }
 }

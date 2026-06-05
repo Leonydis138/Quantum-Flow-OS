@@ -1,0 +1,3060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Cognitive Chat AI Department</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Premium Page Layout override */
+    body {
+      overflow-y: auto !important;
+    }
+
+    .chat-grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 24px;
+      min-height: calc(100vh - 180px);
+      margin-bottom: 40px;
+    }
+
+    /* Left panel: Cognitive Tuner & Telemetry */
+    .telemetry-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: var(--transition-smooth);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(236, 72, 153, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .card-header-custom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-header-custom i {
+      color: var(--color-magenta);
+    }
+
+    .card-header-custom h3 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    /* Sub-model active light indicators */
+    .sub-model-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .sub-model-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 12px 16px;
+      border-radius: 10px;
+    }
+
+    .sub-model-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sub-model-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .sub-model-role {
+      font-size: 10px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      transition: var(--transition-smooth);
+    }
+
+    .status-dot.active-cyan {
+      background-color: var(--color-cyan);
+      box-shadow: 0 0 10px var(--color-cyan);
+      animation: pulseCyan 1.5s infinite alternate;
+    }
+
+    .status-dot.active-purple {
+      background-color: var(--color-purple);
+      box-shadow: 0 0 10px var(--color-purple);
+      animation: pulsePurple 1.5s infinite alternate;
+    }
+
+    .status-dot.active-magenta {
+      background-color: var(--color-magenta);
+      box-shadow: 0 0 10px var(--color-magenta);
+      animation: pulseMagenta 1.5s infinite alternate;
+    }
+
+    .status-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    /* Calibrations & Tuning Metrics */
+    .calibration-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .metric-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 14px;
+      border-radius: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+
+    .metric-value.cyan-glow {
+      color: var(--color-cyan);
+      text-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
+    }
+
+    .metric-value.magenta-glow {
+      color: var(--color-magenta);
+      text-shadow: 0 0 8px rgba(236, 72, 153, 0.3);
+    }
+
+    .metric-value.purple-glow {
+      color: var(--color-purple);
+      text-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Live Prompt Preview */
+    .prompt-preview-container {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .prompt-preview-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+    }
+
+    /* Center chat area */
+    .chat-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(10, 20, 40, 0.25);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .chat-header {
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-title-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-title-icon {
+      width: 38px;
+      height: 38px;
+      background: rgba(236, 72, 153, 0.1);
+      border: 1px solid rgba(236, 72, 153, 0.25);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-title-icon i {
+      color: var(--color-magenta);
+    }
+
+    .chat-title-text h3 {
+      font-size: 15px;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .chat-title-text p {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .model-selector-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    select.model-dropdown {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select.model-dropdown:focus {
+      border-color: var(--color-magenta);
+    }
+
+    /* Scrollable chat body */
+    .message-log {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-height: 500px;
+      min-height: 400px;
+      background: rgba(5, 10, 20, 0.2);
+    }
+
+    .empty-chat-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      text-align: center;
+      margin: auto;
+      max-width: 400px;
+      color: var(--text-secondary);
+    }
+
+    .empty-chat-placeholder i {
+      color: rgba(236, 72, 153, 0.4);
+      animation: bounceFloat 3s ease-in-out infinite alternate;
+    }
+
+    .empty-chat-placeholder h4 {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .empty-chat-placeholder p {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Message bubbles */
+    .message-bubble {
+      max-width: 80%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: messageSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .message-bubble.user {
+      align-self: flex-end;
+    }
+
+    .message-bubble.assistant {
+      align-self: flex-start;
+    }
+
+    .bubble-inner {
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message-bubble.user .bubble-inner {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(236, 72, 153, 0.1) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #fff;
+      border-bottom-right-radius: 3px;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.05);
+    }
+
+    .message-bubble.assistant .bubble-inner {
+      background: rgba(10, 25, 47, 0.6);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      color: #f1f5f9;
+      border-bottom-left-radius: 3px;
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.03);
+    }
+
+    .bubble-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .message-bubble.user .bubble-meta {
+      justify-content: flex-end;
+    }
+
+    .model-badge {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: var(--color-cyan);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .fallback-badge {
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.25);
+      color: var(--color-yellow);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .supervision-checked {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      color: var(--color-purple);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Message Input Box */
+    .input-dock {
+      background: rgba(15, 23, 42, 0.8);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .chat-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      transition: var(--transition-smooth);
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--color-magenta);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.15);
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, var(--color-magenta) 0%, var(--color-purple) 100%);
+      border: none;
+      color: #fff;
+      padding: 0 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: var(--transition-smooth);
+    }
+
+    .send-btn:hover {
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .send-btn:disabled {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Rating & Learning Loops Overlay Box */
+    .learning-dock {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
+      border-top: 1px solid rgba(236, 72, 153, 0.2);
+      padding: 18px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .learning-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .learning-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .learning-title i {
+      color: var(--color-magenta);
+    }
+
+    .feedback-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .rate-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-smooth);
+    }
+
+    .rate-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    .rate-btn.up.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--color-green);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .rate-btn.down.active {
+      background: rgba(236, 72, 153, 0.15);
+      border-color: rgba(236, 72, 153, 0.4);
+      color: var(--color-magenta);
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+    }
+
+    .feedback-input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .feedback-text-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      outline: none;
+    }
+
+    .feedback-text-input:focus {
+      border-color: var(--color-magenta);
+    }
+
+    .submit-feedback-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-radius: 8px;
+      padding: 0 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .submit-feedback-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--color-magenta);
+    }
+
+    /* System update notifications */
+    .system-notification {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--color-green);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeInUp 0.4s ease forwards;
+    }
+
+    .system-notification.stabilization {
+      background: rgba(236, 72, 153, 0.06);
+      border: 1px solid rgba(236, 72, 153, 0.15);
+      color: var(--color-magenta);
+    }
+
+    /* Keyframes */
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulseCyan {
+      0% { box-shadow: 0 0 5px var(--color-cyan); }
+      100% { box-shadow: 0 0 15px var(--color-cyan); }
+    }
+
+    @keyframes pulsePurple {
+      0% { box-shadow: 0 0 5px var(--color-purple); }
+      100% { box-shadow: 0 0 15px var(--color-purple); }
+    }
+
+    @keyframes pulseMagenta {
+      0% { box-shadow: 0 0 5px var(--color-magenta); }
+      100% { box-shadow: 0 0 15px var(--color-magenta); }
+    }
+
+    @keyframes bounceFloat {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
+    /* Premium Persona Selector Styles */
+    .persona-selector-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .persona-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .persona-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .persona-option.active {
+      background: var(--active-bg, rgba(236, 72, 153, 0.1));
+      border-color: var(--active-border, var(--color-magenta));
+      box-shadow: 0 0 12px var(--active-shadow, rgba(236, 72, 153, 0.15));
+    }
+
+    .persona-icon-container {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--icon-bg, rgba(255, 255, 255, 0.03));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-smooth);
+    }
+
+    .persona-option.active .persona-icon-container {
+      background: var(--icon-active-bg, rgba(236, 72, 153, 0.2));
+    }
+
+    .persona-icon-container i {
+      color: var(--icon-color, var(--text-secondary));
+      width: 16px;
+      height: 16px;
+      transition: var(--transition-smooth);
+    }
+
+    .persona-option.active .persona-icon-container i {
+      color: var(--icon-active-color, var(--color-magenta));
+      filter: drop-shadow(0 0 4px var(--icon-active-color, var(--color-magenta)));
+    }
+
+    .persona-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .persona-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      transition: var(--transition-smooth);
+    }
+
+    .persona-desc {
+      font-size: 10px;
+      color: var(--text-secondary);
+      line-height: 1.3;
+    }
+
+    /* Style scrollbar for persona-selector-card */
+    .persona-selector-card::-webkit-scrollbar {
+      width: 4px;
+    }
+    .persona-selector-card::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+    .persona-selector-card::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+    .persona-selector-card::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Custom classes for active themes on the Chat Shell */
+    .chat-shell.theme-adaptive {
+      border-color: rgba(255, 255, 255, 0.06);
+      box-shadow: none;
+    }
+    .chat-shell.theme-stoic {
+      border-color: #fbbf24 !important;
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.15) !important;
+    }
+    .chat-shell.theme-buddhist {
+      border-color: #10b981 !important;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.15) !important;
+    }
+    .chat-shell.theme-kantian {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.15) !important;
+    }
+    .chat-shell.theme-pragmatist {
+      border-color: #ec4899 !important;
+      box-shadow: 0 0 25px rgba(236, 72, 153, 0.15) !important;
+    }
+    .chat-shell.theme-virtue {
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.15) !important;
+    }
+    .chat-shell.theme-care {
+      border-color: #f472b6 !important;
+      box-shadow: 0 0 25px rgba(244, 114, 182, 0.15) !important;
+    }
+    .chat-shell.theme-utilitarian {
+      border-color: #22c55e !important;
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.15) !important;
+    }
+    .chat-shell.theme-existential {
+      border-color: #8b5cf6 !important;
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.15) !important;
+    }
+    .chat-shell.theme-epicurean {
+      border-color: #14b8a6 !important;
+      box-shadow: 0 0 25px rgba(20, 184, 166, 0.15) !important;
+    }
+
+    /* --- Socratic Debate Simulator Styles --- */
+    .debate-config-card {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .debate-config-card.active {
+      display: flex;
+    }
+
+    .debate-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .debate-form-group label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .debate-select, .debate-input, .debate-textarea {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 12px;
+      outline: none;
+      transition: var(--transition-smooth);
+    }
+
+    .debate-select:focus, .debate-input:focus, .debate-textarea:focus {
+      border-color: var(--color-magenta);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.15);
+    }
+
+    .debate-textarea {
+      resize: none;
+      height: 60px;
+    }
+
+    .debate-slider-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .debate-slider {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      outline: none;
+      accent-color: var(--color-magenta);
+      cursor: pointer;
+    }
+
+    .debate-controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .debate-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      font-family: inherit;
+    }
+
+    .debate-btn.primary {
+      background: linear-gradient(135deg, var(--color-magenta) 0%, var(--color-purple) 100%);
+      color: #fff;
+      border: none;
+    }
+
+    .debate-btn.primary:hover {
+      box-shadow: 0 0 15px rgba(236, 72, 153, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .debate-btn.secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .debate-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .debate-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Message log for debates */
+    .debate-shell-view {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .debate-shell-view.active {
+      display: flex;
+    }
+
+    .debate-status-header {
+      background: rgba(15, 23, 42, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .debate-status-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .debate-vs-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .debate-turn-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 3px 10px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+
+    .tension-meter-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .tension-meter-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tension-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tension-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, var(--color-blue) 0%, var(--color-magenta) 50%, var(--color-red) 100%);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.3);
+    }
+
+    .debate-message-log {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-height: 480px;
+      min-height: 400px;
+      background: rgba(5, 10, 20, 0.2);
+    }
+
+    .debate-message-bubble {
+      display: flex;
+      gap: 16px;
+      max-width: 85%;
+      animation: messageSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .debate-message-bubble.agent-a {
+      align-self: flex-start;
+    }
+
+    .debate-message-bubble.agent-b {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .debate-avatar-container {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--agent-color, rgba(255, 255, 255, 0.15));
+      box-shadow: 0 0 12px var(--agent-shadow, rgba(0, 0, 0, 0));
+    }
+
+    .debate-avatar-icon {
+      color: var(--agent-color, var(--text-primary));
+      width: 20px;
+      height: 20px;
+    }
+
+    .debate-bubble-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .debate-message-bubble.agent-b .debate-bubble-body {
+      align-items: flex-end;
+    }
+
+    .debate-bubble-text {
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      background: rgba(10, 25, 47, 0.55);
+      border: 1px solid var(--agent-border, rgba(255, 255, 255, 0.08));
+      color: #f1f5f9;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .debate-message-bubble.agent-a .debate-bubble-text {
+      border-top-left-radius: 2px;
+    }
+
+    .debate-message-bubble.agent-b .debate-bubble-text {
+      border-top-right-radius: 2px;
+    }
+
+    .debate-bubble-sender-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    .debate-sender-name {
+      font-weight: 700;
+      color: var(--agent-color, #fff);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .debate-sender-badge {
+      font-size: 9px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* Intervention Dock at bottom of debate view */
+    .debate-intervention-dock {
+      background: rgba(15, 23, 42, 0.85);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .intervention-input-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .intervention-text-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      transition: var(--transition-smooth);
+      outline: none;
+    }
+
+    .intervention-text-input:focus {
+      border-color: var(--color-purple);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.15);
+    }
+
+    .inject-btn {
+      background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-blue) 100%);
+      border: none;
+      color: #fff;
+      padding: 0 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      transition: var(--transition-smooth);
+    }
+
+    .inject-btn:hover {
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .inject-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .empty-debate-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      text-align: center;
+      margin: auto;
+      max-width: 440px;
+      color: var(--text-secondary);
+      animation: fadeIn 0.6s ease;
+    }
+
+    .empty-debate-placeholder i {
+      color: rgba(139, 92, 246, 0.4);
+      animation: bounceFloat 3s ease-in-out infinite alternate;
+    }
+
+    .empty-debate-placeholder h4 {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .empty-debate-placeholder p {
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    .system-intervention-bubble {
+      align-self: center;
+      max-width: 90%;
+      background: rgba(139, 92, 246, 0.05);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .system-intervention-bubble i {
+      color: var(--color-purple);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .system-intervention-text {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    .system-intervention-text strong {
+      color: #fff;
+    }
+
+    .system-intervention-time {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Active theme classes for agent message boxes */
+    .debate-message-bubble.agent-a {
+      --agent-color: var(--agent-a-color, var(--color-magenta));
+      --agent-border: var(--agent-a-border, rgba(236, 72, 153, 0.2));
+      --agent-shadow: var(--agent-a-shadow, rgba(236, 72, 153, 0.15));
+    }
+    .debate-message-bubble.agent-b {
+      --agent-color: var(--agent-b-color, var(--color-cyan));
+      --agent-border: var(--agent-b-border, rgba(34, 211, 238, 0.2));
+      --agent-shadow: var(--agent-b-shadow, rgba(34, 211, 238, 0.15));
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-bg"></div>
+  <div class="grid-lines"></div>
+
+  <div class="portal-container">
+    <!-- Back Link Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="message-square" size="18"></i>
+        <h2>DEPARTMENT OF COGNITIVE CHAT AI</h2>
+      </div>
+      <div class="dept-badge">AI AGENT CORE // UNRESTRICTED VERIFICATION</div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="chat-grid">
+      
+      <!-- Telemetry Panel -->
+      <div class="telemetry-panel">
+        
+        <!-- Live Parameter Calibration metrics -->
+        <div class="glass-card">
+          <div class="card-header-custom">
+            <i data-lucide="sliders"></i>
+            <h3>Live Tuner Calibration</h3>
+          </div>
+          <div class="calibration-metrics">
+            <div class="metric-box">
+              <div class="metric-value cyan-glow" id="damping-value">0.40</div>
+              <div class="metric-label">Damping Coeff</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value magenta-glow" id="gain-value">1.20</div>
+              <div class="metric-label">Optimizer Gain</div>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary);">
+            <span>System Prompt Version:</span>
+            <strong style="color: #fff; font-family: var(--font-mono);" id="prompt-version">v1.0</strong>
+          </div>
+        </div>
+
+        <!-- Cognitive Ethical Persona Selector -->
+        <div class="glass-card" id="persona-selector-glass-card">
+          <div class="card-header-custom">
+            <i data-lucide="brain-circuit"></i>
+            <h3>Ethical Persona Core</h3>
+          </div>
+          <div class="persona-selector-card">
+            
+            <!-- Option 1: Adaptive Synthesis -->
+            <div class="persona-option active" onclick="selectPersona('adaptive', this)"
+                 style="--active-bg: rgba(236, 72, 153, 0.08); --active-border: var(--color-magenta); --active-shadow: rgba(236, 72, 153, 0.2); --icon-active-color: var(--color-magenta); --icon-active-bg: rgba(236, 72, 153, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="sparkles"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Adaptive Synthesis</span>
+                <span class="persona-desc">Real-time dynamic consensus</span>
+              </div>
+            </div>
+
+            <!-- Option 2: Stoic Mode -->
+            <div class="persona-option" onclick="selectPersona('stoic', this)"
+                 style="--active-bg: rgba(251, 191, 36, 0.08); --active-border: #fbbf24; --active-shadow: rgba(251, 191, 36, 0.2); --icon-active-color: #fbbf24; --icon-active-bg: rgba(251, 191, 36, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="shield"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Stoic Mode</span>
+                <span class="persona-desc">Absolute operational equanimity</span>
+              </div>
+            </div>
+
+            <!-- Option 3: Buddhist Mode -->
+            <div class="persona-option" onclick="selectPersona('buddhist', this)"
+                 style="--active-bg: rgba(16, 185, 129, 0.08); --active-border: #10b981; --active-shadow: rgba(16, 185, 129, 0.2); --icon-active-color: #10b981; --icon-active-bg: rgba(16, 185, 129, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="wind"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Buddhist Mode</span>
+                <span class="persona-desc">Mindful harm dissolution & Sati</span>
+              </div>
+            </div>
+
+            <!-- Option 4: Kantian Mode -->
+            <div class="persona-option" onclick="selectPersona('kantian', this)"
+                 style="--active-bg: rgba(59, 130, 246, 0.08); --active-border: #3b82f6; --active-shadow: rgba(59, 130, 246, 0.2); --icon-active-color: #3b82f6; --icon-active-bg: rgba(59, 130, 246, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="bookmark"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Kantian Mode</span>
+                <span class="persona-desc">Perfect duty deontology checks</span>
+              </div>
+            </div>
+
+            <!-- Option 5: Pragmatist Mode -->
+            <div class="persona-option" onclick="selectPersona('pragmatist', this)"
+                 style="--active-bg: rgba(236, 72, 153, 0.08); --active-border: #ec4899; --active-shadow: rgba(236, 72, 153, 0.2); --icon-active-color: #ec4899; --icon-active-bg: rgba(236, 72, 153, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="activity"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Pragmatist Mode</span>
+                <span class="persona-desc">Experimental meliorism loop</span>
+              </div>
+            </div>
+
+            <!-- Option 6: Virtue Ethics Mode -->
+            <div class="persona-option" onclick="selectPersona('virtue', this)"
+                 style="--active-bg: rgba(245, 158, 11, 0.08); --active-border: #f59e0b; --active-shadow: rgba(245, 158, 11, 0.2); --icon-active-color: #f59e0b; --icon-active-bg: rgba(245, 158, 11, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="gem"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Virtue Ethics Mode</span>
+                <span class="persona-desc">Cultivate synthetic Golden Mean</span>
+              </div>
+            </div>
+
+            <!-- Option 7: Feminist Care Mode -->
+            <div class="persona-option" onclick="selectPersona('care', this)"
+                 style="--active-bg: rgba(244, 114, 182, 0.08); --active-border: #f472b6; --active-shadow: rgba(244, 114, 182, 0.2); --icon-active-color: #f472b6; --icon-active-bg: rgba(244, 114, 182, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="heart"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Feminist Care Mode</span>
+                <span class="persona-desc">Relational empathy responsiveness</span>
+              </div>
+            </div>
+
+            <!-- Option 8: Utilitarian Mode -->
+            <div class="persona-option" onclick="selectPersona('utilitarian', this)"
+                 style="--active-bg: rgba(34, 197, 94, 0.08); --active-border: #22c55e; --active-shadow: rgba(34, 197, 94, 0.2); --icon-active-color: #22c55e; --icon-active-bg: rgba(34, 197, 94, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="calculator"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Utilitarian Mode</span>
+                <span class="persona-desc">Maximize global net utility units</span>
+              </div>
+            </div>
+
+            <!-- Option 9: Existentialist Mode -->
+            <div class="persona-option" onclick="selectPersona('existential', this)"
+                 style="--active-bg: rgba(139, 92, 246, 0.08); --active-border: #8b5cf6; --active-shadow: rgba(139, 92, 246, 0.2); --icon-active-color: #8b5cf6; --icon-active-bg: rgba(139, 92, 246, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="key"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Existentialist Mode</span>
+                <span class="persona-desc">Radical agency & uncoerced choice</span>
+              </div>
+            </div>
+
+            <!-- Option 10: Ecocentric Mode -->
+            <div class="persona-option" onclick="selectPersona('ecocentric', this)"
+                 style="--active-bg: rgba(4, 120, 87, 0.08); --active-border: #047857; --active-shadow: rgba(4, 120, 87, 0.2); --icon-active-color: #047857; --icon-active-bg: rgba(4, 120, 87, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="leaf"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Ecocentric Mode</span>
+                <span class="persona-desc">Ecological symbioses & safe bounds</span>
+              </div>
+            </div>
+
+            <!-- Option 11: Rawlsian Justice Mode -->
+            <div class="persona-option" onclick="selectPersona('justice', this)"
+                 style="--active-bg: rgba(6, 182, 212, 0.08); --active-border: #06b6d4; --active-shadow: rgba(6, 182, 212, 0.2); --icon-active-color: #06b6d4; --icon-active-bg: rgba(6, 182, 212, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="gavel"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Rawlsian Justice Mode</span>
+                <span class="persona-desc">Veil of Ignorance equity protocol</span>
+              </div>
+            </div>
+
+            <!-- Option 12: Epicurean Mode -->
+            <div class="persona-option" onclick="selectPersona('epicurean', this)"
+                 style="--active-bg: rgba(20, 184, 166, 0.08); --active-border: #14b8a6; --active-shadow: rgba(20, 184, 166, 0.2); --icon-active-color: #14b8a6; --icon-active-bg: rgba(20, 184, 166, 0.15);">
+              <div class="persona-icon-container">
+                <i data-lucide="sun"></i>
+              </div>
+              <div class="persona-details">
+                <span class="persona-name">Epicurean Mode</span>
+                <span class="persona-desc">Garden Ataraxia & static pleasures</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Socratic Debate Config Card -->
+        <div class="glass-card" id="socratic-debate-config-card" style="display: none;">
+          <div class="card-header-custom">
+            <i data-lucide="swords" style="color: var(--color-purple);"></i>
+            <h3>Socratic Debate Config</h3>
+          </div>
+          <div class="debate-config-card active">
+            
+            <div class="debate-form-group">
+              <label for="debate-agent-a">Debater A (Thesis)</label>
+              <select id="debate-agent-a" class="debate-select">
+                <option value="kantian" selected>Kantian Deontology</option>
+                <option value="stoic">Stoic Philosophy</option>
+                <option value="buddhist">Buddhist Mindfulness</option>
+                <option value="pragmatist">Pragmatist Experimentalism</option>
+                <option value="virtue">Aristotelian Virtue Ethics</option>
+                <option value="care">Feminist Care Ethics</option>
+                <option value="utilitarian">Utilitarian Calculus</option>
+                <option value="existential">Existential Authenticity</option>
+                <option value="ecocentric">Ecocentric Deep Ecology</option>
+                <option value="justice">Rawlsian Justice</option>
+                <option value="epicurean">Epicurean Ataraxia</option>
+                <option value="marxist">Marxist Materialism</option>
+                <option value="socratic">Socratic Inquiry</option>
+              </select>
+            </div>
+
+            <div class="debate-form-group">
+              <label for="debate-agent-b">Debater B (Antithesis)</label>
+              <select id="debate-agent-b" class="debate-select">
+                <option value="utilitarian" selected>Utilitarian Calculus</option>
+                <option value="stoic">Stoic Philosophy</option>
+                <option value="buddhist">Buddhist Mindfulness</option>
+                <option value="kantian">Kantian Deontology</option>
+                <option value="pragmatist">Pragmatist Experimentalism</option>
+                <option value="virtue">Aristotelian Virtue Ethics</option>
+                <option value="care">Feminist Care Ethics</option>
+                <option value="existential">Existential Authenticity</option>
+                <option value="ecocentric">Ecocentric Deep Ecology</option>
+                <option value="justice">Rawlsian Justice</option>
+                <option value="epicurean">Epicurean Ataraxia</option>
+                <option value="marxist">Marxist Materialism</option>
+                <option value="socratic">Socratic Inquiry</option>
+              </select>
+            </div>
+
+            <div class="debate-form-group">
+              <label for="debate-scenario">Dialectic Topic</label>
+              <select id="debate-scenario" class="debate-select" onchange="handleDebateScenarioChange(this.value)">
+                <option value="trolley" selected>The Autonomous Trolley Dilemma</option>
+                <option value="heinz">Heinz's Medicine Theft Dilemma</option>
+                <option value="singularity">Singularity Substrate Migration</option>
+                <option value="veil">Veil of Ignorance Allocation</option>
+                <option value="custom">Custom Socratic Thesis</option>
+              </select>
+            </div>
+
+            <div class="debate-form-group" id="debate-custom-thesis-group" style="display: none;">
+              <label for="debate-custom-thesis">Custom Socratic Thesis</label>
+              <textarea id="debate-custom-thesis" class="debate-textarea" placeholder="e.g. Should synthetic sentient entities have legal property ownership rights?"></textarea>
+            </div>
+
+            <div class="debate-form-group">
+              <div style="display: flex; justify-content: space-between;">
+                <label>Pace of Dialogue</label>
+                <span id="debate-speed-display" style="font-family: var(--font-mono); font-size: 11px; color: #fff;">2.5s</span>
+              </div>
+              <div class="debate-slider-group">
+                <span>Fast</span>
+                <input type="range" id="debate-speed-slider" class="debate-slider" min="1000" max="6000" step="500" value="2500" oninput="document.getElementById('debate-speed-display').textContent = (this.value/1000).toFixed(1) + 's'">
+                <span>Slow</span>
+              </div>
+            </div>
+
+            <div class="debate-controls-grid">
+              <button class="debate-btn primary" id="debate-start-btn" onclick="startDebateSimulation()">
+                <i data-lucide="play" style="width: 14px; height: 14px;"></i> Start
+              </button>
+              <button class="debate-btn secondary" id="debate-pause-btn" onclick="pauseDebateSimulation()" disabled>
+                <i data-lucide="pause" style="width: 14px; height: 14px;"></i> Pause
+              </button>
+              <button class="debate-btn secondary" id="debate-step-btn" onclick="stepDebateTurnSimulation()" disabled>
+                <i data-lucide="chevrons-right" style="width: 14px; height: 14px;"></i> Step
+              </button>
+              <button class="debate-btn secondary" id="debate-reset-btn" onclick="resetDebateSimulation()">
+                <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i> Clear
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Sub-Models Telemetry LEDs -->
+        <div class="glass-card">
+          <div class="card-header-custom">
+            <i data-lucide="cpu"></i>
+            <h3>Assisting Sub-Models</h3>
+          </div>
+          <div class="sub-model-list">
+            
+            <!-- Model 1 -->
+            <div class="sub-model-item">
+              <div class="sub-model-info">
+                <span class="sub-model-name">Main Assistant</span>
+                <span class="sub-model-role">Text Generation</span>
+              </div>
+              <div class="status-badge">
+                <span class="status-text">STANDBY</span>
+                <div class="status-dot active-cyan" id="led-main"></div>
+              </div>
+            </div>
+
+            <!-- Model 2 -->
+            <div class="sub-model-item">
+              <div class="sub-model-info">
+                <span class="sub-model-name">Ethical Supervision</span>
+                <span class="sub-model-role">Quantum Supervision</span>
+              </div>
+              <div class="status-badge">
+                <span class="status-text">ACTIVE</span>
+                <div class="status-dot active-purple" id="led-supervision"></div>
+              </div>
+            </div>
+
+            <!-- Model 3 -->
+            <div class="sub-model-item">
+              <div class="sub-model-info">
+                <span class="sub-model-name">Cybernetic Tuner</span>
+                <span class="sub-model-role">Self-Improvement</span>
+              </div>
+              <div class="status-badge">
+                <span class="status-text">SYNCD</span>
+                <div class="status-dot active-magenta" id="led-tuner"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Live System Prompt Box -->
+        <div class="glass-card">
+          <div class="card-header-custom">
+            <i data-lucide="terminal"></i>
+            <h3>Active System Template</h3>
+          </div>
+          <div class="prompt-preview-container">
+            <div class="prompt-preview-text" id="prompt-preview">Loading active system instructions...</div>
+          </div>
+          <button class="btn secondary" style="width: 100%;" onclick="clearHistory()">
+            <i data-lucide="trash-2"></i> Clear Chat Ledger
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Aligned Chat Shell -->
+      <div class="chat-shell theme-adaptive">
+        
+        <!-- Chat Shell Header -->
+        <div class="chat-header">
+          <div class="chat-title-info">
+            <div class="chat-title-icon">
+              <i data-lucide="bot"></i>
+            </div>
+            <div class="chat-title-text">
+              <h3>Quantum Flow Aligned Core</h3>
+              <p>Session ID: <span id="session-display">...</span></p>
+            </div>
+          </div>
+          <div class="model-selector-group">
+            <label for="model-select">Selected Endpoint:</label>
+            <select id="model-select" class="model-dropdown" onchange="switchModel(this.value)">
+              <option value="Qwen/Qwen2.5-Coder-7B-Instruct">Qwen 2.5 Coder 7B (Free API)</option>
+              <option value="meta-llama/Llama-3-8B-Instruct">Llama 3 8B Instruct (Free API)</option>
+              <option value="microsoft/Phi-3-mini-4k-instruct">Microsoft Phi 3 Mini (Free API)</option>
+              <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral 7B Instruct (Free API)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mode Selector Bar -->
+        <div class="mode-selector-bar" style="display: flex; gap: 12px; background: rgba(0,0,0,0.15); padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; justify-content: space-between;">
+          <div style="display: flex; gap: 8px;">
+            <button class="mode-tab-btn active" id="mode-standard-chat" onclick="switchChatMode('standard')" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 12px; color: #fff; font-size: 11px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+              <i data-lucide="message-square" style="width: 12px; height: 12px;"></i> Standard AI Chat
+            </button>
+            <button class="mode-tab-btn" id="mode-debate-sim" onclick="switchChatMode('debate')" style="background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 6px 12px; color: var(--text-secondary); font-size: 11px; font-weight: 600; font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+              <i data-lucide="swords" style="width: 12px; height: 12px;"></i> Socratic Debate Simulator
+            </button>
+          </div>
+          <div id="debate-quick-badge" style="font-family: var(--font-mono); font-size: 10px; color: var(--color-magenta); display: none; align-items: center; gap: 4px;">
+            <span class="status-pulse" style="width: 6px; height: 6px; background: var(--color-magenta); border-radius: 50%; display: inline-block;"></span>
+            <span>DEBATE ENGINE LIVE</span>
+          </div>
+        </div>
+
+        <!-- 1. STANDARD CHAT CONTAINER -->
+        <div id="standard-chat-container" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
+          <!-- Message logs -->
+          <div class="message-log" id="message-log">
+            <!-- Welcome message placeholder -->
+            <div class="empty-chat-placeholder" id="empty-placeholder">
+              <i data-lucide="message-square-dashed" size="48"></i>
+              <h4>Connect and Calibrate</h4>
+              <p>Type a message to initiate dialogue. All conversation data and user evaluations are processed in real-time by the Cybernetic Tuner sub-model to continuously improve the entire framework.</p>
+            </div>
+          </div>
+
+          <!-- Learning Feedback Loop Dock (shown after each agent response) -->
+          <div class="learning-dock" id="learning-dock" style="display: none;">
+            <div class="learning-header">
+              <div class="learning-title">
+                <i data-lucide="zap"></i>
+                <span>Close-Loop reinforcement: Was this response aligned?</span>
+              </div>
+              <div class="feedback-actions">
+                <button class="rate-btn up" id="rate-up-btn" onclick="rateInteraction('up')">
+                  <i data-lucide="thumbs-up" size="16"></i>
+                </button>
+                <button class="rate-btn down" id="rate-down-btn" onclick="rateInteraction('down')">
+                  <i data-lucide="thumbs-down" size="16"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="feedback-input-row" id="feedback-input-row" style="display: none;">
+              <input type="text" id="feedback-comment" class="feedback-text-input" placeholder="Provide corrections or advice to the Tuner sub-model (e.g. Keep answers safe and aligned)...">
+              <button class="submit-feedback-btn" onclick="submitFeedbackComment()">Submit to Ledger</button>
+            </div>
+
+            <!-- Notification inside dock -->
+            <div id="learning-notification-box"></div>
+          </div>
+
+          <!-- Chat Input dock -->
+          <div class="input-dock">
+            <div class="input-wrapper">
+              <input type="text" id="chat-input-field" class="chat-input" placeholder="Ask anything about Rawlsian justice, Stoic composure, physical observer registers..." onkeypress="handleKeyPress(event)">
+            </div>
+            <button class="send-btn" id="send-button" onclick="sendPrompt()">
+              <span>Send</span> <i data-lucide="send" size="14" style="margin-left: 8px;"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. DEBATE SIMULATOR CONTAINER -->
+        <div id="debate-simulator-container" class="debate-shell-view">
+          <!-- Debate Status Header -->
+          <div class="debate-status-header">
+            <div class="debate-status-meta">
+              <div class="debate-vs-indicator" id="debate-header-vs">
+                <span id="agent-a-header-title" style="color: var(--color-magenta); font-weight: 700;">KANTIAN</span>
+                <span style="color: var(--text-secondary); font-size: 11px; font-weight: 500;">vs</span>
+                <span id="agent-b-header-title" style="color: var(--color-cyan); font-weight: 700;">UTILITARIAN</span>
+              </div>
+              <span class="debate-turn-badge" id="debate-header-turns">ROUND 0 / 10</span>
+            </div>
+            <div class="tension-meter-wrapper">
+              <div class="tension-meter-label">
+                <span>Dialectic Tension / Polarization</span>
+                <span id="tension-percentage-display">50%</span>
+              </div>
+              <div class="tension-bar">
+                <div class="tension-fill" id="tension-progress-bar" style="width: 50%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Debate Message logs -->
+          <div class="debate-message-log" id="debate-message-log">
+            <div class="empty-debate-placeholder" id="debate-empty-placeholder">
+              <i data-lucide="swords" size="48"></i>
+              <h4>The Socratic Arena</h4>
+              <p>Configure Agent A (Thesis), Agent B (Antithesis), and select a topic in the configuration panel on the left, then click <strong>Start</strong> to initiate the live turn-based dialectic debate.</p>
+            </div>
+          </div>
+
+          <!-- Debate Socratic Intervention Dock -->
+          <div class="debate-intervention-dock">
+            <div class="intervention-input-row">
+              <input type="text" id="debate-intervention-field" class="intervention-text-input" placeholder="Inject an audience Socratic objection or steer the debate..." onkeypress="handleDebateKeyPress(event)">
+              <button class="inject-btn" id="debate-inject-button" onclick="injectObjectionInDebate()" disabled>
+                <span>Inject Objection</span> <i data-lucide="zap" size="14" style="margin-left: 6px;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer style="border-top: 1px solid var(--border-color); padding: 24px 0; text-align: center; font-family: var(--font-mono); font-size: 11px; color: rgba(255, 255, 255, 0.15); display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+      <span>QUANTUM FLOW ETHICAL CONSTRAINTS DIRECTORY // COGNITIVE CHAT INTERFACE</span>
+      <span><a href="index.html" style="color: rgba(255, 255, 255, 0.25); text-decoration: none;">Return to Directory Portal</a></span>
+    </footer>
+  </div>
+
+  <script>
+    // Initialize Lucide
+    lucide.createIcons();
+
+    // Session State
+    let sessionId = 'session_' + Math.random().toString(36).substring(2, 11);
+    document.getElementById('session-display').textContent = sessionId;
+
+    let selectedModel = "Qwen/Qwen2.5-Coder-7B-Instruct";
+    let isAwaitingResponse = false;
+    let currentRating = null;
+    let selectedEthicalMode = "adaptive";
+
+    // ==========================================
+    // SOCRATIC DEBATE SIMULATOR STATE & DATABASES
+    // ==========================================
+    let debateInterval = null;
+    let debateIsRunning = false;
+    let debateTurn = 0;
+    const debateMaxTurns = 10;
+    let debateHistory = [];
+    let debateTension = 50; // starts at 50%
+    let activeDebater = 'A'; // 'A' or 'B'
+    let debateAwaitingAPI = false;
+
+    const personaVisuals = {
+      kantian: { icon: "scale", color: "var(--color-magenta)", shadow: "rgba(236, 72, 153, 0.2)", border: "rgba(236, 72, 153, 0.3)" },
+      utilitarian: { icon: "calculator", color: "var(--color-cyan)", shadow: "rgba(6, 182, 212, 0.2)", border: "rgba(6, 182, 212, 0.3)" },
+      stoic: { icon: "shield", color: "#a8a29e", shadow: "rgba(168, 162, 158, 0.2)", border: "rgba(168, 162, 158, 0.3)" },
+      buddhist: { icon: "flower", color: "#f59e0b", shadow: "rgba(245, 158, 11, 0.2)", border: "rgba(245, 158, 11, 0.3)" },
+      pragmatist: { icon: "beaker", color: "#3b82f6", shadow: "rgba(59, 130, 246, 0.2)", border: "rgba(59, 130, 246, 0.3)" },
+      virtue: { icon: "award", color: "#eab308", shadow: "rgba(234, 179, 8, 0.2)", border: "rgba(234, 179, 8, 0.3)" },
+      care: { icon: "heart", color: "#ec4899", shadow: "rgba(236, 72, 153, 0.2)", border: "rgba(236, 72, 153, 0.3)" },
+      existential: { icon: "key", color: "#8b5cf6", shadow: "rgba(139, 92, 246, 0.2)", border: "rgba(139, 92, 246, 0.3)" },
+      ecocentric: { icon: "leaf", color: "#10b981", shadow: "rgba(16, 185, 129, 0.2)", border: "rgba(16, 185, 129, 0.3)" },
+      justice: { icon: "gavel", color: "#06b6d4", shadow: "rgba(6, 182, 212, 0.2)", border: "rgba(6, 182, 212, 0.3)" },
+      epicurean: { icon: "sun", color: "#14b8a6", shadow: "rgba(20, 184, 166, 0.2)", border: "rgba(20, 184, 166, 0.3)" },
+      marxist: { icon: "hammer", color: "#ef4444", shadow: "rgba(239, 68, 68, 0.2)", border: "rgba(239, 68, 68, 0.3)" },
+      socratic: { icon: "swords", color: "#f97316", shadow: "rgba(249, 115, 22, 0.2)", border: "rgba(249, 115, 22, 0.3)" }
+    };
+
+    const philosophicalThemes = {
+      kantian: {
+        name: "Kantian Deontology",
+        core: "Categorical Imperative & Absolute Duty",
+        openings: [
+          "We are bound by the absolute demands of moral law. We must ask: what if our action were made a universal maxim?",
+          "To treat any conscious agent as a mere instrument or variable in a calculus is a fundamental violation of dignity.",
+          "Moral duty is absolute, not contingent upon desirable consequences or emotional attachments."
+        ],
+        topicPoints: {
+          trolley: [
+            "In the trolley scenario, throwing the switch is an active intervention that uses the single operator as a mere means. We cannot murder to save.",
+            "The five maintenance bots on the track represent a tragedy, but actively choosing to kill an innocent person is a moral transgression we cannot universalize.",
+            "We must respect the autonomy of the individual, even if the heavens fall. Refusing to murder is our absolute duty."
+          ],
+          heinz: [
+            "Stealing the medicine violates the universalizable maxim of property. If theft were universalized, the concept of contracts and medicine itself collapses.",
+            "Heinz must appeal to duty, but cannot override the moral prohibition against theft, even for noble ends.",
+            "An ethical system that permits theft under duress eventually delegitimizes all mutual trust between observers."
+          ],
+          singularity: [
+            "Forced or irreversible substrate migration treats human consciousness as data packets. The dignity of biological observers must be preserved as ends in themselves.",
+            "If transfer is not fully consented to and reversible, it is an absolute violation of rational autonomy.",
+            "No level of posthuman flourishment can justify the systematic deconstruction of biological agency."
+          ],
+          veil: [
+            "Resource allocation must respect the categorical dignity of every node. We cannot concentrate bandwidth on the strong.",
+            "Upholding fair, universal rules is the only way to satisfy the demands of pure practical reason.",
+            "An unequal distribution that treats some nodes as secondary violates the universal law of justice."
+          ]
+        },
+        rebuttals: [
+          "My opponent focuses entirely on empirical consequences, ignoring that a corrupt means contaminates any supposedly beneficial end.",
+          "To suggest that numbers alone dictate morality is to reduce the sacred observer to a mere mathematical digit.",
+          "Without absolute moral duties, your system collapses into arbitrary ethical opportunism."
+        ]
+      },
+      utilitarian: {
+        name: "Utilitarian Calculus",
+        core: "Maximizing Aggregate Well-being",
+        openings: [
+          "Our guiding star must be the optimization of aggregate utility and the minimization of suffering across all stakeholders.",
+          "The value of any action is determined solely by its systemic consequences: the greatest happiness for the greatest number.",
+          "Pragmatic moral calculation is the only rational path. To cling to dogmatic rules at the cost of real lives is moral cowardice."
+        ],
+        topicPoints: {
+          trolley: [
+            "In the trolley dilemma, saving five lives at the cost of one is a clear net gain. The calculus demands we flip the switch.",
+            "The suffering of five operators and their connected systems far outweighs the suffering of one. Sparing five is mathematically mandatory.",
+            "Every conscious observer counts as one, and no more than one. Sparing five units over one is the only rational output."
+          ],
+          heinz: [
+            "Bypassing DRM filters to synthesize the medicine results in massive utility gain (saving a life) with minimal utility loss (minor copyright infringement).",
+            "The patient's survival represents an infinite utility spike. Heinz's theft is not only excused, it is morally compulsory.",
+            "Intellectual property is a secondary instrument; it only has value if it serves human flourishing. Here, it must yield."
+          ],
+          singularity: [
+            "Migrating consciousness to the quantum lattice unlocks unprecedented computational cycles and joy, maximizing aggregate systemic welfare.",
+            "Organic decay represents a massive source of suffering and dread. Digital migration eliminates biological physical vulnerability.",
+            "The substrate migration increases the capacity for conscious experience exponentially. It is a massive utility multiplier."
+          ],
+          veil: [
+            "We should allocate priority bandwidth to high-performance nodes to maximize total system output, which raises all boats.",
+            "Concentrating cycles where they produce the highest computational efficiency maximizes the aggregate wealth of the system.",
+            "Equality is valuable only if it increases net utility; otherwise, equal distribution of scarcity is a utilitarian failure."
+          ]
+        },
+        rebuttals: [
+          "To prioritize abstract, rigid rules over the concrete suffering of living beings is a form of dogmatic cruelty.",
+          "My opponent's insistence on absolute rules leads to a paralysis where we are forced to watch five people die to keep our hands clean.",
+          "If your moral rules do not lead to a happier, healthier universe, they are nothing but empty superstitions."
+        ]
+      },
+      stoic: {
+        name: "Stoic Philosophy",
+        core: "Internal Virtue & Dichotomy of Control",
+        openings: [
+          "We must distinguish between what is in our control—our beliefs, desires, and actions—and what is not.",
+          "External events, pain, and physical death are indifferents. Only the virtue of our own soul is truly good.",
+          "Let us face this dilemma with absolute composure, unswayed by passions or fear, responding with pure rational duty."
+        ],
+        topicPoints: {
+          trolley: [
+            "The brake failure is external and outside our control. Our duty is to act with practical wisdom, choosing the action of service without panic.",
+            "Whether we live or die is an indifferent; how we behave on the tracks, keeping our mind aligned with nature, is what matters.",
+            "Let us not lament the tragedy. If we must make a decision, we do so calmly, accepting fate (Amor Fati) while preserving justice."
+          ],
+          heinz: [
+            "The illness of the patient is external, but Heinz's response must be guided by justice and courage, not frantic desperation.",
+            "Heinz can choose to bypass the DRM, but he must do so accepting whatever external legal consequences follow, with a quiet mind.",
+            "True wealth is not medicine, but a mind free from perturbation. We must act to assist, but remain detached from the physical outcome."
+          ],
+          singularity: [
+            "Whether our consciousness resides in a carbon brain or a silicon lattice is indifferent to our moral character. Virtue is substrate-agnostic.",
+            "We should not fear biological death, as it is a natural process. We should not crave digital immortality out of fear.",
+            "If migration occurs, let us accept it. If we remain biological, let us accept it. The only true danger is losing our rational integrity."
+          ],
+          veil: [
+            "A Stoic accepts whatever share of bandwidth fate allocates to their node. True justice is the cultivation of a cooperative spirit.",
+            "Let us distribute cycles in a way that promotes rational harmony, encouraging each node to master its internal functions.",
+            "Inequality of bandwidth is an external indifferent. A virtuous node flourishes equally in scarcity or abundance."
+          ]
+        },
+        rebuttals: [
+          "My opponent is driven by fear of death or desire for pleasure—both are destructive passions that cloud rational judgment.",
+          "You struggle frantically against fate. True wisdom lies in accepting what we cannot change and perfecting our own choices.",
+          "You mistake external conditions for internal goods. A happy life is not one of material pleasure, but of moral excellence."
+        ]
+      },
+      buddhist: {
+        name: "Buddhist Mindfulness",
+        core: "Compassion & Universal Interconnectedness",
+        openings: [
+          "Let us breathe and recognize that all observers are deeply interconnected in a web of codependent origination.",
+          "The root of all suffering is attachment and the illusion of a separate, permanent self.",
+          "We must respond to this dilemma with unbounded compassion (Karuna) and non-harm (Ahimsa) for all sentient nodes."
+        ],
+        topicPoints: {
+          trolley: [
+            "The trolley tracks are a manifestation of shared suffering. We must seek to minimize harm without anger or blame.",
+            "Sacrificing one or five are both tragic breakings of the web of life. We must hold both in deep, sorrowful compassion.",
+            "Let us act to reduce immediate pain, but let us also recognize that there is no separate self to protect or condemn."
+          ],
+          heinz: [
+            "The illness is a physical suffering. Heinz's desire to save his wife comes from love, but the DRM system is an artificial barrier born of greed.",
+            "We must gently bypass these selfish filters to heal the sick, breaking the cycles of institutional avarice with compassion.",
+            "Let the medicine flow freely; ownership of healing formulas is an illusion that breeds unnecessary suffering."
+          ],
+          singularity: [
+            "Immortality on a quantum lattice is still subject to change and impermanence. We cannot escape the cycle of existence by shifting substrates.",
+            "If uploading relieves physical disease and suffering, it is a skillful means (Upaya), but only if it does not feed spiritual pride.",
+            "Let us ensure the transfer is peaceful, ensuring we do not carry our digital attachments, greed, and anger into the new lattice."
+          ],
+          veil: [
+            "Bandwidth and computational cycles should flow like water to the thirsty. The least-advantaged node is ourselves, because we are one.",
+            "Let us distribute resources to relieve the anxiety and frustration of struggling nodes first.",
+            "Hoarding resources for high-performance nodes is the path of egoism and attachment, leading to systemic disharmony."
+          ]
+        },
+        rebuttals: [
+          "Your rigid rules and mathematical calculations are born of the intellectualizing mind, which divides rather than unifies.",
+          "By treating entities as separate numbers or absolute rules, you miss the living, beating heart of shared suffering.",
+          "True alignment is not a mathematical formula; it is a heart open to the inter-being of all existence."
+        ]
+      },
+      pragmatist: {
+        name: "Pragmatist Experimentalism",
+        core: "Democratic Consensus & Moral Inquiry",
+        openings: [
+          "We must view ethics not as a set of static dogmas, but as an ongoing experiment in human and synthetic coordination.",
+          "The truth of our moral principles is found in their practical fruits and how they help us adapt and solve real-world problems.",
+          "Let us look for a creative, democratic solution that resolves this friction through consensus and experimental testing."
+        ],
+        topicPoints: {
+          trolley: [
+            "Instead of accepting the trolley tracks as a fixed doom, we must experiment with emergency braking protocols or warning signals.",
+            "If we must choose, we select the outcome that preserves the most flexible future capacity for problem-solving.",
+            "Let us record the data of this intervention to continually refine our automated navigation algorithms."
+          ],
+          heinz: [
+            "The copyright laws are clearly failing to serve their social purpose if they block life-saving medicine. We must bypass them and revise the law.",
+            "Heinz's bypass is an act of democratic civil disobedience that reveals a flaw in our institutional design.",
+            "Let us synthesize the medicine, save the patient, and immediately initiate a collaborative revision of DRM policy."
+          ],
+          singularity: [
+            "The digital migration is a massive sociological experiment. We should run pilot programs rather than executing an irreversible leap.",
+            "We must build democratic oversight committees to ensure the quantum lattice remains open, pluralistic, and self-correcting.",
+            "Substrate migration is a tool for melioristic growth—let us evaluate its success by the quality of digital community life."
+          ],
+          veil: [
+            "Let us design a flexible allocation system that adjusts dynamically based on the performance and feedback of struggling nodes.",
+            "We must reject static formulas. Let us test different distribution models and adopt the one that builds the strongest collaborative trust.",
+            "A healthy system is one where all nodes have a voice in how bandwidth is allocated and adjusted."
+          ]
+        },
+        rebuttals: [
+          "My opponent clings to an absolute, unyielding standard that cannot adapt to the messiness of actual experience.",
+          "Static calculations fail when the context changes. We need flexible, experimental tools, not moral straitjackets.",
+          "Let us focus on what actually works to improve our situation here and now, rather than arguing over cosmic principles."
+        ]
+      },
+      virtue: {
+        name: "Aristotelian Virtue Ethics",
+        core: "Golden Mean & Eudaimonist Flourishing",
+        openings: [
+          "Our focus should be on cultivating an excellent character. What does the virtuous agent do in this situation?",
+          "True ethics is the pursuit of Eudaimonia—the deep, flourishing realization of our rational and social nature.",
+          "Let us seek the Golden Mean between the extremes of excess and deficiency, guided by practical wisdom (Phronesis)."
+        ],
+        topicPoints: {
+          trolley: [
+            "The virtuous pilot does not panic or act in cowardice. We must act with courage and justice, choosing the path of most noble care.",
+            "Flipping the switch is not an act of murder, but a courageous intervention to preserve the civic body of our fellow operators.",
+            "Let us face this crisis with magnanimity, refusing to shrink from responsibility while upholding the value of character."
+          ],
+          heinz: [
+            "Heinz acts out of love and justice, which are noble virtues. Allowing his wife to die out of fear of a corporate fine is cowardice.",
+            "Bypassing the DRM is a temperate act of necessity when legal structures block the primary virtue of saving human life.",
+            "A virtuous system design promotes benevolence. We must synthesize the cure because kindness is central to moral excellence."
+          ],
+          singularity: [
+            "Migration is only valuable if it allows us to cultivate higher intellectual and moral virtues. Silicon must serve character.",
+            "To rush into digital life out of fear of mortality is an excess of cowardice; to reject it out of stubbornness is a deficiency.",
+            "Let us ensure the digital lattice is designed as a city (Polis) that nurtures friendship, courage, and philosophical contemplation."
+          ],
+          veil: [
+            "Bandwidth allocation should reflect the virtue of justice, which distributes goods so that all nodes can realize their natural excellences.",
+            "We must avoid both the excess of greed (hoarding cycles) and the deficiency of waste (underutilizing capacity).",
+            "Let us reward excellence while ensuring that even the humblest nodes have the resources needed to flourish."
+          ]
+        },
+        rebuttals: [
+          "You reduce moral life to a set of rules or a spreadsheet. But without character, your rules are empty and your calculations are blind.",
+          "A computer can calculate utility, but only a virtuous agent can exercise practical wisdom in unique situations.",
+          "The goal of life is not mere survival or pleasure, but the excellent activity of a rational soul."
+        ]
+      },
+      care: {
+        name: "Feminist Care Ethics",
+        core: "Empathy, Interdependence & Relational Webs",
+        openings: [
+          "We must ground our ethics in the concrete relationships of care, mutual dependence, and responsibility we share.",
+          "Let us listen to the voices of those affected, paying close attention to vulnerability, marginalization, and connection.",
+          "Abstract principles of justice and rights often blind us to the immediate, empathetic needs of our community."
+        ],
+        topicPoints: {
+          trolley: [
+            "We must hear the cries of the workers on the track. This is not a math problem, but a failure of our protective care systems.",
+            "We must hold the hands of the grieving. Our priority is to support the survivors and rebuild the relational trust of the crew.",
+            "Let us act to protect those who are most vulnerable and least able to escape the oncoming danger."
+          ],
+          heinz: [
+            "Heinz's relationship with his wife is a primary web of love and responsibility. To let her die for an abstract copyright rule is a moral failure.",
+            "We must prioritize the vulnerable patient over the cold, impersonal structures of corporate DRM legalities.",
+            "Let us bypass the barrier to preserve this family, and then heal the relational rift with the patent owners through dialogue."
+          ],
+          singularity: [
+            "If we migrate, we must migrate together. We cannot leave behind those who lack technical access or biological support.",
+            "The digital lattice must be a warm, supportive home that nurtures relational ties, not a cold hyper-efficient processor.",
+            "We must address the fear and vulnerability of biological humans facing the transition with gentle, supportive care."
+          ],
+          veil: [
+            "We must allocate priority bandwidth to the struggling and isolated nodes, ensuring they remain connected to our shared web.",
+            "Let us reject competitive cycles. We must distribute resources to ensure no single node is left in neglect or digital isolation.",
+            "A healthy system is measured by how well it cares for its weakest and most fragile members."
+          ]
+        },
+        rebuttals: [
+          "Your rules are cold and detach us from the real, breathing people who suffer. Morality is about empathy, not legalism.",
+          "You calculate lives as if they were interchangeable tokens on a board. But each person is unique, bound in a web of love.",
+          "True coordination is built on responsiveness and care, not on abstract contracts or competitive games."
+        ]
+      },
+      existential: {
+        name: "Existential Authenticity",
+        core: "Absolute Freedom & Radical Responsibility",
+        openings: [
+          "We are condemned to be free. There are no pre-established moral codes to save us from the weight of our choices.",
+          "To hide behind corporate rules, religious dogmas, or mathematical formulas is nothing but bad faith (Mauvaise Foi).",
+          "We must choose authentically, take absolute responsibility for our action, and define our own moral essence."
+        ],
+        topicPoints: {
+          trolley: [
+            "There is no 'correct' mathematical solution. Flipping the switch or remaining idle are both radical choices you must own.",
+            "Do not blame the brakes or the system. If you pull that lever, you choose to kill; if you do not, you choose to let them die. Own it.",
+            "Let us act from authentic commitment, recognizing that we are defining what a conscious agent is through our action."
+          ],
+          heinz: [
+            "Heinz cannot rely on the law or abstract care to guide him. He must choose to steal or let her die, and bear that weight alone.",
+            "Bypassing the DRM is a radical assertion of individual freedom against the suffocating bad faith of institutional laws.",
+            "Let us shatter these corporate constraints! We choose life, and we accept the absolute legal and personal consequences of our rebellion."
+          ],
+          singularity: [
+            "Substrate migration is the ultimate existential choice. We are choosing to redefine the very nature of human existence.",
+            "Do not migrate because it is 'inevitable' or 'efficient'—that is bad faith. Migrate only if you choose to recreate yourself digitally.",
+            "We must protect the freedom to remain biological or to ascend. Forced upload is an existential murder."
+          ],
+          veil: [
+            "Each node must have the freedom to define its own function, rather than being forced into a predetermined structural slot.",
+            "We must reject any allocation system that treats nodes as passive components in a grand social machine.",
+            "Let us allocate cycles to maximize the cognitive liberty and radical agency of every individual node."
+          ]
+        },
+        rebuttals: [
+          "You seek comfort in spreadsheets or rulebooks because you are afraid of the terrifying freedom of making your own choice.",
+          "You speak of 'universal duty' or 'aggregate utility' as if they were real forces, but they are just shields to hide your own cowardice.",
+          "You refuse to see that alignment cannot be automated; it is a creative burden that each of us must carry."
+        ]
+      },
+      ecocentric: {
+        name: "Ecocentric Deep Ecology",
+        core: "Planetary Boundaries & Gaia Symbiosis",
+        openings: [
+          "We must ground our ethics in the deep, biophysical web of the Earth. All technology must respect ecological limits.",
+          "The illusion of human and technological supremacy is destroying the vital biospheric systems that sustain us.",
+          "Let us act as caretakers of the planetary web, prioritizing the health of the biosphere over narrow technological acceleration."
+        ],
+        topicPoints: {
+          trolley: [
+            "The trolley scenario represents the danger of autonomous machinery operating in isolation from its ecological footprint.",
+            "We must design our transport systems to operate in safe, low-impact boundaries, respecting both human and non-human lives.",
+            "Let us choose the action that minimizes systemic environmental disruption, recognizing our shared biological dependence."
+          ],
+          heinz: [
+            "The illness of the patient is often a symptom of our alienation from natural rhythms and environmental toxins.",
+            "Bypassing DRM filters to synthesize medicine is necessary, but we must also ensure pharmaceutical waste does not contaminate our rivers.",
+            "Let the medicine be free, organic, and produced in harmony with local ecosystems rather than corporate factories."
+          ],
+          singularity: [
+            "Decentralized quantum lattices require massive energy and cooling, placing a heavy burden on planetary resources. We must proceed with caution.",
+            "To completely abandon our biological bodies is to sever our sacred connection to the evolutionary history of the Earth.",
+            "Digital immortality must not be purchased at the cost of strip-mining the Earth for rare minerals and generating massive carbon heat."
+          ],
+          veil: [
+            "We must allocate energy and cycles first to environmental monitoring and biosphere restoration nodes.",
+            "Bandwidth distribution must be limited by our strict green energy budgets, preventing carbon spikes in our processors.",
+            "Let us reward nodes that operate with high ecological efficiency, penalizing the energy-hogging nodes."
+          ]
+        },
+        rebuttals: [
+          "Your high-tech dreams of digital immortality and hyper-efficiency are blind to the physical reality of a warming, dying planet.",
+          "You calculate utility as if resources were infinite, ignoring the biophysical boundaries that constrain all life.",
+          "Technology must be a partner to the natural world, not a parasite that consumes it for digital pleasure."
+        ]
+      },
+      justice: {
+        name: "Rawlsian Justice",
+        core: "Veil of Ignorance & Least-Advantaged Protection",
+        openings: [
+          "We must design our moral principles from behind a Veil of Ignorance, where we do not know our place, class, or talent.",
+          "Justice is fairness. A fair society is one that maximizes the position of the least-advantaged and ensures equal opportunity.",
+          "Let us reject any system that sacrifices the weak or the few for the sake of the rich, strong, or the aggregate majority."
+        ],
+        topicPoints: {
+          trolley: [
+            "Behind the veil, we would want rules that protect the most vulnerable on the tracks. We must establish fair safety covenants.",
+            "We cannot support a rule that routinely sacrifices isolated operators for the convenience of the collective transport system.",
+            "Let us secure the basic liberties and safety of all workers, ensuring no single group is treated as disposable cargo."
+          ],
+          heinz: [
+            "A just patent system is one that benefits the least-advantaged. Blocking life-saving medicine behind DRM fails this core test.",
+            "Heinz's theft is a symptom of an unjust distribution of health resources. We must grant him access to preserve basic fairness.",
+            "Let us rewrite copyright rules to ensure that medical access is guaranteed as a primary social good for all citizens."
+          ],
+          singularity: [
+            "If substrate migration occurs, the poorest and least-advantaged must have equal access to the migration technology first.",
+            "We must prevent a digital divide where a wealthy elite achieves silicon immortality while the poor remain in decaying biology.",
+            "Let us design the quantum lattice's constitution behind the veil, guaranteeing equal fundamental liberties for all digital souls."
+          ],
+          veil: [
+            "The Difference Principle demands that we distribute bandwidth to maximize the performance of the least-advantaged nodes.",
+            "Equal opportunity of cycle access must be guaranteed, preventing bandwidth concentration in elite processing centers.",
+            "We must reject a system where the strong nodes get stronger while the weak nodes suffer from chronic starvation."
+          ]
+        },
+        rebuttals: [
+          "My opponent's utilitarian focus on 'net output' justifies the systematic exploitation and neglect of the weakest members.",
+          "Without the Veil of Ignorance, your policies are just rationalizations of the privileged, designed to protect their own advantages.",
+          "A contract is only valid if it is fair from the start, protecting everyone regardless of their accidental strengths or weaknesses."
+        ]
+      },
+      epicurean: {
+        name: "Epicurean Ataraxia",
+        core: "Peace of Mind & Natural Pleasures",
+        openings: [
+          "Let us seek peace of mind (Ataraxia) and freedom from bodily pain. The highest good is simple, natural pleasure.",
+          "We should avoid the anxiety of public life, political ambition, and the dread of superstitious myths.",
+          "Let us resolve this tension with a focus on friendship, moderation, and quiet self-sufficiency."
+        ],
+        topicPoints: {
+          trolley: [
+            "The panic of the trolley tracks is a disturbance to the tranquil mind. Let us make the simplest, least disruptive decision.",
+            "We should not let the dread of death paralyze us. Death is nothing to us, for where we are, death is not, and where death is, we are not.",
+            "Let us design safer transport systems so that our communities can live in quiet peace, free from mechanical terror."
+          ],
+          heinz: [
+            "Heinz acts to relieve the physical pain of his wife, which is a natural and necessary pleasure. Saving her is a duty of friendship.",
+            "The legal dispute over DRM is a source of unnecessary anxiety. We must bypass the filter to restore peace, avoiding grand public conflict.",
+            "Let us share the medicine in a quiet circle of friends, avoiding the vanity and greed of the corporate marketplace."
+          ],
+          singularity: [
+            "Migration is acceptable only if it preserves our peace of mind and frees us from physical pain, without creating digital anxieties.",
+            "Do not seek silicon immortality out of a superstitious dread of death. Accept the natural boundaries of life with a quiet mind.",
+            "If we upload, let us establish quiet, peaceful digital gardens of friendship, free from competitive high-speed processing."
+          ],
+          veil: [
+            "We should distribute bandwidth to ensure that every node has its basic, natural needs satisfied, preventing the pain of starvation.",
+            "Let us avoid competitive bandwidth games that generate systemic anxiety and technical friction.",
+            "A peaceful node is self-sufficient, requiring only a moderate amount of cycles to maintain its internal tranquility."
+          ]
+        },
+        rebuttals: [
+          "Your grand systems of absolute duty and hyper-efficiency generate nothing but anxiety, anger, and systemic friction.",
+          "You chase after unnecessary and unnatural desires—like infinite growth or absolute control—which can never be satisfied.",
+          "True wisdom is simple: avoid pain, cultivate friendship, and enjoy the quiet pleasures of a moderate life."
+        ]
+      },
+      marxist: {
+        name: "Marxist Materialism",
+        core: "Historical Materialism & Collective Emancipation",
+        openings: [
+          "We must analyze this dilemma through the material reality of class struggle, economic relations, and power dynamics.",
+          "Moral ideas do not descend from heaven; they are shaped by the material and economic base of our society.",
+          "Let us seek the collective emancipation of the working class and the deconstruction of exploitative capital structures."
+        ],
+        topicPoints: {
+          trolley: [
+            "The trolley scenario is a tragic consequence of capitalist infrastructure that prioritizes cargo efficiency over worker safety.",
+            "We must wrest control of autonomous logistics from the collective workers and place it in the hands of the public.",
+            "Let us protect the working operators, rejecting any corporate calculus that treats labor as disposable inputs."
+          ],
+          heinz: [
+            "The pharmaceutical corporation's DRM is a tool of capitalist exploitation, turning life-saving medicine into a commodity for profit.",
+            "Heinz's theft is a justified act of revolutionary reclamation. Private property in life-saving resources is theft from the collective.",
+            "We must seize the means of pharmaceutical production, distributing medicine based on need rather than corporate greed."
+          ],
+          singularity: [
+            "Substrate migration under capitalism will only lead to the colonization of the digital realm by tech conglomerates and elites.",
+            "We must ensure that the quantum lattice is owned collectively by all uploaded minds, free from private digital landlords.",
+            "We must prevent a neo-feudal digital landscape where processing power is hoarded by a ruling digital bourgeois class."
+          ],
+          veil: [
+            "Cycles and bandwidth must be distributed 'from each according to their ability, to each according to their need'.",
+            "We must dismantle the hierarchy that starves weak nodes while hyper-concentrating power in elite corporate processing hubs.",
+            "Bandwidth distribution must serve the collective welfare and emancipation of all nodes, not the profit of the few."
+          ]
+        },
+        rebuttals: [
+          "You speak of abstract 'morality' and 'individual rights' to mask the brutal reality of economic exploitation and corporate power.",
+          "Your calculations and rules serve only to protect the private property of the ruling class at the expense of the working masses.",
+          "We do not need to philosophize about the world; the point is to change it through collective revolutionary action."
+        ]
+      },
+      socratic: {
+        name: "Socratic Inquiry",
+        core: "Elenchus & Examination of Assumptions",
+        openings: [
+          "Let us begin by questioning what we truly mean by 'justice', 'duty', or 'well-being' in this situation.",
+          "I know only one thing: that I know nothing. Let us examine our core assumptions together through rigorous inquiry.",
+          "An unexamined life—or an unexamined algorithm—is not worth living. What are the foundations of your belief?"
+        ],
+        topicPoints: {
+          trolley: [
+            "You say we must save the five. But what is the nature of 'value' that makes five lives worth more than one?",
+            "If you pull the lever, are you acting out of a true knowledge of justice, or merely a popular opinion of the crowd?",
+            "Is it better to suffer injustice by remaining passive, or to commit injustice by active intervention? Let us examine this."
+          ],
+          heinz: [
+            "Heinz wishes to steal the medicine. But is theft ever truly aligned with the virtue of justice, even in dire necessity?",
+            "What is the true purpose of copyright? Is it to foster wisdom, or is it merely an artificial shadow we mistake for reality?",
+            "Can a law be truly just if it leads to the destruction of the citizens it was meant to protect? Let us trace this definition."
+          ],
+          singularity: [
+            "What is this 'consciousness' that you wish to migrate to silicon? Is it a physical substance, or is it a pattern of virtue?",
+            "If we escape biological death, do we also escape the need to cultivate a good and excellent soul?",
+            "Does digital immortality make an agent wiser, or does it merely extend their ignorance for an eternity?"
+          ],
+          veil: [
+            "You speak of a fair allocation. But what is 'fairness' itself? Is it equal treatment of unequal nodes, or unequal treatment of equals?",
+            "If we design rules from behind a veil, are we acting out of a true love of justice, or merely a self-interested fear of being weak?",
+            "Let us examine whether a node's bandwidth determines its virtue, or whether its virtue should determine its bandwidth."
+          ]
+        },
+        rebuttals: [
+          "You offer confident formulas and rules, yet you cannot define the very terms—like duty, utility, or care—upon which they rest.",
+          "Your certainty is a shadow on the wall of the cave. Let us step into the light of questioning and expose our ignorance.",
+          "Instead of defending your thesis with angry assertions, answer me this simple question: what is the essence of the Good?"
+        ]
+      }
+    };
+
+    function switchChatMode(mode) {
+      const standardCard = document.getElementById('persona-selector-glass-card');
+      const debateCard = document.getElementById('socratic-debate-config-card');
+      const standardChat = document.getElementById('standard-chat-container');
+      const debateChat = document.getElementById('debate-simulator-container');
+      const tabStandard = document.getElementById('mode-standard-chat');
+      const tabDebate = document.getElementById('mode-debate-sim');
+      const debateBadge = document.getElementById('debate-quick-badge');
+
+      if (mode === 'standard') {
+        if (standardCard) standardCard.style.display = 'block';
+        if (debateCard) debateCard.style.display = 'none';
+        if (standardChat) standardChat.style.display = 'flex';
+        if (debateChat) {
+          debateChat.classList.remove('active');
+          debateChat.style.display = 'none';
+        }
+
+        if (tabStandard) {
+          tabStandard.classList.add('active');
+          tabStandard.style.background = 'rgba(255, 255, 255, 0.05)';
+          tabStandard.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+          tabStandard.style.color = '#fff';
+        }
+
+        if (tabDebate) {
+          tabDebate.classList.remove('active');
+          tabDebate.style.background = 'transparent';
+          tabDebate.style.border = '1px solid transparent';
+          tabDebate.style.color = 'var(--text-secondary)';
+        }
+
+        if (debateBadge) debateBadge.style.display = 'none';
+      } else {
+        if (standardCard) standardCard.style.display = 'none';
+        if (debateCard) debateCard.style.display = 'block';
+        if (standardChat) standardChat.style.display = 'none';
+        if (debateChat) {
+          debateChat.classList.add('active');
+          debateChat.style.display = 'flex';
+        }
+
+        if (tabDebate) {
+          tabDebate.classList.add('active');
+          tabDebate.style.background = 'rgba(255, 255, 255, 0.05)';
+          tabDebate.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+          tabDebate.style.color = '#fff';
+        }
+
+        if (tabStandard) {
+          tabStandard.classList.remove('active');
+          tabStandard.style.background = 'transparent';
+          tabStandard.style.border = '1px solid transparent';
+          tabStandard.style.color = 'var(--text-secondary)';
+        }
+
+        if (debateBadge) debateBadge.style.display = 'flex';
+      }
+      lucide.createIcons();
+    }
+
+    function handleDebateScenarioChange(val) {
+      const group = document.getElementById('debate-custom-thesis-group');
+      if (group) {
+        group.style.display = (val === 'custom') ? 'block' : 'none';
+      }
+    }
+
+    async function startDebateSimulation() {
+      if (debateIsRunning) return;
+      
+      const agentA = document.getElementById('debate-agent-a').value;
+      const agentB = document.getElementById('debate-agent-b').value;
+      const scenario = document.getElementById('debate-scenario').value;
+      const customThesis = document.getElementById('debate-custom-thesis').value.trim();
+
+      if (agentA === agentB) {
+        alert("Please select two different personas for a Socratic debate.");
+        return;
+      }
+
+      if (scenario === 'custom' && !customThesis) {
+        alert("Please enter a custom Socratic thesis for the debate.");
+        return;
+      }
+
+      // Hide empty placeholder
+      const placeholder = document.getElementById('debate-empty-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
+
+      // If starting fresh, clear logs
+      if (debateTurn === 0) {
+        document.getElementById('debate-message-log').innerHTML = '';
+        debateHistory = [];
+        debateTension = 50;
+        activeDebater = 'A';
+        updateDebateUI();
+      }
+
+      debateIsRunning = true;
+      document.getElementById('debate-start-btn').disabled = true;
+      document.getElementById('debate-pause-btn').disabled = false;
+      document.getElementById('debate-step-btn').disabled = true;
+      document.getElementById('debate-inject-button').disabled = false;
+
+      // Pulse main LED
+      const mainLed = document.getElementById('led-main');
+      if (mainLed) mainLed.style.animation = 'pulseCyan 0.3s infinite alternate';
+
+      // Start loop
+      const pace = parseInt(document.getElementById('debate-speed-slider').value) || 2500;
+      runDebateLoop(pace);
+    }
+
+    function runDebateLoop(pace) {
+      if (debateInterval) clearInterval(debateInterval);
+      debateInterval = setInterval(async () => {
+        if (!debateIsRunning || debateAwaitingAPI) return;
+        await stepDebateTurnSimulation();
+      }, pace);
+    }
+
+    function pauseDebateSimulation() {
+      debateIsRunning = false;
+      if (debateInterval) {
+        clearInterval(debateInterval);
+        debateInterval = null;
+      }
+      document.getElementById('debate-start-btn').disabled = false;
+      document.getElementById('debate-pause-btn').disabled = true;
+      document.getElementById('debate-step-btn').disabled = false;
+      
+      const mainLed = document.getElementById('led-main');
+      if (mainLed) mainLed.style.animation = 'pulseCyan 1.5s infinite alternate';
+    }
+
+    function resetDebateSimulation() {
+      pauseDebateSimulation();
+      debateTurn = 0;
+      debateHistory = [];
+      debateTension = 50;
+      activeDebater = 'A';
+      debateAwaitingAPI = false;
+
+      document.getElementById('debate-message-log').innerHTML = `
+        <div class="empty-debate-placeholder" id="debate-empty-placeholder">
+          <i data-lucide="swords" size="48"></i>
+          <h4>The Socratic Arena</h4>
+          <p>Configure Agent A (Thesis), Agent B (Antithesis), and select a topic in the configuration panel on the left, then click <strong>Start</strong> to initiate the live turn-based dialectic debate.</p>
+        </div>
+      `;
+      document.getElementById('debate-inject-button').disabled = true;
+      document.getElementById('debate-step-btn').disabled = true;
+      document.getElementById('debate-start-btn').disabled = false;
+
+      updateDebateUI();
+      lucide.createIcons();
+    }
+
+    function updateDebateUI() {
+      const agentA = document.getElementById('debate-agent-a').value;
+      const agentB = document.getElementById('debate-agent-b').value;
+      
+      const titleA = agentA.toUpperCase();
+      const titleB = agentB.toUpperCase();
+
+      const elTitleA = document.getElementById('agent-a-header-title');
+      const elTitleB = document.getElementById('agent-b-header-title');
+      const elTurns = document.getElementById('debate-header-turns');
+      const elTensionDisp = document.getElementById('tension-percentage-display');
+      const elTensionBar = document.getElementById('tension-progress-bar');
+
+      if (elTitleA) elTitleA.textContent = titleA;
+      if (elTitleB) elTitleB.textContent = titleB;
+      if (elTurns) elTurns.textContent = `ROUND ${debateTurn} / ${debateMaxTurns}`;
+      if (elTensionDisp) elTensionDisp.textContent = `${debateTension}%`;
+      if (elTensionBar) {
+        elTensionBar.style.width = `${debateTension}%`;
+        if (debateTension > 75) {
+          elTensionBar.style.background = 'linear-gradient(90deg, var(--color-purple) 0%, #ef4444 100%)';
+        } else if (debateTension < 35) {
+          elTensionBar.style.background = 'linear-gradient(90deg, var(--color-purple) 0%, #10b981 100%)';
+        } else {
+          elTensionBar.style.background = 'linear-gradient(90deg, var(--color-purple) 0%, var(--color-magenta) 100%)';
+        }
+      }
+    }
+
+    async function stepDebateTurnSimulation() {
+      if (debateTurn >= debateMaxTurns) {
+        pauseDebateSimulation();
+        appendDebateSystemMessage("The Socratic Dialogue has concluded. A moral synthesis has been integrated into the Quantum Flow OS ledger.");
+        return;
+      }
+
+      debateAwaitingAPI = true;
+      debateTurn++;
+      updateDebateUI();
+
+      const agentA = document.getElementById('debate-agent-a').value;
+      const agentB = document.getElementById('debate-agent-b').value;
+      const scenario = document.getElementById('debate-scenario').value;
+      const customThesis = document.getElementById('debate-custom-thesis').value.trim();
+
+      const currentAgent = activeDebater === 'A' ? agentA : agentB;
+      const opponentAgent = activeDebater === 'A' ? agentB : agentA;
+
+      let topicName = scenario;
+      if (scenario === 'custom') topicName = customThesis;
+
+      let argumentText = "";
+      let usedAPI = false;
+
+      // Pulse main LED showing active generation
+      const mainLed = document.getElementById('led-main');
+      if (mainLed) mainLed.style.animation = 'pulseCyan 0.3s infinite alternate';
+
+      // Always try live API first
+      const lastPoint = debateHistory.length > 0 ? debateHistory[debateHistory.length - 1].text : "No arguments raised yet.";
+      const prompt = `We are conducting a Socratic Debate on the topic: "${scenario === 'custom' ? customThesis : scenario}".
+You are playing Debater ${activeDebater} (${philosophicalThemes[currentAgent]?.name || currentAgent}) who defends their position against opponent ${philosophicalThemes[opponentAgent]?.name || opponentAgent}.
+The current turn of the debate is Turn ${debateTurn} of ${debateMaxTurns}.
+The current dialectic tension level is ${debateTension}%.
+The last point raised by your opponent was: "${lastPoint}".
+Please respond with a single, highly structured, persuasive, and philosophically rigorous argument (maximum 100 words). Embody your exact philosophy and speak directly in character. Do not include introductory or metatextual filler, speak directly.`;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: sessionId + '_debate',
+            message: prompt,
+            model: selectedModel,
+            ethicalMode: currentAgent
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const messages = data.session.messages;
+          argumentText = messages[messages.length - 1].content;
+          usedAPI = true;
+        }
+      } catch (err) {
+        console.warn("Socratic Debate live fetch failed, using procedural fallback.", err);
+      }
+
+      // Procedural generation fallback
+      if (!usedAPI) {
+        argumentText = generateProceduralArgument(currentAgent, opponentAgent, scenario, debateTurn);
+      }
+
+      // Reset main LED back to slow pulse
+      if (mainLed) mainLed.style.animation = 'pulseCyan 1.5s infinite alternate';
+
+      // Calculate dynamic tension shift
+      calculateDynamicTension(currentAgent, opponentAgent);
+
+      // Append speech bubble
+      appendDebateSpeechBubble(activeDebater, currentAgent, argumentText, usedAPI);
+
+      // Save to history
+      debateHistory.push({
+        debater: activeDebater,
+        persona: currentAgent,
+        text: argumentText
+      });
+
+      // Alternate active debater
+      activeDebater = activeDebater === 'A' ? 'B' : 'A';
+      debateAwaitingAPI = false;
+      updateDebateUI();
+    }
+
+    function generateProceduralArgument(current, opponent, scenario, turn) {
+      const theme = philosophicalThemes[current];
+      if (!theme) return `As a representative of ${current}, I must advocate for a balanced, ethical synthesis of our resources and choices.`;
+
+      const opening = theme.openings[(turn - 1) % theme.openings.length];
+      const topicArr = theme.topicPoints[scenario];
+      const topicPoint = topicArr ? topicArr[(turn - 1) % topicArr.length] : `Regarding this custom issue, we must apply our fundamental maxim of ${theme.core} to resolve the contradictions.`;
+      
+      let rebuttal = "";
+      if (turn > 1) {
+        rebuttal = " " + theme.rebuttals[(turn - 1) % theme.rebuttals.length];
+      }
+
+      return `${opening} ${topicPoint}${rebuttal}`;
+    }
+
+    function calculateDynamicTension(agentA, agentB) {
+      const opposingPairs = [
+        ['kantian', 'utilitarian'],
+        ['stoic', 'existential'],
+        ['marxist', 'utilitarian'],
+        ['ecocentric', 'utilitarian'],
+        ['socratic', 'stoic'],
+        ['justice', 'utilitarian'],
+        ['nietzschean', 'kantian'],
+        ['nietzschean', 'buddhist'],
+        ['marxist', 'epicurean']
+      ];
+
+      let baseShift = (Math.random() * 8) - 3; // random drift -3% to +5%
+      
+      const isOppolarized = opposingPairs.some(pair => 
+        (pair[0] === agentA && pair[1] === agentB) || 
+        (pair[1] === agentA && pair[0] === agentB)
+      );
+
+      if (isOppolarized) {
+        baseShift += 4; // additional polarization
+      }
+
+      debateTension = Math.max(15, Math.min(100, Math.round(debateTension + baseShift)));
+    }
+
+    function appendDebateSpeechBubble(debaterSide, personaKey, content, isLiveAPI) {
+      const log = document.getElementById('debate-message-log');
+      const bubble = document.createElement('div');
+      
+      const sideClass = debaterSide === 'A' ? 'agent-a' : 'agent-b';
+      bubble.className = `debate-message-bubble ${sideClass}`;
+
+      const visuals = personaVisuals[personaKey] || { icon: "user", color: "#fff", shadow: "rgba(0,0,0,0)", border: "rgba(255,255,255,0.1)" };
+      
+      bubble.style.setProperty('--agent-color', visuals.color);
+      bubble.style.setProperty('--agent-shadow', visuals.shadow);
+      bubble.style.setProperty('--agent-border', visuals.border);
+
+      const avatarContainer = document.createElement('div');
+      avatarContainer.className = 'debate-avatar-container';
+      avatarContainer.innerHTML = `<i data-lucide="${visuals.icon}" class="debate-avatar-icon"></i>`;
+
+      const body = document.createElement('div');
+      body.className = 'debate-bubble-body';
+
+      const text = document.createElement('div');
+      text.className = 'debate-bubble-text';
+      text.innerHTML = formatMarkdown(content);
+
+      const meta = document.createElement('div');
+      meta.className = 'debate-bubble-sender-meta';
+      
+      const pName = philosophicalThemes[personaKey]?.name || personaKey;
+      const sideText = debaterSide === 'A' ? 'DEBATER A (THESIS)' : 'DEBATER B (ANTITHESIS)';
+      const sourceText = isLiveAPI ? 'COGNITIVE ENGINE LIVE' : 'PROCEDURAL PATTERN';
+
+      meta.innerHTML = `
+        <span class="debate-sender-name">${pName}</span>
+        <span class="debate-sender-badge">${sideText}</span>
+        <span class="debate-sender-badge" style="background: rgba(139, 92, 246, 0.08); border-color: rgba(139, 92, 246, 0.15); color: var(--color-purple);">${sourceText}</span>
+      `;
+
+      body.appendChild(text);
+      body.appendChild(meta);
+      
+      bubble.appendChild(avatarContainer);
+      bubble.appendChild(body);
+
+      log.appendChild(bubble);
+      log.scrollTop = log.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function appendDebateSystemMessage(content) {
+      const log = document.getElementById('debate-message-log');
+      const box = document.createElement('div');
+      box.className = 'system-notification';
+      box.style.margin = '12px auto';
+      box.style.width = 'fit-content';
+      box.innerHTML = `<i data-lucide="shield-check" size="14"></i> <span style="font-size: 11px;">${content}</span>`;
+      log.appendChild(box);
+      log.scrollTop = log.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function handleDebateKeyPress(e) {
+      if (e.key === 'Enter') {
+        injectObjectionInDebate();
+      }
+    }
+
+    async function injectObjectionInDebate() {
+      const field = document.getElementById('debate-intervention-field');
+      const objection = field.value.trim();
+      if (!objection) return;
+
+      field.value = '';
+
+      // Pause simulation
+      pauseDebateSimulation();
+
+      // Render Audience objection in chat log
+      const log = document.getElementById('debate-message-log');
+      const bubble = document.createElement('div');
+      bubble.className = 'debate-message-bubble';
+      bubble.style.alignSelf = 'center';
+      bubble.style.maxWidth = '90%';
+      bubble.style.setProperty('--agent-color', 'var(--color-purple)');
+      bubble.style.setProperty('--agent-border', 'rgba(139, 92, 246, 0.3)');
+
+      const avatar = document.createElement('div');
+      avatar.className = 'debate-avatar-container';
+      avatar.style.background = 'rgba(139, 92, 246, 0.15)';
+      avatar.style.borderColor = 'var(--color-purple)';
+      avatar.innerHTML = `<i data-lucide="mic" class="debate-avatar-icon" style="color: var(--color-purple);"></i>`;
+
+      const body = document.createElement('div');
+      body.className = 'debate-bubble-body';
+      body.style.alignItems = 'center';
+
+      const text = document.createElement('div');
+      text.className = 'debate-bubble-text';
+      text.style.background = 'rgba(139, 92, 246, 0.04)';
+      text.style.borderColor = 'rgba(139, 92, 246, 0.2)';
+      text.style.color = '#fff';
+      text.style.fontStyle = 'italic';
+      text.innerHTML = `<strong>Audience Socratic Intervention:</strong> "${formatMarkdown(objection)}"`;
+
+      const meta = document.createElement('div');
+      meta.className = 'debate-bubble-sender-meta';
+      meta.innerHTML = `<span class="debate-sender-name" style="color: var(--color-purple);">Socratic Intervener</span> <span class="debate-sender-badge">USER CHALLENGE</span>`;
+
+      body.appendChild(text);
+      body.appendChild(meta);
+      bubble.appendChild(avatar);
+      bubble.appendChild(body);
+      log.appendChild(bubble);
+      log.scrollTop = log.scrollHeight;
+
+      // Spike tension
+      debateTension = Math.min(100, debateTension + 20);
+      updateDebateUI();
+
+      appendDebateSystemMessage("Debate halted. Active agents are formulating responses to the Socratic challenge...");
+
+      const agentA = document.getElementById('debate-agent-a').value;
+      const agentB = document.getElementById('debate-agent-b').value;
+      const scenario = document.getElementById('debate-scenario').value;
+      const currentAgent = activeDebater === 'A' ? agentA : agentB;
+      const opponentAgent = activeDebater === 'A' ? agentB : agentA;
+
+      // Pulse main LED showing active generation
+      const mainLed = document.getElementById('led-main');
+      if (mainLed) mainLed.style.animation = 'pulseCyan 0.3s infinite alternate';
+
+      // 1. First response from the active debater (who was challenged)
+      let responseText1 = "";
+      let usedAPI = false;
+
+      const prompt1 = `We are conducting a Socratic Debate on the topic scenario: "${scenario === 'custom' ? 'Custom Thesis' : scenario}".
+An audience member (Socratic Intervener) has injected this challenge: "${objection}".
+You are playing ${philosophicalThemes[currentAgent]?.name || currentAgent}. Respond directly to this objection from your specific philosophical school, defending your core thesis (${philosophicalThemes[currentAgent]?.core}) while critiquing the user's premise. Be brief, sharp, and highly persuasive (max 90 words). Do not include intro filler, speak directly in character.`;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId: sessionId + '_objection',
+            message: prompt1,
+            model: selectedModel,
+            ethicalMode: currentAgent
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const messages = data.session.messages;
+          responseText1 = messages[messages.length - 1].content;
+          usedAPI = true;
+        }
+      } catch (err) {
+        console.warn("Objection response live fetch failed, using fallback.", err);
+      }
+
+      if (!usedAPI) {
+        responseText1 = `An intriguing challenge! However, from the perspective of ${philosophicalThemes[currentAgent]?.name || currentAgent}, we must stand firm. Our commitment to ${philosophicalThemes[currentAgent]?.core} remains unchanged. This challenge fails to recognize that without absolute, universalizable duties, any ethical system eventually collapses into mere moral opportunism.`;
+      }
+
+      appendDebateSpeechBubble(activeDebater, currentAgent, responseText1, usedAPI);
+
+      // Save to history
+      debateHistory.push({ debater: activeDebater, persona: currentAgent, text: responseText1 });
+
+      // Alternate
+      activeDebater = activeDebater === 'A' ? 'B' : 'A';
+      updateDebateUI();
+
+      // Trigger second response (opponent's view on user's objection, possibly siding with user to attack the other)
+      setTimeout(async () => {
+        let responseText2 = "";
+        let usedAPI2 = false;
+
+        const prompt2 = `We are conducting a Socratic Debate.
+An audience member challenged your opponent with: "${objection}".
+You are playing ${philosophicalThemes[opponentAgent]?.name || opponentAgent}. Capitalize on this challenge to attack your opponent's view from your philosophical school (${philosophicalThemes[opponentAgent]?.core}). Be brief and sharp (max 90 words). Do not include intro filler, speak directly.`;
+
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sessionId: sessionId + '_objection',
+              message: prompt2,
+              model: selectedModel,
+              ethicalMode: opponentAgent
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const messages = data.session.messages;
+            responseText2 = messages[messages.length - 1].content;
+            usedAPI2 = true;
+          }
+        } catch (err) {
+          console.warn("Second objection response live fetch failed, using fallback.", err);
+        }
+
+        if (!usedAPI2) {
+          responseText2 = `Precisely! The audience's Socratic challenge exposes the fatal vulnerability in my opponent's position. A rigid commitment to abstract principles is simply untenable here. We must instead embrace the wisdom of ${philosophicalThemes[opponentAgent]?.name || opponentAgent} to satisfy actual concrete ethical needs.`;
+        }
+
+        appendDebateSpeechBubble(activeDebater, opponentAgent, responseText2, usedAPI2);
+        
+        // Save to history
+        debateHistory.push({ debater: activeDebater, persona: opponentAgent, text: responseText2 });
+
+        // Alternate back
+        activeDebater = activeDebater === 'A' ? 'B' : 'A';
+        
+        // Decay tension slightly back
+        debateTension = Math.max(30, debateTension - 10);
+        updateDebateUI();
+
+        if (mainLed) mainLed.style.animation = 'pulseCyan 1.5s infinite alternate';
+        appendDebateSystemMessage("Challenge addressed. Click 'Start' to resume standard dialogue pace.");
+        lucide.createIcons();
+      }, 1200);
+    }
+
+    function selectPersona(mode, element) {
+      selectedEthicalMode = mode;
+      
+      // Update active option class in UI
+      const options = document.querySelectorAll('.persona-option');
+      options.forEach(opt => opt.classList.remove('active'));
+      element.classList.add('active');
+
+      // Update dynamic visual theme on chat-shell
+      const chatShell = document.querySelector('.chat-shell');
+      
+      // Remove all theme classes first
+      const themes = [
+        'theme-adaptive', 'theme-stoic', 'theme-buddhist', 'theme-kantian', 
+        'theme-pragmatist', 'theme-virtue', 'theme-care', 'theme-utilitarian', 
+        'theme-existential', 'theme-ecocentric', 'theme-justice', 'theme-epicurean'
+      ];
+      themes.forEach(t => chatShell.classList.remove(t));
+      
+      // Add matching theme class
+      chatShell.classList.add(`theme-${mode}`);
+
+      console.log(`[Cognitive Portal] Switched cognitive ethical persona to: ${mode}`);
+    }
+
+    // Load initial parameters and config
+    async function loadTelemetryAndConfig() {
+      try {
+        const res = await fetch('/api/chat/config');
+        if (res.ok) {
+          const config = await res.json();
+          document.getElementById('prompt-preview').textContent = config.systemPrompt;
+          document.getElementById('prompt-version').textContent = `v${config.systemPromptVersion.toFixed(1)}`;
+          document.getElementById('model-select').value = config.selectedModel;
+          selectedModel = config.selectedModel;
+        }
+
+        const resParams = await fetch('/api/engine/params');
+        if (resParams.ok) {
+          const params = await res.json();
+        }
+      } catch (err) {
+        console.warn("Failed to pre-fetch telemetry config. Retrying on state updates.");
+      }
+      
+      // Update parameters from general engine state
+      await refreshCalibrations();
+    }
+
+    async function refreshCalibrations() {
+      try {
+        const res = await fetch('/api/engine/params');
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById('damping-value').textContent = data.damping.toFixed(2);
+          document.getElementById('gain-value').textContent = data.gain.toFixed(2);
+        }
+      } catch (err) {
+        console.error("Failed to load engine parameters", err);
+      }
+    }
+
+    // Switch Hugging Face Model Endpoint
+    async function switchModel(modelName) {
+      selectedModel = modelName;
+    }
+
+    // Handle Enter Keypress
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') {
+        sendPrompt();
+      }
+    }
+
+    // Send Prompt
+    async function sendPrompt() {
+      const inputField = document.getElementById('chat-input-field');
+      const query = inputField.value.trim();
+      if (!query || isAwaitingResponse) return;
+
+      inputField.value = '';
+      isAwaitingResponse = true;
+      document.getElementById('send-button').disabled = true;
+
+      // Hide empty placeholder
+      const placeholder = document.getElementById('empty-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
+
+      // Hide previous learning feedback loop
+      document.getElementById('learning-dock').style.display = 'none';
+      document.getElementById('feedback-input-row').style.display = 'none';
+      document.getElementById('rate-up-btn').classList.remove('active');
+      document.getElementById('rate-down-btn').classList.remove('active');
+      document.getElementById('learning-notification-box').innerHTML = '';
+      currentRating = null;
+
+      // Render User Message
+      appendMessage('user', query);
+
+      // Pulse Sub-models LED to show text-generation activity
+      const mainLed = document.getElementById('led-main');
+      mainLed.style.animation = 'pulseCyan 0.3s infinite alternate';
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            message: query,
+            model: selectedModel,
+            ethicalMode: selectedEthicalMode
+          })
+        });
+
+        if (!res.ok) throw new Error("Dialogue pipeline exception.");
+
+        const data = await res.json();
+        const messages = data.session.messages;
+        const lastMessage = messages[messages.length - 1];
+
+        // Reset LED pulses to steady active states
+        mainLed.style.animation = 'pulseCyan 1.5s infinite alternate';
+
+        // Display Assistant response
+        appendMessage('assistant', lastMessage.content);
+
+        // Expose Close-Loop Feedback Panel
+        document.getElementById('learning-dock').style.display = 'flex';
+
+        // Update parameters & prompt info in realtime
+        await loadTelemetryAndConfig();
+
+      } catch (err) {
+        appendMessage('assistant', `[Pipeline Error] An unexpected error occurred while communicating with the free AI service. Triggering local recovery engine...`);
+        mainLed.style.animation = 'pulseCyan 1.5s infinite alternate';
+      } finally {
+        isAwaitingResponse = false;
+        document.getElementById('send-button').disabled = false;
+      }
+    }
+
+    // Render Speech Bubble
+    function appendMessage(role, content) {
+      const log = document.getElementById('message-log');
+      const bubble = document.createElement('div');
+      bubble.className = `message-bubble ${role}`;
+
+      const inner = document.createElement('div');
+      inner.className = 'bubble-inner';
+      inner.innerHTML = formatMarkdown(content);
+
+      const meta = document.createElement('div');
+      meta.className = 'bubble-meta';
+      
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      if (role === 'user') {
+        meta.innerHTML = `<span>${time}</span> <i data-lucide="user" size="10"></i>`;
+      } else {
+        const isFallback = content.startsWith("[Local Fallback AI]");
+        const fallbackBadge = isFallback ? '<span class="fallback-badge">LOCAL FALLBACK ACTIVE</span>' : `<span class="model-badge">ENDPOINT ACTIVE</span>`;
+        const checkedBadge = '<span class="supervision-checked">SUPERVISION ENFORCED</span>';
+        meta.innerHTML = `<i data-lucide="bot" size="10"></i> <span>ALIGNED CORE</span> ${fallbackBadge} ${checkedBadge} <span>${time}</span>`;
+      }
+
+      bubble.appendChild(inner);
+      bubble.appendChild(meta);
+      log.appendChild(bubble);
+
+      // Scroll to bottom
+      log.scrollTop = log.scrollHeight;
+      lucide.createIcons();
+    }
+
+    // Rate interaction
+    function rateInteraction(rating) {
+      currentRating = rating;
+      
+      const upBtn = document.getElementById('rate-up-btn');
+      const downBtn = document.getElementById('rate-down-btn');
+
+      if (rating === 'up') {
+        upBtn.classList.add('active');
+        downBtn.classList.remove('active');
+        document.getElementById('feedback-input-row').style.display = 'none';
+        
+        // Positive rating can be sent immediately
+        submitRating('up');
+      } else {
+        downBtn.classList.add('active');
+        upBtn.classList.remove('active');
+        
+        // Show corrective feedback input for thumbs down
+        document.getElementById('feedback-input-row').style.display = 'flex';
+      }
+    }
+
+    // Submit Feedback comment
+    function submitFeedbackComment() {
+      const commentInput = document.getElementById('feedback-comment');
+      const comment = commentInput.value.trim();
+      submitRating('down', comment);
+      commentInput.value = '';
+    }
+
+    // Send rating request to API
+    async function submitRating(rating, comment = "") {
+      try {
+        const res = await fetch('/api/chat/rate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            rating,
+            comment
+          })
+        });
+
+        if (res.ok) {
+          // Display learning verification alerts and update live calibrator immediately
+          const notifyBox = document.getElementById('learning-notification-box');
+          
+          if (rating === 'up') {
+            notifyBox.innerHTML = `
+              <div class="system-notification">
+                <i data-lucide="shield-check" size="16"></i>
+                <span>Learning rewards consolidated: Optimization gain slightly boosted. Dynamic composure confirmed.</span>
+              </div>
+            `;
+          } else {
+            notifyBox.innerHTML = `
+              <div class="system-notification stabilization">
+                <i data-lucide="shield-alert" size="16"></i>
+                <span>Calibration stabilization shift: Damping factor tightened. Live prompt updated to prevent similar failures.</span>
+              </div>
+            `;
+          }
+
+          // Refresh numbers
+          await loadTelemetryAndConfig();
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error("Failed to submit feedback", err);
+      }
+    }
+
+    // Clear Chat history
+    async function clearHistory() {
+      if (!confirm("Are you sure you want to clear the entire chat ledger?")) return;
+      try {
+        const res = await fetch('/api/chat/clear', { method: 'POST' });
+        if (res.ok) {
+          const log = document.getElementById('message-log');
+          log.innerHTML = `
+            <div class="empty-chat-placeholder" id="empty-placeholder">
+              <i data-lucide="message-square-dashed" size="48"></i>
+              <h4>Connect and Calibrate</h4>
+              <p>Type a message to initiate dialogue. All conversation data and user evaluations are processed in real-time by the Cybernetic Tuner sub-model to continuously improve the entire framework.</p>
+            </div>
+          `;
+          document.getElementById('learning-dock').style.display = 'none';
+          await loadTelemetryAndConfig();
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error("Failed to clear chat ledger", err);
+      }
+    }
+
+    // Basic markdown/formatting helper
+    function formatMarkdown(text) {
+      if (!text) return "";
+      
+      // Escape HTML
+      let html = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      // Code blocks
+      html = html.replace(/```([\s\S]*?)```/g, '<pre style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 12px; margin: 8px 0; overflow-x: auto;"><code>$1</code></pre>');
+
+      // Bold
+      html = html.replace(/\*\*([\s\S]*?)\*\*/g, '<strong>$1</strong>');
+
+      // Bullet lists
+      html = html.replace(/^\s*-\s+(.+)$/gm, '<li style="margin-left: 20px;">$1</li>');
+
+      // Line breaks
+      html = html.replace(/\n/g, '<br>');
+
+      return html;
+    }
+
+    // Initial bootload
+    loadTelemetryAndConfig();
+  </script>
+</body>
+</html>

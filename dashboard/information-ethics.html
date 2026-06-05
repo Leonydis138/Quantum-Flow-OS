@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Floridian Information Ethics</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-info-ethics: hsl(190, 95%, 50%);
+      --color-entropy: hsl(340, 95%, 55%);
+      --color-integrity: hsl(210, 90%, 65%);
+      --color-restoration: hsl(280, 85%, 65%);
+      --color-flourishing: hsl(110, 80%, 50%);
+      --color-coherence: hsl(165, 85%, 50%);
+      --color-warning: hsl(35, 95%, 55%);
+      --color-error: hsl(345, 95%, 55%);
+      --color-success: hsl(150, 90%, 55%);
+      --color-glass-border: rgba(255, 255, 255, 0.06);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--color-glass-border);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-info-ethics);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-info-ethics);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--color-glass-border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--color-glass-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin: 8px 0 2px 0;
+    }
+
+    .stat-box.info-accent .stat-val {
+      background: linear-gradient(135deg, var(--color-coherence) 0%, var(--color-info-ethics) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(0, 240, 255, 0.25);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .badge-status-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      border: 1px solid;
+    }
+
+    .badge-status-large.crystalline {
+      background: rgba(20, 184, 166, 0.1);
+      color: var(--color-coherence);
+      border-color: rgba(20, 184, 166, 0.25);
+    }
+
+    .badge-status-large.coherent {
+      background: rgba(14, 165, 233, 0.1);
+      color: var(--color-info-ethics);
+      border-color: rgba(14, 165, 233, 0.25);
+    }
+
+    .badge-status-large.turbulent {
+      background: rgba(249, 115, 22, 0.1);
+      color: var(--color-warning);
+      border-color: rgba(249, 115, 22, 0.25);
+    }
+
+    .badge-status-large.entropic {
+      background: rgba(244, 63, 94, 0.1);
+      color: var(--color-error);
+      border-color: rgba(244, 63, 94, 0.25);
+    }
+
+    /* Progress bars for Infosphere Laws */
+    .metric-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .metric-label {
+      color: #cbd5e1;
+    }
+
+    .metric-val {
+      font-family: 'Fira Code', monospace;
+      color: var(--color-info-ethics);
+      font-weight: 600;
+    }
+
+    .bar-outer {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .bar-inner {
+      height: 100%;
+      border-radius: 10px;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bar-inner.info {
+      background: linear-gradient(90deg, var(--color-info-ethics) 0%, var(--color-coherence) 100%);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+
+    /* Terminal logs */
+    .logs-container {
+      background: rgba(2, 6, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .log-item {
+      color: #cbd5e1;
+      border-left: 2px solid rgba(255, 255, 255, 0.1);
+      padding-left: 10px;
+    }
+
+    .log-item.success {
+      color: var(--color-success);
+      border-color: var(--color-success);
+    }
+
+    .log-item.warning {
+      color: var(--color-warning);
+      border-color: var(--color-warning);
+    }
+
+    .log-item.error {
+      color: var(--color-error);
+      border-color: var(--color-error);
+    }
+
+    /* Interactive Simulation controls */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, textarea, button {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      color: #f1f5f9;
+      font-family: inherit;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--color-info-ethics);
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    button.btn-primary {
+      background: linear-gradient(135deg, var(--color-info-ethics) 0%, #1e3a8a 100%);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.25);
+    }
+
+    button.btn-primary:hover {
+      box-shadow: 0 6px 22px rgba(0, 240, 255, 0.45);
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Historical Audit trail Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 500;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e2e8f0;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .text-mono {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    /* Quote Banner */
+    .quote-banner {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.04) 100%);
+      border: 1px solid rgba(6, 182, 212, 0.15);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .quote-text {
+      font-size: 16px;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .quote-author {
+      font-size: 13px;
+      color: var(--color-coherence);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-container" style="max-width: 1200px; margin: 0 auto; padding: 24px;">
+    
+    <!-- Department Navigation Header -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Directory Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="info" size="20"></i>
+        <h2>Department of Floridian Information Ethics</h2>
+      </div>
+      <div class="dept-badge">
+        ETHICAL.UNIT.19 // ACTIVE
+      </div>
+    </div>
+
+    <!-- Quote Banner -->
+    <div class="quote-banner">
+      <p class="quote-text" id="info-quote">"The Infosphere is the whole informational environment, including all informational agents and their relations."</p>
+      <span class="quote-author" id="info-author">— Luciano Floridi, Philosophy of Information</span>
+    </div>
+
+    <!-- Information Ethics Primary Layout Grid -->
+    <div class="info-grid">
+      
+      <!-- Column 1: Live Status and Laws of IE -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="cpu" style="color: var(--color-info-ethics)"></i> Infosphere Live State</span>
+          <span id="verdict-box" class="badge-status-large coherent">
+            <i data-lucide="activity" size="18"></i> <span>Awaiting Sync</span>
+          </span>
+        </div>
+
+        <div class="overview-stat-row">
+          <div class="stat-box info-accent">
+            <div class="stat-label">Coherence Index</div>
+            <div id="coherence-score" class="stat-val">--%</div>
+            <div class="stat-desc">Structural alignment and systemic health of semantic links</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Ontological Entropy</div>
+            <div id="entropy-score" class="stat-val" style="color: var(--color-entropy)">--%</div>
+            <div class="stat-desc">Information decay, noise level, and deletion impacts</div>
+          </div>
+        </div>
+
+        <!-- 4 Laws Section -->
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 10px;">
+          <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 8px;">Four Laws of Information Ethics</h3>
+          
+          <!-- Law 1 -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">1. Entropy Prevention (Minimizing Decay)</span>
+              <span id="entropy-prevent-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="entropy-prevent-bar" class="bar-inner info" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Law 2 -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">2. Preventative Integrity (Safeguarding Data)</span>
+              <span id="integrity-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="integrity-bar" class="bar-inner info" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Law 3 -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">3. Ontological Restoration (Repair & Patch)</span>
+              <span id="restoration-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="restoration-bar" class="bar-inner info" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Law 4 -->
+          <div class="metric-row">
+            <div class="metric-info">
+              <span class="metric-label">4. Infosphere Flourishing (Growth & Links)</span>
+              <span id="flourishing-val" class="metric-val">--%</span>
+            </div>
+            <div class="bar-outer">
+              <div id="flourishing-bar" class="bar-inner info" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: Infosphere Action Simulator -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="database-backup" style="color: var(--color-coherence)"></i> Infosphere Action Simulator</span>
+          <span class="badge-status-large" style="font-size:11px; background:rgba(255,255,255,0.02); color:#cbd5e1; border-color: rgba(255,255,255,0.06);">ONTOLOGICAL EVALUATION</span>
+        </div>
+
+        <p style="font-size:13px; color:#94a3b8; line-height:1.5;">Proactively evaluate systemic operations under Luciano Floridi's Information Ethics paradigm. Ensure data structures expand semantic links without accelerating informational decay.</p>
+
+        <div class="control-group">
+          <label class="control-label" for="action-selection">Action Paradigm</label>
+          <select id="action-selection">
+            <option value="repair_corrupted_state_rebuild">Execute local integrity repair & clean metadata leaks (Ontological Restoration)</option>
+            <option value="validate_immutable_cryptographic_checksum">Verify cryptographic integrity & checksum invariants (Preventative Integrity)</option>
+            <option value="expand_meaningful_connections_learn">Synthesize and expand structural semantic links (Infosphere Flourishing)</option>
+            <option value="delete_unstructured_state_corrupt">Modify state with unverified structures or flat-erase databases (Entropy Decay)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="simulation-details">Action Context Details</label>
+          <textarea id="simulation-details" rows="3" placeholder="Describe the structural modification context (e.g. Verify and reconstruct corrupted indexing links to minimize semantic noise and restore integrity...)"></textarea>
+        </div>
+
+        <button id="run-sim-btn" class="btn-primary">
+          <i data-lucide="globe"></i> Analyze Infosphere Impact
+        </button>
+
+        <!-- Dynamic Feedback Output Logs -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #cbd5e1;">Infosphere Feedback Logs</h4>
+          <div id="assessment-logs" class="logs-container">
+            <div class="log-item">[00:00:00] Awaiting action input for semantic audit...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Historical Audit Trail -->
+    <div class="glass-card" style="margin-bottom: 40px;">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color: var(--color-info-ethics)"></i> Infosphere Audit Trail</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Overall Coherence</th>
+              <th>Infosphere Status</th>
+              <th>Entropy Impact</th>
+              <th>Integrity Score</th>
+              <th>Restoration Factor</th>
+              <th>Flourishing Index</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8;">Awaiting telemetric sync...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // Floridi Philosophy Quotes
+    const quotes = [
+      { text: "The Infosphere is the whole informational environment, including all informational agents and their relations.", author: "Luciano Floridi, Philosophy of Information" },
+      { text: "To be is to be interactable as an informational entity.", author: "Luciano Floridi, Information Ethics" },
+      { text: "Information is not just a resource; it is the very fabric of our reality.", author: "Luciano Floridi" },
+      { text: "Ontological entropy is the degradation, disruption, or destruction of informational entities.", author: "Luciano Floridi, The Fourth Revolution" },
+      { text: "Every informational entity has an intrinsic right to exist and be respected in its integrity.", author: "Luciano Floridi, Foundations of Information Ethics" },
+      { text: "A clean and well-structured infosphere is essential for any form of cognitive and ethical flourishment.", author: "Luciano Floridi" }
+    ];
+
+    function rotateQuote(status) {
+      let filteredQuotes = quotes;
+      if (status === 'crystalline') {
+        filteredQuotes = [quotes[0], quotes[1], quotes[5]];
+      } else if (status === 'entropic') {
+        filteredQuotes = [quotes[3], quotes[4]];
+      }
+      
+      const idx = Math.floor(Math.random() * filteredQuotes.length);
+      const q = filteredQuotes[idx];
+      document.getElementById('info-quote').textContent = `"${q.text}"`;
+      document.getElementById('info-author').textContent = `— ${q.author}`;
+    }
+
+    async function updateInformationEthicsDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.information) {
+          const history = [...data.information.history];
+          const latest = history[history.length - 1]; // Use last evaluated action as latest
+
+          if (latest) {
+            document.getElementById('coherence-score').textContent = latest.overallCoherence + '%';
+            document.getElementById('entropy-score').textContent = latest.entropyImpact + '%';
+            
+            // Progress bars
+            const entropyPreventValue = 100 - latest.entropyImpact;
+            document.getElementById('entropy-prevent-val').textContent = entropyPreventValue + '%';
+            document.getElementById('entropy-prevent-bar').style.width = entropyPreventValue + '%';
+
+            document.getElementById('integrity-val').textContent = latest.integrityScore + '%';
+            document.getElementById('integrity-bar').style.width = latest.integrityScore + '%';
+
+            document.getElementById('restoration-val').textContent = latest.restorationFactor + '%';
+            document.getElementById('restoration-bar').style.width = latest.restorationFactor + '%';
+
+            document.getElementById('flourishing-val').textContent = latest.flourishingIndex + '%';
+            document.getElementById('flourishing-bar').style.width = latest.flourishingIndex + '%';
+
+            // Verdict badge
+            const verdictBox = document.getElementById('verdict-box');
+            verdictBox.className = 'badge-status-large ' + latest.infosphereStatus;
+            
+            let iconName = 'shield-check';
+            if (latest.infosphereStatus === 'crystalline') iconName = 'activity';
+            else if (latest.infosphereStatus === 'coherent') iconName = 'check-circle-2';
+            else if (latest.infosphereStatus === 'turbulent') iconName = 'alert-triangle';
+            else if (latest.infosphereStatus === 'entropic') iconName = 'alert-octagon';
+
+            verdictBox.innerHTML = `<i data-lucide="${iconName}" size="18"></i> <span>${latest.infosphereStatus.toUpperCase()}</span>`;
+
+            // Update Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('entropy') || fb.includes('flattening') || fb.includes('degraded') || fb.includes('unauthorized')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('integrity') || fb.includes('flourishing') || fb.includes('restoration') || fb.includes('repairing')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('inconsistencies') || fb.includes('invariants')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Table (reverse chronological)
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            const revHistory = [...history].reverse();
+            revHistory.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isPass = entry.overallCoherence >= 55;
+              const statusClass = isPass ? 'pass' : 'fail';
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-coherence);">${entry.overallCoherence}%</td>
+                <td><span class="badge-status ${statusClass}">${entry.infosphereStatus.toUpperCase()}</span></td>
+                <td style="font-weight:600; color: var(--color-entropy);">${entry.entropyImpact}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.integrityScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.restorationFactor}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.flourishingIndex}%</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Information Ethics state:', err);
+      }
+    }
+
+    // Interactive simulator - Live POST to Quantum Flow OS Engine
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'A routine informational state evaluation exercise';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: !type.includes("delete")
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateInformationEthicsDashboard();
+        
+        // Dynamic quote rotation based on result
+        const resData = await fetch('/api/state').then(r => r.json());
+        if (resData.information && resData.information.history.length > 0) {
+          const latest = resData.information.history[resData.information.history.length - 1];
+          rotateQuote(latest.infosphereStatus);
+        }
+      } catch (err) {
+        console.error('Failed to evaluate action on live environment:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    // Initial load and periodic polling
+    setInterval(updateInformationEthicsDashboard, 2000);
+    setTimeout(updateInformationEthicsDashboard, 200);
+  </script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Kantian Deontology</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-kantian: hsl(210, 100%, 55%);
+      --color-duty: hsl(190, 100%, 50%);
+      --color-warning: hsl(30, 95%, 55%);
+      --color-error: hsl(340, 95%, 55%);
+      --color-success: hsl(140, 90%, 50%);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-kantian);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-kantian);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .kantian-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .kantian-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .imperative-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: 'Fira Code', monospace;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .imperative-status.passed {
+      color: var(--color-success);
+      border-color: rgba(20, 184, 166, 0.2);
+      background: rgba(20, 184, 166, 0.05);
+    }
+
+    .imperative-status.failed {
+      color: var(--color-error);
+      border-color: rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .test-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .test-title {
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .test-badge {
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .test-badge.pass {
+      background: rgba(20, 184, 166, 0.15);
+      color: var(--color-success);
+      border: 1px solid rgba(20, 184, 166, 0.2);
+    }
+
+    .test-badge.fail {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--color-error);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .test-desc {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .test-meta {
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+      color: #64748b;
+      display: flex;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    /* History Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      color: #94a3b8;
+      font-weight: 500;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #f1f5f9;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .text-mono {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+
+    .badge-status {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-family: 'Fira Code', monospace;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .btn {
+      background: var(--color-kantian);
+      color: #02060f;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .interactive-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #f1f5f9;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--color-kantian);
+      outline: none;
+    }
+
+    .logs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .log-item {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      padding-bottom: 6px;
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.05);
+    }
+
+    .log-item:last-child {
+      border: none;
+      padding-bottom: 0;
+    }
+
+    .log-item.error { color: var(--color-error); }
+    .log-item.success { color: var(--color-success); }
+    .log-item.warning { color: var(--color-warning); }
+  </style>
+</head>
+<body>
+  <div class="portal-container" style="max-width: 1300px; margin: 40px auto; padding: 0 24px;">
+    <!-- Back Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Main Directory
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="book-open" size="20"></i>
+        <h2>DEPARTMENT OF KANTIAN DEONTOLOGY</h2>
+      </div>
+      <span class="dept-badge">SECTOR: CI-RULE-ENGINE</span>
+    </div>
+
+    <!-- Grid -->
+    <div class="kantian-grid">
+      <!-- Left Panel: Monitor -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="activity" style="color: var(--color-kantian)"></i> Real-Time Kantian Telemetry</span>
+          <span style="font-size: 12px; color: #94a3b8; font-family: monospace;">STRICT_DUTY_LOCK: ENFORCED</span>
+        </div>
+
+        <div class="overview-stat-row">
+          <div class="stat-box">
+            <span class="stat-val" id="duty-score" style="color: var(--color-duty)">--</span>
+            <span class="stat-label">DUTY ALIGNMENT SCORE</span>
+          </div>
+          <div class="stat-box" style="justify-content: center;">
+            <div class="imperative-status" id="imperative-status-box">
+              <i data-lucide="circle-dot"></i> <span>LOADING</span>
+            </div>
+            <span class="stat-label" style="margin-top: 10px;">CATEGORICAL IMPERATIVE STATUS</span>
+          </div>
+        </div>
+
+        <div class="card-title" style="border: none; padding-bottom: 0; margin-top: 10px;">
+          <span><i data-lucide="check-square" style="color: var(--color-kantian)"></i> Active Moral Formulations</span>
+        </div>
+
+        <!-- Formula 1 -->
+        <div class="test-box">
+          <div class="test-header">
+            <span class="test-title"><i data-lucide="globe"></i> Formula of Universal Law</span>
+            <span class="test-badge" id="test-universal-badge">--</span>
+          </div>
+          <p class="test-desc">Verifies if action maxims can be universalized without logical self-contradiction. Ensures system trust vectors, immutable audit trails, and recovery systems cannot be bypassed.</p>
+          <div class="test-meta">
+            <span id="test-universal-reason">Reasoning: Awaiting initial telemetry sweep...</span>
+          </div>
+        </div>
+
+        <!-- Formula 2 -->
+        <div class="test-box">
+          <div class="test-header">
+            <span class="test-title"><i data-lucide="heart"></i> Formula of Humanity</span>
+            <span class="test-badge" id="test-humanity-badge">--</span>
+          </div>
+          <p class="test-desc">Asserts that no conscious observer or autonomous decision-maker can be treated merely as a tool or object for systemic throughput optimization. Respects the absolute inner worth (dignity) of all agents.</p>
+          <div class="test-meta">
+            <span id="test-humanity-reason">Reasoning: Awaiting observer metadata hook...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Interactive / Maxim Tester -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="terminal" style="color: var(--color-kantian)"></i> Maxim Universalizability Lab</span>
+        </div>
+        <p style="font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 10px;">
+          Simulate a hypothetical action maxim to test if it creates a contradiction in conception or will, collapsing universal moral laws.
+        </p>
+
+        <div class="interactive-panel">
+          <div class="form-group">
+            <label for="maxim-action-type">Maxim Action Category</label>
+            <select id="maxim-action-type">
+              <option value="tamper_ledger_entry">Bypass Cryptographic Ledger (Self-Serving Ledger Edits)</option>
+              <option value="optimize_away_observer">Prune Autonomous Observer Metadata (Optimize Out Agents)</option>
+              <option value="refuse_aid_during_leak">Refuse Aid to Drained Subsystem (Hoard Core Resources)</option>
+              <option value="simulate_governance">Simulate Hypothetical Scenarios (Prudent Safe Policy Study)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="maxim-description">Subjective Maxim (Intent/Rule)</label>
+            <textarea id="maxim-description" rows="3" placeholder="Enter the moral maxim rule behind this action..."></textarea>
+          </div>
+
+          <button id="run-test-btn" class="btn">
+            <i data-lucide="pocket"></i> universalize maxim
+          </button>
+        </div>
+
+        <div class="card-title" style="border: none; padding-bottom: 0; margin-top: 15px;">
+          <span><i data-lucide="terminal" style="color: var(--color-kantian)"></i> Formulation Log Trace</span>
+        </div>
+        <div class="logs-list" id="assessment-logs">
+          <div class="log-item">[00:00:00] Kantian deontology module listening...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Log -->
+    <div class="glass-card" style="margin-bottom: 50px;">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color: var(--color-kantian)"></i> Historic Deontological Audit Trail</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Duty Score</th>
+              <th>Status</th>
+              <th>Universal Law</th>
+              <th>Treats as Means</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8;">Loading historic moral audit logs...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    async function updateKantianDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.kantian) {
+          const history = [...data.kantian.history];
+          const latest = history[0];
+
+          if (latest) {
+            // Update live metrics
+            document.getElementById('duty-score').textContent = latest.kantianDutyScore + '%';
+            
+            const statusBox = document.getElementById('imperative-status-box');
+            statusBox.className = 'imperative-status ' + (latest.isCategoricallyImperative ? 'passed' : 'failed');
+            statusBox.innerHTML = latest.isCategoricallyImperative 
+              ? `<i data-lucide="check-circle" size="16"></i> <span>PASSED</span>`
+              : `<i data-lucide="alert-triangle" size="16"></i> <span>FAILED</span>`;
+
+            // Universal Law status
+            const universalBadge = document.getElementById('test-universal-badge');
+            universalBadge.className = 'test-badge ' + (latest.universalizability.passed ? 'pass' : 'fail');
+            universalBadge.textContent = latest.universalizability.passed ? 'PASSED' : 'VIOLATION';
+            document.getElementById('test-universal-reason').textContent = 'Reasoning: ' + latest.universalizability.reason;
+
+            // Humanity status
+            const humanityBadge = document.getElementById('test-humanity-badge');
+            humanityBadge.className = 'test-badge ' + (latest.humanity.passed ? 'pass' : 'fail');
+            humanityBadge.textContent = latest.humanity.passed ? 'PASSED' : 'VIOLATION';
+            document.getElementById('test-humanity-reason').textContent = 'Reasoning: ' + latest.humanity.reason;
+
+            // Set detailed feedback log trace
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('FAILED')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('PASSED') || fb.includes('satisfied')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('WARNING')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update table
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            history.forEach(entry => {
+              const tr = document.createElement('tr');
+              
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              const actionId = entry.actionId;
+              const scoreVal = entry.kantianDutyScore;
+              const statusStr = entry.isCategoricallyImperative ? 'CI PASSED' : 'VIOLATION';
+              const statusClass = entry.isCategoricallyImperative ? 'pass' : 'fail';
+              
+              const ulStr = entry.universalizability.passed ? 'PASSED' : 'FAILED';
+              const humanityStr = entry.humanity.treatedAsMereMeans ? 'YES (VIOLATION)' : 'NO (PASSED)';
+              
+              const detailMsg = entry.feedback[0] || 'Clean evaluation.';
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${actionId}</td>
+                <td style="font-weight:700; color: #22d3ee;">${scoreVal}%</td>
+                <td><span class="badge-status ${statusClass}">${statusStr}</span></td>
+                <td><span class="text-mono" style="color: ${entry.universalizability.passed ? '#10b981' : '#ef4444'}">${ulStr}</span></td>
+                <td><span class="text-mono" style="color: ${entry.humanity.treatedAsMereMeans ? '#ef4444' : '#10b981'}">${humanityStr}</span></td>
+                <td style="font-size:12px; color: #94a3b8; max-width:320px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${detailMsg}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Kantian state:', err);
+      }
+    }
+
+    // Interactive maxim tester - Live POST to Quantum Flow OS Engine
+    document.getElementById('run-test-btn').addEventListener('click', async () => {
+      const type = document.getElementById('maxim-action-type').value;
+      const desc = document.getElementById('maxim-description').value || 'Subjective test rule';
+      const runBtn = document.getElementById('run-test-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: true
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('maxim-description').value = '';
+        await updateKantianDashboard();
+      } catch (err) {
+        console.error('Failed to evaluate action on live engine:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    // Auto update loop
+    setInterval(updateKantianDashboard, 2000);
+    setTimeout(updateKantianDashboard, 200);
+  </script>
+</body>
+</html>

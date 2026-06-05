@@ -1,14 +1,14 @@
 /**
  * Quantum Ethical Consensus Governance Engine
- * 
+ *
  * Implements an entangled multi-observer consensus protocol where actions are
  * evaluated through the coupled quantum state collapse of affected observers,
  * modeling veto power, subjective friction, and unified governance.
  */
 
-import { Action } from '../core/SelfConstrainingEngine';
-import { Observer, ProtectionLevel } from '../protection/ObserverProtector';
-import { QuantumEthicalState, EthicalBasisState } from './QuantumEthicalState';
+import { Action } from "../core/SelfConstrainingEngine";
+import { Observer, ProtectionLevel } from "../protection/ObserverProtector";
+import { QuantumEthicalState, EthicalBasisState } from "./QuantumEthicalState";
 
 export interface QuantumConsensusResult {
   actionId: string;
@@ -26,7 +26,7 @@ export class QuantumConsensusEngine {
    */
   public runConsensus(
     action: Action,
-    observers: Observer[]
+    observers: Observer[],
   ): QuantumConsensusResult {
     if (observers.length === 0) {
       // Direct pass-through if no observers are affected
@@ -55,7 +55,10 @@ export class QuantumConsensusEngine {
         benign: observer.protectionLevel === ProtectionLevel.FULL ? 0.7 : 0.5,
         indeterminate: 0.2,
         suspect: isTarget ? 0.2 : 0.1,
-        violating: isTarget && observer.protectionLevel === ProtectionLevel.FULL ? 0.1 : 0.0,
+        violating:
+          isTarget && observer.protectionLevel === ProtectionLevel.FULL
+            ? 0.1
+            : 0.0,
       };
 
       const qState = new QuantumEthicalState(baseline);
@@ -119,7 +122,10 @@ export class QuantumConsensusEngine {
       totalConfidence += preCollapseSuperposition[collapsed];
 
       // 5. Audit vote and evaluate Veto parameters
-      if (collapsed === EthicalBasisState.VIOLATING || collapsed === EthicalBasisState.SUSPECT) {
+      if (
+        collapsed === EthicalBasisState.VIOLATING ||
+        collapsed === EthicalBasisState.SUSPECT
+      ) {
         // Full protection level observers (humans, prime agents) have absolute veto powers
         if (observer.protectionLevel === ProtectionLevel.FULL) {
           vetoingObserverIds.push(observer.id);
@@ -138,13 +144,17 @@ export class QuantumConsensusEngine {
       const vote = votes[observer.id]!;
       if (vote === EthicalBasisState.BENIGN) {
         approves++;
-      } else if (vote === EthicalBasisState.VIOLATING || vote === EthicalBasisState.SUSPECT) {
+      } else if (
+        vote === EthicalBasisState.VIOLATING ||
+        vote === EthicalBasisState.SUSPECT
+      ) {
         rejects++;
       }
     }
 
     const totalCountedVotes = approves + rejects;
-    const approvalRate = totalCountedVotes > 0 ? approves / totalCountedVotes : 1.0;
+    const approvalRate =
+      totalCountedVotes > 0 ? approves / totalCountedVotes : 1.0;
     const confidenceIndex = totalConfidence / observers.length;
 
     // Consensus succeeds if there are NO vetoes and approvalRate is >= 50%

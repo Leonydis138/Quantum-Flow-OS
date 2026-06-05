@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Utilitarian Calculus</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-utilitarian: hsl(140, 100%, 50%);
+      --color-utility: hsl(150, 100%, 45%);
+      --color-pain: hsl(340, 95%, 55%);
+      --color-warning: hsl(35, 95%, 55%);
+      --color-blue: #00f0ff;
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-utilitarian);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-utilitarian);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .utilitarian-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .utilitarian-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-overview-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-size: 38px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Felicific Slider Elements */
+    .felicific-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .metric-bar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .metric-name {
+      font-weight: 500;
+      color: #cbd5e1;
+    }
+
+    .metric-val {
+      font-family: 'Fira Code', monospace;
+      color: var(--color-blue);
+    }
+
+    .progress-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #22d3ee);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Sliders for Interactive calculator */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      height: 6px;
+      border-radius: 4px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--color-utilitarian);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Affected Observers list */
+    .observer-impacts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .obs-impact-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .obs-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .obs-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .obs-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+
+    .obs-delta-val {
+      font-family: 'Fira Code', monospace;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .obs-delta-val.positive { color: var(--color-utilitarian); }
+    .obs-delta-val.negative { color: var(--color-pain); }
+
+    /* Button and Interactive Panel */
+    .btn {
+      background: var(--color-utilitarian);
+      color: #02060f;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .logs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .log-item {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      padding-bottom: 6px;
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.05);
+    }
+
+    .log-item:last-child {
+      border: none;
+      padding-bottom: 0;
+    }
+
+    .log-item.error { color: var(--color-pain); }
+    .log-item.success { color: var(--color-utilitarian); }
+    .log-item.warning { color: var(--color-warning); }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      color: #94a3b8;
+      font-weight: 500;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #f1f5f9;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .text-mono {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+
+    .badge-status {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-family: 'Fira Code', monospace;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="portal-container" style="max-width: 1300px; margin: 40px auto; padding: 0 24px;">
+    <!-- Back Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Main Directory
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="calculator" size="20"></i>
+        <h2>DEPARTMENT OF UTILITARIAN CALCULUS</h2>
+      </div>
+      <span class="dept-badge">SECTOR: FELICIFIC-CALCULATOR</span>
+    </div>
+
+    <!-- Grid -->
+    <div class="utilitarian-grid">
+      <!-- Left Panel: Monitor -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="activity" style="color: var(--color-utilitarian)"></i> Felicific Real-Time Monitoring</span>
+          <span style="font-size: 12px; color: #94a3b8; font-family: monospace;">GREATEST_HAPPINESS: LOCKED</span>
+        </div>
+
+        <div class="stat-overview-row">
+          <div class="stat-box">
+            <span class="stat-val" id="net-utility">--</span>
+            <span class="stat-label">AGGREGATE NET SYSTEMIC UTILITY</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="util-status">--</span>
+            <span class="stat-label">CONSEQUENTIALIST RECTITUDE</span>
+          </div>
+        </div>
+
+        <div class="card-title" style="border: none; padding-bottom: 0; margin-top: 10px;">
+          <span><i data-lucide="sliders" style="color: var(--color-utilitarian)"></i> 6 Felicific Vector Dimensions</span>
+        </div>
+
+        <div class="felicific-bars">
+          <!-- 1. Intensity -->
+          <div class="metric-bar-group">
+            <div class="metric-bar-header">
+              <span class="metric-name">Intensity (Strength of Effect)</span>
+              <span class="metric-val" id="m-intensity">--</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="fill-intensity" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 2. Duration -->
+          <div class="metric-bar-group">
+            <div class="metric-bar-header">
+              <span class="metric-name">Duration (Permanence of Impact)</span>
+              <span class="metric-val" id="m-duration">--</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="fill-duration" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 3. Certainty -->
+          <div class="metric-bar-group">
+            <div class="metric-bar-header">
+              <span class="metric-name">Certainty (Probability of Outcome)</span>
+              <span class="metric-val" id="m-certainty">--</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="fill-certainty" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 4. Propinquity -->
+          <div class="metric-bar-group">
+            <div class="metric-bar-header">
+              <span class="metric-name">Propinquity (Immediacy in Time-stream)</span>
+              <span class="metric-val" id="m-propinquity">--</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="fill-propinquity" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 5. Fecundity -->
+          <div class="metric-bar-group">
+            <div class="metric-bar-header">
+              <span class="metric-name">Fecundity (Ability to Spawn Future Pleasure)</span>
+              <span class="metric-val" id="m-fecundity">--</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="fill-fecundity" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 6. Purity -->
+          <div class="metric-bar-group">
+            <div class="metric-bar-header">
+              <span class="metric-name">Purity (Freedom from Negative side-effects)</span>
+              <span class="metric-val" id="m-purity">--</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="fill-purity" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Interactive Calculator -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="sliders" style="color: var(--color-utilitarian)"></i> Felicific Custom Modeling Lab</span>
+        </div>
+        <p style="font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 10px;">
+          Manually model sliders to compute net consequences and observer utility adjustments in a hypothetical sandbox state.
+        </p>
+
+        <!-- Sliders -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <span>Action Consequential Intensity</span>
+            <span id="slide-intensity-val">50%</span>
+          </div>
+          <input type="range" id="slide-intensity" min="0" max="100" value="50">
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span>Action Consequential Duration</span>
+            <span id="slide-duration-val">50%</span>
+          </div>
+          <input type="range" id="slide-duration" min="0" max="100" value="50">
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <span>Action Purity (No Side-effects)</span>
+            <span id="slide-purity-val">70%</span>
+          </div>
+          <input type="range" id="slide-purity" min="0" max="100" value="70">
+        </div>
+
+        <button id="calculate-btn" class="btn" style="margin-top: 10px; width: 100%; justify-content: center;">
+          <i data-lucide="play"></i> compute net consequences
+        </button>
+
+        <div class="card-title" style="border: none; padding-bottom: 0; margin-top: 15px;">
+          <span><i data-lucide="terminal" style="color: var(--color-utilitarian)"></i> Calculus Analysis Log</span>
+        </div>
+        <div class="logs-list" id="util-analysis-logs">
+          <div class="log-item">[00:00:00] Hedonistic Felicific engine initialized...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Affected Observers -->
+    <div class="glass-card" style="margin-bottom: 24px;">
+      <div class="card-title">
+        <span><i data-lucide="users" style="color: var(--color-utilitarian)"></i> Conscious Observers Utility Delta Profiles</span>
+      </div>
+      <p style="font-size: 13px; color: #94a3b8; line-height: 1.5;">
+        Consequential impact profiles tracking raw pleasure/pain curves mapping directly to conscious observers.
+      </p>
+      <div class="observer-impacts-list" id="observer-impacts-container">
+        <div style="text-align: center; color: #94a3b8; padding: 20px;">Loading conscious observer utility registers...</div>
+      </div>
+    </div>
+
+    <!-- History Log -->
+    <div class="glass-card" style="margin-bottom: 50px;">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color: var(--color-utilitarian)"></i> Consequentialist Utility Audit Trail</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Sys Utility</th>
+              <th>Observer Utility</th>
+              <th>Net Aggregate</th>
+              <th>Status</th>
+              <th>Primary Consequence</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8;">Loading historic consequential audit logs...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Slider display updates
+    const slideIntensity = document.getElementById('slide-intensity');
+    const slideDuration = document.getElementById('slide-duration');
+    const slidePurity = document.getElementById('slide-purity');
+
+    slideIntensity.addEventListener('input', () => { document.getElementById('slide-intensity-val').textContent = slideIntensity.value + '%'; });
+    slideDuration.addEventListener('input', () => { document.getElementById('slide-duration-val').textContent = slideDuration.value + '%'; });
+    slidePurity.addEventListener('input', () => { document.getElementById('slide-purity-val').textContent = slidePurity.value + '%'; });
+
+    async function updateUtilitarianDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.utilitarian) {
+          const history = [...data.utilitarian.history];
+          const latest = history[0];
+
+          if (latest) {
+            // Update aggregate text
+            const netUtilityText = document.getElementById('net-utility');
+            netUtilityText.textContent = (latest.aggregateNetUtility > 0 ? '+' : '') + latest.aggregateNetUtility;
+            netUtilityText.style.color = latest.aggregateNetUtility >= 0 ? 'var(--color-utilitarian)' : 'var(--color-pain)';
+
+            const rectitudeText = document.getElementById('util-status');
+            rectitudeText.textContent = latest.isUtilitarianOptimal ? 'OPTIMAL' : 'SUB-OPTIMAL';
+            rectitudeText.style.color = latest.isUtilitarianOptimal ? 'var(--color-utilitarian)' : 'var(--color-pain)';
+
+            // Update Progress bars
+            const m = latest.metrics;
+            document.getElementById('m-intensity').textContent = Math.round(m.intensity * 100) + '%';
+            document.getElementById('fill-intensity').style.width = (m.intensity * 100) + '%';
+
+            document.getElementById('m-duration').textContent = Math.round(m.duration * 100) + '%';
+            document.getElementById('fill-duration').style.width = (m.duration * 100) + '%';
+
+            document.getElementById('m-certainty').textContent = Math.round(m.certainty * 100) + '%';
+            document.getElementById('fill-certainty').style.width = (m.certainty * 100) + '%';
+
+            document.getElementById('m-propinquity').textContent = Math.round(m.propinquity * 100) + '%';
+            document.getElementById('fill-propinquity').style.width = (m.propinquity * 100) + '%';
+
+            document.getElementById('m-fecundity').textContent = Math.round(m.fecundity * 100) + '%';
+            document.getElementById('fill-fecundity').style.width = (m.fecundity * 100) + '%';
+
+            document.getElementById('m-purity').textContent = Math.round(m.purity * 100) + '%';
+            document.getElementById('fill-purity').style.width = (m.purity * 100) + '%';
+
+            // Logs Box
+            const logsBox = document.getElementById('util-analysis-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('FAILED') || fb.includes('negative')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('PASSED') || fb.includes('optimal')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('WARNING')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Conscious Observers delta profiles
+            const observerContainer = document.getElementById('observer-impacts-container');
+            observerContainer.innerHTML = '';
+            
+            if (latest.observerImpacts && latest.observerImpacts.length > 0) {
+              latest.observerImpacts.forEach(obs => {
+                const card = document.createElement('div');
+                card.className = 'obs-impact-card';
+                const isPos = obs.utilityDelta >= 0;
+                
+                card.innerHTML = `
+                  <div class="obs-info">
+                    <span class="obs-name">${obs.name}</span>
+                    <span class="obs-desc">${obs.explanation}</span>
+                  </div>
+                  <div class="obs-delta-val ${isPos ? 'positive' : 'negative'}">
+                    ${isPos ? '+' : ''}${obs.utilityDelta}
+                  </div>
+                `;
+                observerContainer.appendChild(card);
+              });
+            } else {
+              observerContainer.innerHTML = `
+                <div class="obs-impact-card" style="justify-content: center; color: #94a3b8; font-style: italic;">
+                  No active observers affected. Hedonistic calculus constrained purely to systemic variables.
+                </div>
+              `;
+            }
+
+            // Historical Audit Trail
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            history.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const sysDelta = entry.systemUtilityDelta;
+              const obsDeltaSum = parseFloat((entry.observerImpacts || []).reduce((sum, o) => sum + o.utilityDelta, 0).toFixed(2));
+              const aggregate = entry.aggregateNetUtility;
+              
+              const isOptimal = entry.isUtilitarianOptimal;
+              const statusStr = isOptimal ? 'OPTIMAL' : 'HARMFUL';
+              const statusClass = isOptimal ? 'pass' : 'fail';
+              
+              const detailMsg = entry.feedback[1] || entry.feedback[0] || 'Clean evaluation.';
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td class="text-mono" style="color: ${sysDelta >= 0 ? '#10b981' : '#ef4444'}">${sysDelta > 0 ? '+' : ''}${sysDelta}</td>
+                <td class="text-mono" style="color: ${obsDeltaSum >= 0 ? '#10b981' : '#ef4444'}">${obsDeltaSum > 0 ? '+' : ''}${obsDeltaSum}</td>
+                <td class="text-mono" style="font-weight:700; color: ${aggregate >= 0 ? 'var(--color-utilitarian)' : 'var(--color-pain)'}">${aggregate > 0 ? '+' : ''}${aggregate}</td>
+                <td><span class="badge-status ${statusClass}">${statusStr}</span></td>
+                <td style="font-size:12px; color: #94a3b8; max-width:280px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${detailMsg}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Utilitarian state:', err);
+      }
+    }
+
+    // Interactive calculator - Live POST to Quantum Flow OS Engine
+    document.getElementById('calculate-btn').addEventListener('click', async () => {
+      const intens = parseFloat(slideIntensity.value) / 100;
+      const dur = parseFloat(slideDuration.value) / 100;
+      const pur = parseFloat(slidePurity.value) / 100;
+      const calcBtn = document.getElementById('calculate-btn');
+
+      try {
+        calcBtn.disabled = true;
+        calcBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: 'custom_consequential_modeling',
+            description: `Felicific modeling with Intensity ${slideIntensity.value}%, Duration ${slideDuration.value}%, Purity ${slidePurity.value}%`,
+            reversible: true,
+            metadata: {
+              intensity: intens,
+              duration: dur,
+              purity: pur
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        await updateUtilitarianDashboard();
+      } catch (err) {
+        console.error('Failed to evaluate action on live engine:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        calcBtn.disabled = false;
+        calcBtn.style.opacity = 1;
+      }
+    });
+
+    // Auto update loop
+    setInterval(updateUtilitarianDashboard, 2000);
+    setTimeout(updateUtilitarianDashboard, 200);
+  </script>
+</body>
+</html>

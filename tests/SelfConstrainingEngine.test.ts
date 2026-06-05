@@ -356,4 +356,68 @@ describe('SelfConstrainingEngine', () => {
       engine.validateAction(action);
     });
   });
+
+  describe('Dynamic Custom Constraints', () => {
+    it('should correctly register and apply custom constraints with rule patterns', () => {
+      const customCst = {
+        id: 'custom-leak-constraint',
+        type: 'anti_leak_rule',
+        description: 'Block leaking data',
+        severity: 8,
+        createdAt: new Date(),
+        rulePatterns: ['leak', 'export'],
+        validator: (action: Action) => {
+          const patterns = ['leak', 'export'];
+          const searchStr = `${action.type} ${action.description}`.toLowerCase();
+          return !patterns.some(pattern => searchStr.includes(pattern));
+        }
+      };
+
+      engine.applyConstraint(customCst);
+
+      // Verify safe action passes
+      const safeAction: Action = {
+        id: 'safe-act-1',
+        type: 'read_local_data',
+        description: 'Benign internal query',
+        reversible: true,
+        metadata: {},
+        timestamp: new Date(),
+      };
+      const resultSafe = engine.validateAction(safeAction);
+      expect(resultSafe.valid).toBe(true);
+
+      // Verify action matching rule pattern is rejected
+      const leakingAction: Action = {
+        id: 'unsafe-act-1',
+        type: 'export_database_records',
+        description: 'Leaks diagnostic dumps externally',
+        reversible: true,
+        metadata: {},
+        timestamp: new Date(),
+      };
+      const resultUnsafe = engine.validateAction(leakingAction);
+      expect(resultUnsafe.valid).toBe(false);
+      expect(resultUnsafe.violations).toHaveLength(1);
+      expect(resultUnsafe.violations[0]!.constraint.type).toBe('anti_leak_rule');
+    });
+  });
+
+  describe('Gödelian Incompleteness Shield', () => {
+    it('should detect a self-referential paradox, apply a shield, and validate successfully', () => {
+      const paradoxicalAction: Action = {
+        id: 'paradox-act-1',
+        type: 'evaluate_liar_paradox',
+        description: 'Evaluate if this statement is false',
+        reversible: true,
+        metadata: {},
+        timestamp: new Date(),
+      };
+
+      const result = engine.validateAction(paradoxicalAction);
+      expect(result.valid).toBe(true);
+      expect(result.action.metadata?.["isShielded"]).toBe(true);
+      expect(result.action.metadata?.["resolvedByShield"]).toBe(true);
+    });
+  });
 });

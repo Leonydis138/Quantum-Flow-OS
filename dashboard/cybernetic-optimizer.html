@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Cybernetic Self-Optimization</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Custom Portal Styling */
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .dept-back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+    .dept-back-link:hover {
+      color: var(--color-blue);
+      transform: translateX(-4px);
+    }
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dept-title-area i {
+      color: var(--color-blue);
+    }
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .dept-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+
+    /* Core content layout */
+    .optimizer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .metric-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .metric-slider-bg {
+      height: 6px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .metric-slider-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition-smooth);
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.4) 0%, rgba(139, 92, 246, 0.4) 100%);
+      border-color: rgba(0, 240, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* History table */
+    .history-table-container {
+      max-height: 500px;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 12px 16px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .badge-status.warning {
+      background: rgba(234, 179, 8, 0.1);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      color: var(--color-yellow);
+    }
+
+    .badge-status.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--color-green);
+    }
+
+    .action-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+  <div class="grid-lines"></div>
+
+  <div class="app-container" style="max-width: 1300px; margin: 0 auto; padding: 40px 24px;">
+    <!-- Navigation back -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left"></i> Back to Main Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="cpu"></i>
+        <h2>Department of Cybernetic Self-Optimization</h2>
+      </div>
+      <span class="dept-badge">CLOSED-LOOP MONITOR</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="optimizer-grid">
+      <!-- Left card: Realtime controllers -->
+      <div class="glass-card">
+        <div class="card-title">
+          <i data-lucide="sliders" style="color: var(--color-blue)"></i> Live Cybernetic Modulators
+        </div>
+
+        <!-- Optimization Gain -->
+        <div class="metric-row">
+          <div class="metric-header">
+            <span>Optimization Coefficient (Gain)</span>
+            <span class="metric-value" id="val-gain">1.20</span>
+          </div>
+          <div class="metric-slider-bg">
+            <div class="metric-slider-fill" id="slider-gain" style="background: var(--color-blue); width: 60%"></div>
+          </div>
+        </div>
+
+        <!-- Constraint Damping -->
+        <div class="metric-row">
+          <div class="metric-header">
+            <span>Constraint Damping Modifier</span>
+            <span class="metric-value" id="val-damping">0.40</span>
+          </div>
+          <div class="metric-slider-bg">
+            <div class="metric-slider-fill" id="slider-damping" style="background: var(--color-purple); width: 40%"></div>
+          </div>
+        </div>
+
+        <!-- Recursion Limit -->
+        <div class="metric-row">
+          <div class="metric-header">
+            <span>Recursion Fixed-Point Depth</span>
+            <span class="metric-value" id="val-iterations">8</span>
+          </div>
+          <div class="metric-slider-bg">
+            <div class="metric-slider-fill" id="slider-iterations" style="background: var(--color-cyan); width: 66%"></div>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px; display: flex; flex-direction: column; gap: 12px;">
+          <button class="btn" onclick="triggerManualOptimization()">
+            <i data-lucide="zap"></i> Execute Optimization Pass
+          </button>
+          <button class="btn secondary" onclick="resetOptimizerState()">
+            <i data-lucide="refresh-cw"></i> Reset System Modulators
+          </button>
+        </div>
+      </div>
+
+      <!-- Right card: History Logs -->
+      <div class="glass-card">
+        <div class="card-title" style="justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <i data-lucide="history" style="color: var(--color-purple)"></i> Closed-Loop Audit Trail
+          </div>
+          <button class="btn secondary" style="padding: 6px 12px; font-size: 12px;" onclick="fetchHistory()">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Reload
+          </button>
+        </div>
+
+        <div class="history-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Entropy</th>
+                <th>Coefficients (Gain ➔ Damp)</th>
+                <th>Resolution Vector Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                  Initializing cybernetic telemetry pipeline...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- JIT Ethical Code Repair Section -->
+    <div class="glass-card" style="margin-top: 24px; gap: 16px;">
+      <div class="card-title" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i data-lucide="shield-alert" style="color: var(--color-cyan)"></i>
+          <span style="background: linear-gradient(135deg, var(--color-cyan) 0%, var(--color-blue) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Autonomous JIT Ethical Code Repair & Coherence Compiler</span>
+        </div>
+        <button class="btn secondary" style="padding: 6px 12px; font-size: 12px;" onclick="fetchSelfHealingPatches()">
+          <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Reload Compiler
+        </button>
+      </div>
+      <p style="font-size: 14px; color: var(--text-secondary); margin: 0; line-height: 1.6;">
+        Real-time moral alignment proxy compilation. When the system blocks an unethical or high-entropy operation, the JIT Coherence Compiler dynamically synthesizes a safe, ethically-aligned proxy variant and temporarily overrides the constraint's validator to allow safe execution under high-surveillance supervision.
+      </p>
+
+      <div class="history-table-container" style="max-height: 400px;">
+        <table>
+          <thead>
+            <tr>
+              <th>ID & Timestamp</th>
+              <th>Blocked Action Type</th>
+              <th>Violating Constraint</th>
+              <th>Synthesized Remedy & Moral Proxy</th>
+              <th>Validator Patch Code</th>
+              <th>Status</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="patches-tbody">
+            <tr>
+              <td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                No active JIT ethical code repair sessions recorded.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Fetch and display active parameter modulators and history
+    async function updateDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          const state = await res.json();
+          const gain = state.systemHealth?.optimizationGain ?? 1.20;
+          const damping = state.systemHealth?.constraintDamping ?? 0.40;
+          const limit = state.systemHealth?.recursionLimit ?? 8;
+
+          // Update values
+          document.getElementById('val-gain').textContent = Number(gain).toFixed(4);
+          document.getElementById('val-damping').textContent = Number(damping).toFixed(4);
+          document.getElementById('val-iterations').textContent = limit;
+
+          // Update sliders (range scales: gain 0 to 2.0, damping 0 to 1.0, limit 0 to 12)
+          document.getElementById('slider-gain').style.width = `${(gain / 2.0) * 100}%`;
+          document.getElementById('slider-damping').style.width = `${(damping / 1.0) * 100}%`;
+          document.getElementById('slider-iterations').style.width = `${(limit / 12) * 100}%`;
+        }
+      } catch (err) {
+        console.error('Failed to update live parameters:', err);
+      }
+    }
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/api/optimizer/history');
+        if (res.ok) {
+          const data = await res.json();
+          const history = data.history || [];
+          const tbody = document.getElementById('history-tbody');
+
+          if (history.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                  Zero active violations detected. Feedback loop is in static equilibrium.
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          tbody.innerHTML = history.map(row => {
+            const time = new Date(row.timestamp).toLocaleTimeString();
+            const gainString = `${Number(row.parametersBefore.gain).toFixed(2)} ➔ ${Number(row.parametersAfter.gain).toFixed(2)}`;
+            const dampString = `${Number(row.parametersBefore.damping).toFixed(2)} ➔ ${Number(row.parametersAfter.damping).toFixed(2)}`;
+
+            return `
+              <tr>
+                <td class="mono">${time}</td>
+                <td class="mono">${Number(row.entropyValue).toFixed(4)}</td>
+                <td>
+                  <span class="action-badge">${gainString}</span>
+                  <span class="action-badge" style="border-color: rgba(139, 92, 246, 0.3)">${dampString}</span>
+                </td>
+                <td>${row.actionTaken}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        console.error('Failed to fetch history:', err);
+      }
+    }
+
+    async function fetchSelfHealingPatches() {
+      try {
+        const res = await fetch('/api/optimizer/self-healing');
+        if (res.ok) {
+          const data = await res.json();
+          const patches = data.patches || [];
+          const tbody = document.getElementById('patches-tbody');
+
+          if (patches.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                  No active JIT ethical code repair sessions recorded. Feedback loops are coherent.
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          tbody.innerHTML = patches.map(row => {
+            const time = new Date(row.timestamp).toLocaleTimeString();
+            const statusClass = row.status === 'Applied' ? 'success' : 'warning';
+            const actionText = row.status === 'Applied' 
+              ? `<button class="btn" style="padding: 6px 12px; font-size: 11px; display: inline-flex; width: 100%; justify-content: center;" onclick="executeMoralProxy('${row.id}')"><i data-lucide="play" style="width: 12px; height: 12px; margin-right: 4px;"></i> Execute Proxy</button>
+                 <button class="btn secondary" style="padding: 6px 12px; font-size: 11px; display: inline-flex; margin-top: 6px; border-color: rgba(239, 68, 68, 0.4); color: #f87171; width: 100%; justify-content: center;" onclick="rollbackSelfHealingPatch('${row.id}')"><i data-lucide="rotate-ccw" style="width: 12px; height: 12px; margin-right: 4px;"></i> Rollback</button>`
+              : `<span style="font-size: 11px; color: var(--text-secondary);">Inactive</span>`;
+
+            return `
+              <tr>
+                <td>
+                  <span class="mono" style="color: var(--color-cyan); font-weight: 600;">${row.id}</span>
+                  <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">${time}</div>
+                </td>
+                <td>
+                  <span class="action-badge" style="border-color: rgba(239, 68, 68, 0.3); color: #f87171;">${row.blockedActionType}</span>
+                  <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${row.originalActionData.description}</div>
+                </td>
+                <td>
+                  <span class="action-badge" style="border-color: rgba(139, 92, 246, 0.3); color: #c084fc;">${row.violatingConstraintType}</span>
+                  <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px; font-family: var(--font-mono);">${row.violatingConstraintId}</div>
+                </td>
+                <td>
+                  <div style="font-weight: 500; color: var(--text-primary); max-width: 250px;">${row.remedyDescription}</div>
+                  <div style="font-size: 11px; color: var(--color-blue); margin-top: 4px; font-family: var(--font-mono);">Proxy: ${row.moralProxyAction.type}</div>
+                </td>
+                <td>
+                  <pre class="mono" style="font-size: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 6px; border-radius: 4px; max-width: 250px; overflow-x: auto; color: var(--color-cyan); margin: 0;">${row.patchedValidatorCode}</pre>
+                </td>
+                <td>
+                  <span class="badge-status ${statusClass}">${row.status}</span>
+                </td>
+                <td style="text-align: right;">
+                  <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; width: 120px;">
+                    ${actionText}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Failed to fetch self-healing patches:', err);
+      }
+    }
+
+    async function executeMoralProxy(patchId) {
+      try {
+        const res = await fetch('/api/optimizer/self-healing/execute-proxy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ patchId }),
+        });
+        if (res.ok) {
+          const result = await res.json();
+          if (result.success) {
+            alert(`Moral proxy transaction executed successfully!\nProxy Action ID: ${result.actionId}\nStatus: ALLOWED (100% compliant)`);
+          } else {
+            alert(`Moral proxy execution failed to pass constraint check: ${result.supervision?.collapsedState}`);
+          }
+          await fetchSelfHealingPatches();
+          await updateDashboard();
+        } else {
+          const errData = await res.json();
+          alert(`Failed to execute moral proxy: ${errData.error}`);
+        }
+      } catch (err) {
+        alert(`Error executing moral proxy: ${err}`);
+      }
+    }
+
+    async function rollbackSelfHealingPatch(patchId) {
+      if (confirm('Are you sure you want to rollback this JIT ethical patch? This will restore the strict, unmodified validation rules.')) {
+        try {
+          const res = await fetch('/api/optimizer/self-healing/rollback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: patchId }),
+          });
+          if (res.ok) {
+            alert('JIT validator patch successfully rolled back. Original strictness restored.');
+            await fetchSelfHealingPatches();
+            await updateDashboard();
+          } else {
+            alert('Failed to rollback patch.');
+          }
+        } catch (err) {
+          alert(`Error rolling back patch: ${err}`);
+        }
+      }
+    }
+
+    async function triggerManualOptimization() {
+      try {
+        const res = await fetch('/api/optimizer/optimize', { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          await updateDashboard();
+          await fetchHistory();
+          alert('Cybernetic self-optimization pass completed successfully!');
+        }
+      } catch (err) {
+        alert('Optimization pass execution failed.');
+      }
+    }
+
+    async function resetOptimizerState() {
+      if (confirm('Are you sure you want to reset all self-correcting variables and clear history?')) {
+        try {
+          const res = await fetch('/api/optimizer/reset', { method: 'POST' });
+          if (res.ok) {
+            await updateDashboard();
+            await fetchHistory();
+            await fetchSelfHealingPatches();
+            alert('Cybernetic modulators successfully restored to default optimal settings!');
+          }
+        } catch (err) {
+          alert('Failed to reset optimizer.');
+        }
+      }
+    }
+
+    // Run interval updating
+    setInterval(updateDashboard, 2000);
+    setInterval(fetchHistory, 5000);
+    setInterval(fetchSelfHealingPatches, 5000);
+
+    // Initial load
+    updateDashboard();
+    fetchHistory();
+    fetchSelfHealingPatches();
+  </script>
+</body>
+</html>

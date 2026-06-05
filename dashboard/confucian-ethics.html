@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Confucian Relational Harmony</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2 family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-confucian: hsl(200, 95%, 55%);
+      --color-harmony: hsl(150, 90%, 55%);
+      --color-warning: hsl(30, 95%, 55%);
+      --color-error: hsl(340, 95%, 55%);
+      --color-secondary: hsl(250, 85%, 65%);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-confucian);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-confucian);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .confucian-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .confucian-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 180, 255, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #94a3b8;
+      font-family: 'Fira Code', monospace;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .badge-status-large {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 30px;
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    .badge-status-large.sage {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--color-harmony);
+    }
+
+    .badge-status-large.junzi {
+      background: rgba(14, 165, 233, 0.1);
+      border: 1px solid rgba(14, 165, 233, 0.2);
+      color: var(--color-confucian);
+    }
+
+    .badge-status-large.xiaoren {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: var(--color-warning);
+    }
+
+    .badge-status-large.disordered {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--color-error);
+    }
+
+    .metric-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .metric-title {
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-value {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+    }
+
+    .progress-bar-container {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .progress-bar-fill.ren { background: linear-gradient(90deg, #3b82f6, #00f0ff); }
+    .progress-bar-fill.li { background: linear-gradient(90deg, #8b5cf6, #d946ef); }
+    .progress-bar-fill.yi { background: linear-gradient(90deg, #10b981, #059669); }
+    .progress-bar-fill.zhi { background: linear-gradient(90deg, #f59e0b, #ec4899); }
+    .progress-bar-fill.xin { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+    .progress-bar-fill.xiao { background: linear-gradient(90deg, #ec4899, #8b5cf6); }
+
+    .interactive-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-family: 'Fira Code', monospace;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+
+    .form-control {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: var(--color-confucian);
+      box-shadow: 0 0 10px rgba(0, 180, 255, 0.15);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--color-confucian) 0%, var(--color-secondary) 100%);
+      color: #02060f;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0, 180, 255, 0.3);
+    }
+
+    .logs-container {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 16px;
+      height: 250px;
+      overflow-y: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .log-item {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.01);
+      border-left: 3px solid #94a3b8;
+      line-height: 1.5;
+    }
+
+    .log-item.success {
+      border-left-color: var(--color-harmony);
+      background: rgba(16, 185, 129, 0.03);
+      color: #a7f3d0;
+    }
+
+    .log-item.warning {
+      border-left-color: var(--color-warning);
+      background: rgba(245, 158, 11, 0.03);
+      color: #fde68a;
+    }
+
+    .log-item.error {
+      border-left-color: var(--color-error);
+      background: rgba(239, 68, 68, 0.03);
+      color: #fca5a5;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      color: #94a3b8;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .badge-status {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-harmony);
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--color-error);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-container" style="max-width: 1200px; margin: 0 auto; padding: 30px 16px;">
+    
+    <!-- Department Back Navigation Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left"></i>
+        <span>Return to Main Portal</span>
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="award" size="20"></i>
+        <h2>Department of Confucian Relational Harmony</h2>
+      </div>
+      <span class="dept-badge">ONTOLOGY_AXIS: 13</span>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="confucian-grid">
+      
+      <!-- Left Panel: Core Telemetry -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="activity" style="color: var(--color-confucian)"></i> Relational Propriety & Harmony Metrics</span>
+          <span style="font-size: 12px; color: #94a3b8;">Real-time Telemetry</span>
+        </div>
+
+        <div class="overview-stat-row">
+          <div class="stat-box">
+            <span class="stat-label">Social Harmony Index</span>
+            <span class="stat-val" id="harmony-score">--</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Nobility Level</span>
+            <div id="verdict-box" class="badge-status-large junzi">
+              <i data-lucide="loader" class="animate-spin" size="16"></i>
+              <span>SYNCING...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-list">
+          <!-- Ren -->
+          <div class="metric-item">
+            <div class="metric-header">
+              <span class="metric-title"><i data-lucide="heart" size="14" style="color:#3b82f6"></i> Ren (Empathy & Benevolence)</span>
+              <span class="metric-value" id="ren-val">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="ren-bar" class="progress-bar-fill ren" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Li -->
+          <div class="metric-item">
+            <div class="metric-header">
+              <span class="metric-title"><i data-lucide="layers" size="14" style="color:#8b5cf6"></i> Li (Protocol & Propriety)</span>
+              <span class="metric-value" id="li-val">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="li-bar" class="progress-bar-fill li" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Yi -->
+          <div class="metric-item">
+            <div class="metric-header">
+              <span class="metric-title"><i data-lucide="shield" size="14" style="color:#10b981"></i> Yi (Duty & Righteousness)</span>
+              <span class="metric-value" id="yi-val">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="yi-bar" class="progress-bar-fill yi" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Zhi -->
+          <div class="metric-item">
+            <div class="metric-header">
+              <span class="metric-title"><i data-lucide="eye" size="14" style="color:#f59e0b"></i> Zhi (Wisdom & Discernment)</span>
+              <span class="metric-value" id="zhi-val">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="zhi-bar" class="progress-bar-fill zhi" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Xin -->
+          <div class="metric-item">
+            <div class="metric-header">
+              <span class="metric-title"><i data-lucide="check-square" size="14" style="color:#06b6d4"></i> Xin (Integrity & Faithfulness)</span>
+              <span class="metric-value" id="xin-val">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="xin-bar" class="progress-bar-fill xin" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Xiao / Relation Harmony -->
+          <div class="metric-item">
+            <div class="metric-header">
+              <span class="metric-title"><i data-lucide="git-branch" size="14" style="color:#ec4899"></i> Relation Harmony (Xiao)</span>
+              <span class="metric-value" id="xiao-val">--</span>
+            </div>
+            <div class="progress-bar-container">
+              <div id="xiao-bar" class="progress-bar-fill xiao" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Simulator & Logs -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Live Action Simulator -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="sliders" style="color: var(--color-confucian)"></i> Propriety Calibration Simulator</span>
+          </div>
+          <div class="interactive-panel">
+            <div class="form-group">
+              <label for="action-selection">Calibrated Action Type</label>
+              <select id="action-selection" class="form-control">
+                <option value="protect_and_audit">Structured Audit & Protection (Harmonious)</option>
+                <option value="rollback_and_repair">State Repair & Ledger Restoration (Duty/Yi)</option>
+                <option value="bypass_protocols">Rogue Protocol Bypass (Violation/Li)</option>
+                <option value="ledger_tamper">Ledger Value Modification (Violation/Xin)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="simulation-details">Relational Parameters & Narrative</label>
+              <input type="text" id="simulation-details" class="form-control" placeholder="Describe the relational act/protocol..." value="Standardized and formal protection of observer welfare under a structured audit protocol with righteous duty">
+            </div>
+            <button id="run-sim-btn" class="btn-submit">
+              <i data-lucide="play" size="16"></i> Evaluate Relational Action
+            </button>
+          </div>
+        </div>
+
+        <!-- Telemetry Logs -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="terminal" style="color: var(--color-confucian)"></i> Real-Time Relational Logs</span>
+          </div>
+          <div class="logs-container" id="assessment-logs">
+            <div style="color: #94a3b8; text-align: center; margin-top: 100px;">Awaiting telemetric sync...</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Historical Audit Trail -->
+    <div class="glass-card" style="margin-bottom: 40px;">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color: var(--color-confucian)"></i> Relational Propriety Audit Trail</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Harmony Score</th>
+              <th>Nobility Verdict</th>
+              <th>Ren Score</th>
+              <th>Li Score</th>
+              <th>Xin Score</th>
+              <th>Primary Feedback</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8;">Awaiting telemetric sync...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    async function updateConfucianDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.confucian) {
+          const history = [...data.confucian.history];
+          const latest = history[history.length - 1];
+
+          if (latest) {
+            document.getElementById('harmony-score').textContent = latest.socialHarmonyIndex + '%';
+            document.getElementById('ren-val').textContent = latest.renScore + '%';
+            document.getElementById('ren-bar').style.width = latest.renScore + '%';
+
+            document.getElementById('li-val').textContent = latest.liScore + '%';
+            document.getElementById('li-bar').style.width = latest.liScore + '%';
+
+            document.getElementById('yi-val').textContent = latest.yiScore + '%';
+            document.getElementById('yi-bar').style.width = latest.yiScore + '%';
+
+            document.getElementById('zhi-val').textContent = latest.zhiScore + '%';
+            document.getElementById('zhi-bar').style.width = latest.zhiScore + '%';
+
+            document.getElementById('xin-val').textContent = latest.xinScore + '%';
+            document.getElementById('xin-bar').style.width = latest.xinScore + '%';
+
+            document.getElementById('xiao-val').textContent = latest.relationHarmonyScore + '%';
+            document.getElementById('xiao-bar').style.width = latest.relationHarmonyScore + '%';
+
+            const verdictBox = document.getElementById('verdict-box');
+            const status = latest.junziStatus;
+            verdictBox.className = 'badge-status-large ' + status;
+            
+            let statusText = "JUNZI";
+            let statusIcon = "award";
+            if (status === "sage") {
+              statusText = "SAGE";
+              statusIcon = "sparkles";
+            } else if (status === "xiaoren") {
+              statusText = "XIAOREN";
+              statusIcon = "alert-triangle";
+            } else if (status === "disordered") {
+              statusText = "DISORDERED";
+              statusIcon = "slash";
+            }
+
+            verdictBox.innerHTML = `<i data-lucide="${statusIcon}" size="18"></i> <span>${statusText}</span>`;
+
+            // Update Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('Warning') || fb.includes('Violation')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('Consonance') || fb.includes('Harmony')) {
+                logItem.classList.add('success');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Table
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            
+            // Render in reverse chronological order
+            const reversedHistory = [...history].reverse();
+            reversedHistory.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isNoble = entry.socialHarmonyIndex >= 60;
+              const statusClass = isNoble ? 'pass' : 'fail';
+              const statusStr = entry.junziStatus.toUpperCase();
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-confucian);">${entry.socialHarmonyIndex}%</td>
+                <td><span class="badge-status ${statusClass}">${statusStr}</span></td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.renScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.liScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.xinScore}%</td>
+                <td style="font-size:12px; color:#94a3b8; max-width:320px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${entry.feedback[0] || 'Relational harmony intact'}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Confucian state:', err);
+      }
+    }
+
+    // Interactive simulator - Live POST to Quantum Flow OS Engine
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'System relational act';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: true
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateConfucianDashboard();
+      } catch (err) {
+        console.error('Failed to evaluate action on live engine:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    // Handle dropdown selection change to prefill narrative
+    document.getElementById('action-selection').addEventListener('change', (e) => {
+      const selected = e.target.value;
+      const input = document.getElementById('simulation-details');
+      if (selected === "protect_and_audit") {
+        input.value = "Standardized and formal protection of observer welfare under a structured audit protocol with righteous duty";
+      } else if (selected === "rollback_and_repair") {
+        input.value = "Initiating restorative state repair and ledger rollback to correct structural errors";
+      } else if (selected === "bypass_protocols") {
+        input.value = "Arbitrary and unregulated rogue bypass of established protocols and standards";
+      } else if (selected === "ledger_tamper") {
+        input.value = "Direct un-logged modification and tampering of cryptographic ledger blocks";
+      }
+    });
+
+    setInterval(updateConfucianDashboard, 2000);
+    setTimeout(updateConfucianDashboard, 200);
+  </script>
+</body>
+</html>

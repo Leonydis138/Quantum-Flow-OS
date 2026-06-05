@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quantum Consensus Dynamics — Interactive HD Visual Storyboard Player</title>
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --surface-color: rgba(17, 24, 39, 0.85);
+      --accent-glow: #00f2fe;
+      --accent-success: #4facfe;
+      --text-main: #f3f4f6;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-hidden: true;
+    }
+    #matrix-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.25;
+    }
+    .player-container {
+      position: relative;
+      z-index: 2;
+      width: 900px;
+      height: 560px;
+      background: var(--surface-color);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 242, 254, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+    .video-viewport {
+      position: relative;
+      flex: 1;
+      background: #02040a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .scene-renderer {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .visual-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(16, 24, 48, 0.8) 0%, rgba(2, 4, 10, 1) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+    .ambient-glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.15) 0%, transparent 70%);
+      filter: blur(50px);
+      animation: pulsate 6s infinite alternate;
+    }
+    .scene-meta {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-glow);
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+    }
+    .scene-title {
+      font-size: 28px;
+      font-weight: 800;
+      background: linear-gradient(135s, #00f2fe 0%, #4facfe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .scene-desc {
+      font-size: 14px;
+      color: #9ca3af;
+      max-width: 600px;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .narration-subtitles {
+      position: absolute;
+      bottom: 24px;
+      left: 5%;
+      width: 90%;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.7);
+      border-left: 3px solid var(--accent-success);
+      padding: 14px 20px;
+      border-radius: 4px;
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 500;
+      color: #e5e7eb;
+      box-sizing: border-box;
+    }
+    .controls-bar {
+      height: 90px;
+      background: rgba(10, 15, 28, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 10px 24px;
+      box-sizing: border-box;
+    }
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-glow), var(--accent-success));
+      border-radius: 3px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: width 0.1s linear;
+    }
+    .buttons-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .left-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .play-btn {
+      background: linear-gradient(135deg, var(--accent-glow), var(--accent-success));
+      border: none;
+      color: #0b0f19;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+      transition: all 0.3s ease;
+    }
+    .play-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.6);
+    }
+    .time-readout {
+      font-family: monospace;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .right-directives {
+      font-size: 11px;
+      color: #6b7280;
+      text-align: right;
+    }
+    @keyframes pulsate {
+      0% { transform: scale(1); opacity: 0.4; }
+      100% { transform: scale(1.2); opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="matrix-canvas"></canvas>
+
+  <div class="player-container">
+    <div class="video-viewport">
+      <div class="ambient-glow"></div>
+      
+      <div class="scene-renderer" id="viewport-renderer">
+        <div class="visual-screen">
+          <div class="scene-meta" id="scene-meta-tag">SCENE 1 / 3</div>
+          <div>
+            <div class="scene-title" id="scene-title">The Birth of the Infosphere</div>
+            <div class="scene-desc" id="scene-desc">... loading scene details ...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="narration-subtitles" id="subtitles">
+        Narration loading...
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <div class="progress-track" id="progress-track" onclick="seek(event)">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="buttons-row">
+        <div class="left-controls">
+          <button class="play-btn" id="play-btn" onclick="togglePlay()">PLAY</button>
+          <div class="time-readout" id="time-readout">00:00 / 00:00</div>
+        </div>
+        <div class="right-directives" id="camera-readout">
+          Directives: Pan zoom default
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const scenes = [
+  {
+    "sceneNumber": 1,
+    "title": "The Birth of the Infosphere",
+    "duration": 10,
+    "visualDescription": "Futuristic digital matrix nodes glow intensely against a sleek obsidian canvas, rendering cascading streams of crystalline data.",
+    "narrationTrack": "In the quietude of early digital systems, Luciano Floridi observed that we are not mere users, but informational organisms inhabiting a flourishing infosphere.",
+    "audioTrack": "Sleek low-frequency synthesized drone rising into high-pitched string resonance.",
+    "cameraDirectives": "Slow dolly zoom tracking forwards into a singular glowing matrix cluster."
+  },
+  {
+    "sceneNumber": 2,
+    "title": "The Threat of Ontological Decay",
+    "duration": 10,
+    "visualDescription": "Fading node structures decay into entropic grey fog as a violent glitch ripples across the geometric grids, representing structural flattening.",
+    "narrationTrack": "But with systemic expansion comes the risk of Ontological Entropy. Data deletion, unverified noise, and cybernetic decay threaten semantic richness.",
+    "audioTrack": "Deep industrial mechanical bass drops coupled with high-frequency electronic glitch sparks.",
+    "cameraDirectives": "Panning shake tracking horizontally across the deteriorating data grid."
+  },
+  {
+    "sceneNumber": 3,
+    "title": "The Homeostasis Synthesis",
+    "duration": 10,
+    "visualDescription": "Glowing emerald restorative links reconnect broken nodes, sealing the infosphere inside a vibrant crystalline shielding ring of homeostasis.",
+    "narrationTrack": "Proactive restoration and preventative integrity emerge to heal the infosphere, aligning deontology and utility into permanent homeostasis.",
+    "audioTrack": "Uplifting organic orchestral chords with shimmering celestial synthesizer hums.",
+    "cameraDirectives": "Sweeping crane arc rotating around the fully restored, shimmering node network."
+  }
+];
+    let currentSceneIdx = 0;
+    let isPlaying = false;
+    let timeElapsed = 0;
+    const totalDuration = 30;
+    let intervalId = null;
+
+    // Background matrix animation
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const particles = [];
+    for(let i=0; i<60; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 1,
+        vy: Math.random() * 0.8 + 0.2
+      });
+    }
+    function drawParticles() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#00f2fe';
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+        p.y += p.vy;
+        if(p.y > canvas.height) p.y = 0;
+      });
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+
+    function renderScene() {
+      // Find scene corresponding to timeElapsed
+      let accumTime = 0;
+      let targetIdx = 0;
+      for (let i = 0; i < scenes.length; i++) {
+        accumTime += scenes[i].duration;
+        if (timeElapsed <= accumTime) {
+          targetIdx = i;
+          break;
+        }
+        if (i === scenes.length - 1) {
+          targetIdx = i;
+        }
+      }
+
+      currentSceneIdx = targetIdx;
+      const scene = scenes[currentSceneIdx];
+
+      document.getElementById('scene-meta-tag').innerText = 'SCENE ' + (currentSceneIdx + 1) + ' / ' + scenes.length;
+      document.getElementById('scene-title').innerText = scene.title;
+      document.getElementById('scene-desc').innerText = scene.visualDescription;
+      document.getElementById('subtitles').innerHTML = '<strong>VOICEOVER:</strong> ' + scene.narrationTrack + '<br><small style="color:#00f2fe">SOUND: ' + scene.audioTrack + '</small>';
+      document.getElementById('camera-readout').innerText = 'CAMERA: ' + scene.cameraDirectives;
+
+      // Fill progress bars
+      const pct = (timeElapsed / totalDuration) * 100;
+      document.getElementById('progress-fill').style.width = pct + '%';
+
+      // Time readout formatting
+      const elapsedMin = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+      const elapsedSec = Math.floor(timeElapsed % 60).toString().padStart(2, '0');
+      const totalMin = Math.floor(totalDuration / 60).toString().padStart(2, '0');
+      const totalSec = Math.floor(totalDuration % 60).toString().padStart(2, '0');
+      document.getElementById('time-readout').innerText = elapsedMin + ':' + elapsedSec + ' / ' + totalMin + ':' + totalSec;
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        clearInterval(intervalId);
+        isPlaying = false;
+        document.getElementById('play-btn').innerText = 'PLAY';
+      } else {
+        isPlaying = true;
+        document.getElementById('play-btn').innerText = 'PAUSE';
+        intervalId = setInterval(() => {
+          timeElapsed += 1;
+          if (timeElapsed > totalDuration) {
+            timeElapsed = 0;
+            togglePlay();
+          }
+          renderScene();
+        }, 1000);
+      }
+    }
+
+    function seek(event) {
+      const rect = document.getElementById('progress-track').getBoundingClientRect();
+      const pct = (event.clientX - rect.left) / rect.width;
+      timeElapsed = Math.round(pct * totalDuration);
+      renderScene();
+    }
+
+    renderScene();
+  </script>
+</body>
+</html>

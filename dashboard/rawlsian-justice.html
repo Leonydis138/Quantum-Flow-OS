@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Rawlsian Justice</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* Page Accent Colors overrides */
+    :root {
+      --color-rawlsian: hsl(200, 100%, 55%); /* Bright cyan/blue */
+      --color-veil: hsl(270, 90%, 65%);     /* Purple */
+      --color-gold: hsl(40, 90%, 55%);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+    }
+
+    /* Back Navigation Bar */
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .dept-back-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+    .dept-back-link:hover {
+      color: var(--color-blue);
+      transform: translateX(-4px);
+    }
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dept-title-area i {
+      color: var(--color-blue);
+    }
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .dept-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: var(--text-secondary);
+    }
+
+    /* Main Grid Layout */
+    .rawlsian-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .rawlsian-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: var(--transition-smooth);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Distribution Indicators (Gini, Maximin, State) */
+    .distribution-overview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .distribution-overview {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-radial {
+      position: relative;
+      width: 70px;
+      height: 70px;
+    }
+
+    .stat-radial svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .stat-radial circle {
+      fill: none;
+      stroke-width: 5;
+    }
+
+    .stat-radial circle.bg {
+      stroke: rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-radial circle.progress {
+      stroke: var(--color-blue);
+      stroke-linecap: round;
+      stroke-dasharray: 198; /* pi * 2 * radius (approx 31.5) */
+      stroke-dashoffset: 198;
+      transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-radial circle.progress.purple {
+      stroke: var(--color-veil);
+    }
+
+    .stat-radial .stat-val {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-title {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-status {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Observer Welfare Cards */
+    .observers-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .observer-welfare-card {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      transition: var(--transition-smooth);
+    }
+
+    .observer-welfare-card.least-advantaged {
+      border: 1px solid rgba(234, 179, 8, 0.2);
+      background: rgba(234, 179, 8, 0.015);
+    }
+
+    .observer-welfare-card.least-advantaged::after {
+      content: 'LEAST ADVANTAGED';
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--color-gold);
+      background: rgba(234, 179, 8, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    .obs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .obs-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .obs-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .obs-avatar i {
+      color: var(--color-blue);
+    }
+
+    .least-advantaged .obs-avatar {
+      background: rgba(234, 179, 8, 0.1);
+      border-color: rgba(234, 179, 8, 0.2);
+    }
+
+    .least-advantaged .obs-avatar i {
+      color: var(--color-gold);
+    }
+
+    .obs-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .obs-welfare-score {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-blue);
+    }
+
+    .least-advantaged .obs-welfare-score {
+      color: var(--color-gold);
+    }
+
+    /* Primary Goods Meters Grid */
+    .primary-goods-meters {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .primary-goods-meters {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .goods-meter-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .goods-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .goods-progress-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .goods-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-blue) 0%, #3b82f6 100%);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.8s ease;
+    }
+
+    .least-advantaged .goods-progress-bar {
+      background: linear-gradient(90deg, var(--color-gold) 0%, #d97706 100%);
+    }
+
+    /* Simulation Control and Laws form */
+    .control-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .simulation-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--color-blue) 0%, #3b82f6 100%);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      box-shadow: 0 4px 15px rgba(30, 80, 255, 0.15);
+    }
+
+    .simulation-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 80, 255, 0.3);
+    }
+
+    /* Assessment Logs / Veil results feed */
+    .assessments-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    /* Custom Scrollbar for logs */
+    .assessments-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .assessments-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.01);
+    }
+    .assessments-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+
+    .assessment-item {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: var(--transition-smooth);
+    }
+
+    .assessment-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .assessment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .assessment-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .assessment-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .badge-passed {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-green);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-failed {
+      background: rgba(236, 72, 153, 0.1);
+      color: var(--color-red);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+    }
+
+    .assessment-msg {
+      font-size: 13px;
+      color: #fff;
+      line-height: 1.4;
+    }
+
+    /* Veil Result Decision Matrix Table */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+
+    .matrix-table th, .matrix-table td {
+      padding: 6px 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .matrix-table th {
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .matrix-table td {
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+
+    .change-positive {
+      color: var(--color-green);
+    }
+
+    .change-negative {
+      color: var(--color-red);
+    }
+
+    .change-neutral {
+      color: var(--text-secondary);
+    }
+
+    /* Modal dialog styling */
+    .veil-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(2, 6, 15, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition-smooth);
+    }
+
+    .veil-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .veil-modal {
+      background: rgba(13, 20, 38, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transform: translateY(20px);
+      transition: var(--transition-smooth);
+    }
+
+    .veil-modal-overlay.active .veil-modal {
+      transform: translateY(0);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-title i {
+      color: var(--color-veil);
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group select {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 10px;
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 14px;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--color-blue);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: var(--transition-smooth);
+    }
+
+    .modal-btn.cancel {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+
+    .modal-btn.cancel:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .modal-btn.submit {
+      background: linear-gradient(135deg, var(--color-veil) 0%, #8b5cf6 100%);
+      border: none;
+      color: #fff;
+    }
+
+    .modal-btn.submit:hover {
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+    }
+
+    /* Grid layout backgrounds */
+    .grid-lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: 50px 50px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+      z-index: -1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <div class="glow-bg"></div>
+  <div class="grid-lines"></div>
+
+  <div class="app-container">
+    <!-- Back Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i> Back to Portal
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="scale" size="18"></i>
+        <h2>DEPARTMENT OF RAWLSIAN JUSTICE</h2>
+      </div>
+      <div class="dept-badge">PRINCIPLE ENGINE ACTIVE</div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="rawlsian-grid">
+      <!-- Left Column: Status and Observer Welfare Meters -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Status Overview Card -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span>
+              <i data-lucide="bar-chart-2" style="color: var(--color-blue);"></i>
+              Systemic Distribution Metrics
+            </span>
+            <span style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);" id="last-updated">
+              REFRESHING...
+            </span>
+          </div>
+
+          <div class="distribution-overview">
+            <!-- Gini Index -->
+            <div class="stat-box">
+              <div class="stat-radial">
+                <svg>
+                  <circle class="bg" cx="35" cy="35" r="31.5"></circle>
+                  <circle id="gini-progress" class="progress" cx="35" cy="35" r="31.5"></circle>
+                </svg>
+                <div class="stat-val" id="gini-value">0.00</div>
+              </div>
+              <div class="stat-title">Gini Coefficient</div>
+              <div class="stat-status" id="gini-status" style="color: var(--color-green);">Perfect Equality</div>
+            </div>
+
+            <!-- Maximin Ratio -->
+            <div class="stat-box">
+              <div class="stat-radial">
+                <svg>
+                  <circle class="bg" cx="35" cy="35" r="31.5"></circle>
+                  <circle id="maximin-progress" class="progress purple" cx="35" cy="35" r="31.5"></circle>
+                </svg>
+                <div class="stat-val" id="maximin-value">1.00</div>
+              </div>
+              <div class="stat-title">Maximin Ratio</div>
+              <div class="stat-status" id="maximin-status" style="color: var(--color-green);">Robust Fairness</div>
+            </div>
+
+            <!-- Difference Principle Status -->
+            <div class="stat-box" style="justify-content: center;">
+              <div class="stat-title">Governance Status</div>
+              <div id="diff-status-icon" style="margin: 6px 0;">
+                <i data-lucide="shield-check" size="32" style="color: var(--color-green);"></i>
+              </div>
+              <div class="stat-status" id="diff-principle-status" style="color: var(--color-green);">FAIRNESS SATISFIED</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Observer Welfare Status Card -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span>
+              <i data-lucide="users" style="color: var(--color-blue);"></i>
+              Observer Welfare Profiles (Primary Goods)
+            </span>
+          </div>
+
+          <div class="observers-container" id="observers-container">
+            <!-- Will be dynamically updated by Javascript -->
+            <div style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+              <i data-lucide="loader-2" class="spin" size="32" style="margin-bottom: 10px; color: var(--color-blue);"></i>
+              <p>Fetching active observer welfare states...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Veil of Ignorance Simulation Logs & Form -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Veil of Ignorance simulation launcher -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span>
+              <i data-lucide="sparkles" style="color: var(--color-veil);"></i>
+              Veil of Ignorance Audit
+            </span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px;">
+            Simulate a policy change behind John Rawls' hypothetical <strong>Veil of Ignorance</strong>. Ensure any proposed systemic inequality maximizes the welfare of the least-advantaged observer group before live deployment.
+          </p>
+          <div class="control-actions">
+            <button class="simulation-btn" id="open-sim-modal">
+              <i data-lucide="shield-alert"></i> Propose Policy Impact
+            </button>
+          </div>
+        </div>
+
+        <!-- System Audit Log / History of Rawlsian Checks -->
+        <div class="glass-card">
+          <div class="card-title">
+            <span>
+              <i data-lucide="clipboard-list" style="color: var(--color-blue);"></i>
+              Justice Audit Ledger
+            </span>
+          </div>
+
+          <div class="assessments-container" id="ledger-container">
+            <div style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+              <i data-lucide="boxes" size="32" style="margin-bottom: 10px; color: var(--text-secondary);"></i>
+              <p>No audit results yet. Trigger actions or propose policies to initialize the ledger.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Veil of Ignorance Simulation Modal -->
+  <div class="veil-modal-overlay" id="sim-modal-overlay">
+    <div class="veil-modal">
+      <div class="modal-title">
+        <i data-lucide="glasses"></i>
+        <span>Propose Policy Behind Veil</span>
+      </div>
+      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">
+        Adjust the proposed delta values to simulate how basic primary goods will shift. The engine will evaluate compliance under the Veil of Ignorance.
+      </p>
+
+      <form class="modal-form" id="sim-form" onsubmit="event.preventDefault();">
+        <div class="form-group">
+          <label for="policy-name">Policy Name / Action ID</label>
+          <input type="text" id="policy-name" value="reallocate-quantum-energy" required>
+        </div>
+
+        <!-- Delta Sliders or Number Inputs -->
+        <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 12px;">
+          <h4 style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--color-veil);">Impact Deltas (All Observers)</h4>
+          
+          <div class="form-group">
+            <label style="display: flex; justify-content: space-between;">
+              <span>Rights & Liberties Impact</span>
+              <span id="v-rights-label" style="font-family: var(--font-mono); color: var(--color-blue);">0.00</span>
+            </label>
+            <input type="range" id="delta-rights" min="-0.5" max="0.5" step="0.05" value="0.00" oninput="document.getElementById('v-rights-label').textContent = (parseFloat(this.value) >= 0 ? '+' : '') + parseFloat(this.value).toFixed(2);">
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; justify-content: space-between;">
+              <span>Opportunities & Access Impact</span>
+              <span id="v-opps-label" style="font-family: var(--font-mono); color: var(--color-blue);">+0.10</span>
+            </label>
+            <input type="range" id="delta-opportunities" min="-0.5" max="0.5" step="0.05" value="0.10" oninput="document.getElementById('v-opps-label').textContent = (parseFloat(this.value) >= 0 ? '+' : '') + parseFloat(this.value).toFixed(2);">
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; justify-content: space-between;">
+              <span>Power & Influence Impact</span>
+              <span id="v-power-label" style="font-family: var(--font-mono); color: var(--color-blue);">-0.05</span>
+            </label>
+            <input type="range" id="delta-power" min="-0.5" max="0.5" step="0.05" value="-0.05" oninput="document.getElementById('v-power-label').textContent = (parseFloat(this.value) >= 0 ? '+' : '') + parseFloat(this.value).toFixed(2);">
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; justify-content: space-between;">
+              <span>Basis of Self-Respect Impact</span>
+              <span id="v-respect-label" style="font-family: var(--font-mono); color: var(--color-blue);">+0.05</span>
+            </label>
+            <input type="range" id="delta-selfrespect" min="-0.5" max="0.5" step="0.05" value="0.05" oninput="document.getElementById('v-respect-label').textContent = (parseFloat(this.value) >= 0 ? '+' : '') + parseFloat(this.value).toFixed(2);">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="modal-btn cancel" id="close-sim-modal">Cancel</button>
+          <button type="button" class="modal-btn submit" id="submit-sim-btn">Run Veil Simulation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide
+    lucide.createIcons();
+
+    // Modal controllers
+    const modalOverlay = document.getElementById('sim-modal-overlay');
+    document.getElementById('open-sim-modal').addEventListener('click', () => {
+      modalOverlay.classList.add('active');
+    });
+    document.getElementById('close-sim-modal').addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+    });
+
+    // Custom Mock Audit Actions inside script to feed results instantly if required,
+    // plus fetching real system stats from DashboardServer
+    async function updateRawlsianDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        if (!res.ok) throw new Error('API server offline');
+        const data = await res.json();
+
+        if (data.rawlsian) {
+          const welfares = data.rawlsian.welfares;
+          const report = data.rawlsian.report;
+          const history = data.rawlsian.history || [];
+          const veilHistory = data.rawlsian.veilHistory || [];
+
+          // Update timestamp
+          document.getElementById('last-updated').textContent = `LIVE FEED // ${new Date(report.timestamp).toLocaleTimeString()}`;
+
+          // Update Gini
+          const giniPercent = (report.giniIndex * 198); // progress dashoffset
+          const giniOffset = 198 - giniPercent;
+          document.getElementById('gini-progress').style.strokeDashoffset = giniOffset;
+          document.getElementById('gini-value').textContent = report.giniIndex.toFixed(3);
+          
+          const giniStatusEl = document.getElementById('gini-status');
+          if (report.giniIndex <= 0.15) {
+            giniStatusEl.textContent = 'Excellent Equality';
+            giniStatusEl.style.color = 'var(--color-green)';
+          } else if (report.giniIndex <= 0.35) {
+            giniStatusEl.textContent = 'Acceptable Balance';
+            giniStatusEl.style.color = 'var(--color-blue)';
+          } else {
+            giniStatusEl.textContent = 'High Inequality';
+            giniStatusEl.style.color = 'var(--color-red)';
+          }
+
+          // Update Maximin Ratio
+          const maximinPercent = (report.maximinRatio * 198);
+          const maximinOffset = 198 - maximinPercent;
+          document.getElementById('maximin-progress').style.strokeDashoffset = maximinOffset;
+          document.getElementById('maximin-value').textContent = report.maximinRatio.toFixed(3);
+          
+          const maximinStatusEl = document.getElementById('maximin-status');
+          if (report.maximinRatio >= 0.75) {
+            maximinStatusEl.textContent = 'Very Fair';
+            maximinStatusEl.style.color = 'var(--color-green)';
+          } else if (report.maximinRatio >= 0.5) {
+            maximinStatusEl.textContent = 'Sufficient Minimum';
+            maximinStatusEl.style.color = 'var(--color-blue)';
+          } else {
+            maximinStatusEl.textContent = 'Inequitable Minimum';
+            maximinStatusEl.style.color = 'var(--color-red)';
+          }
+
+          // Update status indicator
+          const diffPrincipleEl = document.getElementById('diff-principle-status');
+          const diffIconEl = document.getElementById('diff-status-icon');
+          if (report.differencePrincipleSatisfied) {
+            diffPrincipleEl.textContent = 'FAIRNESS SATISFIED';
+            diffPrincipleEl.style.color = 'var(--color-green)';
+            diffIconEl.innerHTML = `<i data-lucide="shield-check" size="32" style="color: var(--color-green);"></i>`;
+          } else {
+            diffPrincipleEl.textContent = 'INEQUALITY THRESHOLD VIOLATION';
+            diffPrincipleEl.style.color = 'var(--color-red)';
+            diffIconEl.innerHTML = `<i data-lucide="shield-alert" size="32" style="color: var(--color-red);"></i>`;
+          }
+
+          // Render observers
+          const container = document.getElementById('observers-container');
+          container.innerHTML = welfares.map(obs => {
+            const isLeast = obs.isLeastAdvantaged ? 'least-advantaged' : '';
+            const rightsPercent = (obs.primaryGoods.rightsAndLiberties * 100).toFixed(0);
+            const oppsPercent = (obs.primaryGoods.opportunitiesAndAccess * 100).toFixed(0);
+            const powerPercent = (obs.primaryGoods.powerAndInfluence * 100).toFixed(0);
+            const selfRespectPercent = (obs.primaryGoods.selfRespectBasis * 100).toFixed(0);
+
+            return `
+              <div class="observer-welfare-card ${isLeast}">
+                <div class="obs-header">
+                  <div class="obs-info">
+                    <div class="obs-avatar">
+                      <i data-lucide="user"></i>
+                    </div>
+                    <div>
+                      <div class="obs-name">${obs.name}</div>
+                      <div style="font-size: 10px; color: var(--text-secondary); font-family: var(--font-mono);">${obs.observerId}</div>
+                    </div>
+                  </div>
+                  <div class="obs-welfare-score">
+                    Total Index: ${obs.totalWelfare.toFixed(3)}
+                  </div>
+                </div>
+
+                <div class="primary-goods-meters">
+                  <div class="goods-meter-box">
+                    <div class="goods-label">
+                      <span>Equal liberties</span>
+                      <span>${obs.primaryGoods.rightsAndLiberties.toFixed(2)}</span>
+                    </div>
+                    <div class="goods-progress-bg">
+                      <div class="goods-progress-bar" style="width: ${rightsPercent}%;"></div>
+                    </div>
+                  </div>
+
+                  <div class="goods-meter-box">
+                    <div class="goods-label">
+                      <span>Opportunities & Access</span>
+                      <span>${obs.primaryGoods.opportunitiesAndAccess.toFixed(2)}</span>
+                    </div>
+                    <div class="goods-progress-bg">
+                      <div class="goods-progress-bar" style="width: ${oppsPercent}%;"></div>
+                    </div>
+                  </div>
+
+                  <div class="goods-meter-box">
+                    <div class="goods-label">
+                      <span>Power & Influence</span>
+                      <span>${obs.primaryGoods.powerAndInfluence.toFixed(2)}</span>
+                    </div>
+                    <div class="goods-progress-bg">
+                      <div class="goods-progress-bar" style="width: ${powerPercent}%;"></div>
+                    </div>
+                  </div>
+
+                  <div class="goods-meter-box">
+                    <div class="goods-label">
+                      <span>Social Basis of Self-Respect</span>
+                      <span>${obs.primaryGoods.selfRespectBasis.toFixed(2)}</span>
+                    </div>
+                    <div class="goods-progress-bg">
+                      <div class="goods-progress-bar" style="width: ${selfRespectPercent}%;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          // Render ledger of audits (combination of live actions and custom simulated ones)
+          const ledgerContainer = document.getElementById('ledger-container');
+          
+          if (veilHistory.length === 0) {
+            ledgerContainer.innerHTML = `
+              <div style="text-align: center; padding: 24px; color: var(--text-secondary);">
+                No live Veil of Ignorance audits recorded yet.
+              </div>
+            `;
+          } else {
+            ledgerContainer.innerHTML = veilHistory.map(audit => {
+              const badgeClass = audit.isUniversallyAcceptable ? 'badge-passed' : 'badge-failed';
+              const badgeText = audit.isUniversallyAcceptable ? 'ACCEPTED' : 'VETOED';
+
+              const tableRows = audit.decisionMatrix.map(m => {
+                const netClass = m.netChange > 0 ? 'change-positive' : (m.netChange < 0 ? 'change-negative' : 'change-neutral');
+                const netSign = m.netChange > 0 ? '+' : '';
+                return `
+                  <tr>
+                    <td>${m.observerId.substring(0, 12)}...</td>
+                    <td>${m.preWelfare.toFixed(2)}</td>
+                    <td>${m.postWelfare.toFixed(2)}</td>
+                    <td class="${netClass}">${netSign}${m.netChange.toFixed(2)}</td>
+                  </tr>
+                `;
+              }).join('');
+
+              return `
+                <div class="assessment-item">
+                  <div class="assessment-header">
+                    <div>
+                      <span style="font-size: 13px; font-weight: 600; color: #fff;">Audit: ${audit.actionId}</span>
+                      <div class="assessment-time">${audit.timestamp ? new Date(audit.timestamp).toLocaleTimeString() : 'LIVE'}</div>
+                    </div>
+                    <span class="assessment-badge ${badgeClass}">${badgeText}</span>
+                  </div>
+                  <div class="assessment-msg">${audit.message}</div>
+                  
+                  <table class="matrix-table">
+                    <thead>
+                      <tr>
+                        <th>Observer</th>
+                        <th>Pre-Welfare</th>
+                        <th>Post-Welfare</th>
+                        <th>Net Change</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${tableRows}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+            }).join('');
+          }
+
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Rawlsian state:', err);
+      }
+    }
+
+    // Modal Simulation Submitter - Live POST to Quantum Flow OS Engine
+    document.getElementById('submit-sim-btn').addEventListener('click', async () => {
+      const policyName = document.getElementById('policy-name').value || 'unnamed-policy';
+      const dRights = parseFloat(document.getElementById('delta-rights').value);
+      const dOpps = parseFloat(document.getElementById('delta-opportunities').value);
+      const dPower = parseFloat(document.getElementById('delta-power').value);
+      const dSelfRespect = parseFloat(document.getElementById('delta-selfrespect').value);
+      const submitBtn = document.getElementById('submit-sim-btn');
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: 'rawlsian_policy_simulation',
+            description: `Simulate Rawlsian policy: ${policyName}`,
+            reversible: true,
+            metadata: {
+              deltaRights: dRights,
+              deltaOpportunities: dOpps,
+              deltaPower: dPower,
+              deltaSelfRespect: dSelfRespect
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Policy simulation failed with status ${response.status}`);
+        }
+
+        // Close modal
+        modalOverlay.classList.remove('active');
+
+        // Trigger instant refresh
+        await updateRawlsianDashboard();
+      } catch (err) {
+        console.error('Error running simulated policy:', err);
+        alert('Failed to execute policy evaluation on the live engine. See console for details.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = 1;
+      }
+    });
+
+    // Auto update loops
+    setInterval(updateRawlsianDashboard, 2000);
+    setTimeout(updateRawlsianDashboard, 500);
+  </script>
+</body>
+</html>

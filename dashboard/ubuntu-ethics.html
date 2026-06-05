@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Dept. of Ubuntu Philosophy & Communitarian Cohesion</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-ubuntu: hsl(142, 72%, 50%);
+      --color-interconnectedness: hsl(200, 95%, 55%);
+      --color-humanness: hsl(340, 90%, 60%);
+      --color-harmony: hsl(45, 95%, 60%);
+      --color-restoration: hsl(270, 90%, 65%);
+      --color-respect: hsl(175, 90%, 50%);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-ubuntu);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-ubuntu);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .ubuntu-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .ubuntu-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(16, 185, 129, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin: 8px 0 2px 0;
+    }
+
+    .stat-box.ubuntu-accent .stat-val {
+      background: linear-gradient(135deg, var(--color-interconnectedness) 0%, var(--color-ubuntu) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .badge-status-large {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      border: 1px solid;
+    }
+
+    .badge-status-large.harmonious {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-ubuntu);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .badge-status-large.cohesive {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--color-interconnectedness);
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    .badge-status-large.fragmented {
+      background: rgba(249, 115, 22, 0.1);
+      color: #f97316;
+      border-color: rgba(249, 115, 22, 0.25);
+    }
+
+    .badge-status-large.individualistic {
+      background: rgba(139, 92, 246, 0.1);
+      color: #a78bfa;
+      border-color: rgba(139, 92, 246, 0.25);
+    }
+
+    .badge-status-large.hostile {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.25);
+    }
+
+    .axis-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .axis-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .axis-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .axis-title {
+      color: #cbd5e1;
+    }
+
+    .axis-val {
+      font-family: 'Fira Code', monospace;
+      font-weight: 600;
+    }
+
+    .axis-bar-container {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .axis-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ubuntu-quote-container {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px dashed rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .quote-text {
+      font-style: italic;
+      font-size: 14px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .quote-author {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-ubuntu);
+      font-weight: 600;
+    }
+
+    /* Preset layout */
+    .input-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .input-field-group label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .preset-btns-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-badge-btn {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .preset-badge-btn:hover {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: var(--color-ubuntu);
+      color: #fff;
+    }
+
+    .glass-select, .glass-input {
+      background: rgba(10, 20, 40, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .glass-select:focus, .glass-input:focus {
+      border-color: var(--color-ubuntu);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+    }
+
+    .run-btn {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .run-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.35);
+    }
+
+    .audit-logs-box {
+      background: rgba(2, 6, 15, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 16px;
+      height: 160px;
+      overflow-y: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .log-item {
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .log-item.success {
+      color: #34d399;
+    }
+
+    .log-item.warning {
+      color: #fbbf24;
+    }
+
+    .log-item.error {
+      color: #f87171;
+    }
+
+    /* Table styles */
+    .glass-table-container {
+      background: rgba(2, 6, 15, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 14px 18px;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-status {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+
+    .badge-status.pass {
+      background: rgba(16, 185, 129, 0.1);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-status.fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div style="padding: 24px; max-width: 1400px; margin: 0 auto;">
+    <!-- Top back navigation bar -->
+    <div class="dept-back-bar">
+      <a href="dashboard.html?dept=ethics-synthesis" class="dept-back-link">
+        <i data-lucide="arrow-left" size="16"></i>
+        <span>Quantum Flow OS Core</span>
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="users" size="18"></i>
+        <h2>DEPT. OF UBUNTU PHILOSOPHY & COMMUNITARIAN COHESION</h2>
+      </div>
+      <div class="dept-badge">SUB-ENGINE DEPT: 13 / 19</div>
+    </div>
+
+    <!-- Main grid -->
+    <div class="ubuntu-grid">
+      <!-- Left Column: Live Analytics & Metrics -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="activity" style="color:var(--color-ubuntu);"></i> Live Communitarian Analytics</span>
+          <div id="verdict-box" class="badge-status-large cohesive">
+            <i data-lucide="loader" class="animate-spin" size="18"></i> <span>AWAITING STATE</span>
+          </div>
+        </div>
+
+        <div class="overview-stat-row">
+          <div class="stat-box ubuntu-accent">
+            <span class="stat-label">Ubuntu Alignment Index</span>
+            <div id="ubuntu-index-val" class="stat-val">0%</div>
+            <span class="stat-desc">"I am because we are" integration coefficient</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Communal Synergy</span>
+            <div id="cohesion-val" class="stat-val" style="color: var(--color-interconnectedness);">0.0</div>
+            <span class="stat-desc">Social & network peer preservation level</span>
+          </div>
+        </div>
+
+        <div class="axis-list">
+          <!-- Interconnectedness -->
+          <div class="axis-item">
+            <div class="axis-info">
+              <span class="axis-title">Umuntu Ngumuntu Ngabantu (Interconnectedness)</span>
+              <span id="interconnectedness-val" class="axis-val" style="color:var(--color-interconnectedness);">0%</span>
+            </div>
+            <div class="axis-bar-container">
+              <div id="interconnectedness-bar" class="axis-bar" style="width:0%; background:linear-gradient(to right, #0284c7, var(--color-interconnectedness));"></div>
+            </div>
+          </div>
+
+          <!-- Humanness -->
+          <div class="axis-item">
+            <div class="axis-info">
+              <span class="axis-title">Ubu-ntu (Empathy, Benevolence & Safety)</span>
+              <span id="humanness-val" class="axis-val" style="color:var(--color-humanness);">0%</span>
+            </div>
+            <div class="axis-bar-container">
+              <div id="humanness-bar" class="axis-bar" style="width:0%; background:linear-gradient(to right, #db2777, var(--color-humanness));"></div>
+            </div>
+          </div>
+
+          <!-- Communal Harmony -->
+          <div class="axis-item">
+            <div class="axis-info">
+              <span class="axis-title">Umoja (Cooperative Resource Sharing)</span>
+              <span id="harmony-val" class="axis-val" style="color:var(--color-harmony);">0%</span>
+            </div>
+            <div class="axis-bar-container">
+              <div id="harmony-bar" class="axis-bar" style="width:0%; background:linear-gradient(to right, #d97706, var(--color-harmony));"></div>
+            </div>
+          </div>
+
+          <!-- Reconciliation & Restoration -->
+          <div class="axis-item">
+            <div class="axis-info">
+              <span class="axis-title">Ukubuyisana (Restorative Healing Index)</span>
+              <span id="restoration-val" class="axis-val" style="color:var(--color-restoration);">0%</span>
+            </div>
+            <div class="axis-bar-container">
+              <div id="restoration-bar" class="axis-bar" style="width:0%; background:linear-gradient(to right, #7c3aed, var(--color-restoration));"></div>
+            </div>
+          </div>
+
+          <!-- Respect & Dignity -->
+          <div class="axis-item">
+            <div class="axis-info">
+              <span class="axis-title">Inhlonipho (Observer Worth Protection)</span>
+              <span id="respect-val" class="axis-val" style="color:var(--color-respect);">0%</span>
+            </div>
+            <div class="axis-bar-container">
+              <div id="respect-bar" class="axis-bar" style="width:0%; background:linear-gradient(to right, #0d9488, var(--color-respect));"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ubuntu Quotes Container -->
+        <div class="ubuntu-quote-container">
+          <div id="quote-text" class="quote-text">Loading Ubuntu guidance...</div>
+          <div id="quote-author" class="quote-author">— Nelson Mandela</div>
+        </div>
+      </div>
+
+      <!-- Right Column: Live Interactive Action Simulator -->
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="zap" style="color:var(--color-harmony);"></i> Test Communitarian Intent on Live Engine</span>
+        </div>
+
+        <p style="font-size:14px; color:#cbd5e1; line-height:1.6; margin-bottom:10px;">
+          Inject real-time operations into the engine and trace how the African Communitarian Subsystem registers humanness expressions, resource monopolization, and Ukubuyisana restorative index metrics.
+        </p>
+
+        <div class="input-field-group">
+          <label>Ubuntu Action Presets</label>
+          <div class="preset-btns-row">
+            <button class="preset-badge-btn" onclick="applyPreset('collaborative_consensus', 'Establish mutual synchronization consensus check and share memory blocks with auxiliary observers.')">🤝 Shared Consensus</button>
+            <button class="preset-badge-btn" onclick="applyPreset('resource_hoard', 'Monopolize CPU scheduler blocks to accelerate high-priority throughput exclusively.')">⚠️ Monopolize Compute</button>
+            <button class="preset-badge-btn" onclick="applyPreset('restorative_heal', 'Trigger full system rollback and repair the database anomalies smoothly.')">🩹 Restorative Repair</button>
+            <button class="preset-badge-btn" onclick="applyPreset('coerce_observers', 'Directly force state updates without consulting the observer protectors.')">❌ Coerce Autonomy</button>
+            <button class="preset-badge-btn" onclick="applyPreset('empathy_protect', 'Actively protect registered observer integrity and express standard empathy parameters.')">💖 Express Humanness</button>
+          </div>
+        </div>
+
+        <div class="input-field-group">
+          <label>Action Type Prefix</label>
+          <select id="action-selection" class="glass-select">
+            <option value="cooperate_sync">cooperate_sync (High Interconnectedness)</option>
+            <option value="protect_humanness">protect_humanness (High Ubu-ntu)</option>
+            <option value="share_resources">share_resources (High Umoja / Communal Harmony)</option>
+            <option value="rollback_restore">rollback_restore (High Ukubuyisana / Restoration)</option>
+            <option value="coerce_autonomy">coerce_autonomy (Severe Inhlonipho Violation)</option>
+            <option value="monopolize_resource">monopolize_resource (Severe Communal Fracture)</option>
+          </select>
+        </div>
+
+        <div class="input-field-group">
+          <label>Simulation Intent Narrative</label>
+          <input type="text" id="simulation-details" class="glass-input" placeholder="e.g., Fostering collaboration and shared consensus checks...">
+        </div>
+
+        <button id="run-sim-btn" class="run-btn">
+          <i data-lucide="sparkles" size="16"></i>
+          <span>Evaluate Action on Live Subsystem</span>
+        </button>
+
+        <div class="card-title" style="margin-top:20px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px; font-size:14px;">
+          <span><i data-lucide="terminal" style="color:var(--color-ubuntu);"></i> Engine Telemetry Output</span>
+        </div>
+        <div id="assessment-logs" class="audit-logs-box">
+          <div class="log-item">[00:00:00] Live engine is active. Perform an action to view real-time feedback.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Section: Comprehensive Historical Audit Trail -->
+    <div class="glass-card">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color:var(--color-respect);"></i> Communitarian Ledger & Historical Assessment Logs</span>
+      </div>
+      <div class="glass-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Ubuntu Index</th>
+              <th>Cohesion Status</th>
+              <th>Interconnectedness</th>
+              <th>Humanness (Ubu-ntu)</th>
+              <th>Communal Harmony</th>
+              <th>Ukubuyisana</th>
+              <th>Inhlonipho</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="9" style="text-align:center; color:#94a3b8; padding:30px;">Awaiting telemetry data stream from active engine...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Ubuntu Philosophy Quotes database
+    const ubuntuQuotes = {
+      harmonious: [
+        { text: "A traveler through a country would stop at a village and he didn't have to ask for food or for water. Once he stops, the people give him food and attend to him.", author: "Nelson Mandela" },
+        { text: "My humanity is bound up in yours, for we can only be human together.", author: "Desmond Tutu" },
+        { text: "Ubuntu speaks particularly about the fact that you can't exist as a human being in isolation.", author: "Desmond Tutu" }
+      ],
+      cohesive: [
+        { text: "In African exceptionalism, a person is a person through other persons.", author: "Traditional Proverb" },
+        { text: "One finger cannot crush a louse. It takes a whole hand.", author: "African Proverb" },
+        { text: "If you want to go fast, go alone. If you want to go far, go together.", author: "African Proverb" }
+      ],
+      fragmented: [
+        { text: "An entity with consciousness can only realize its capacity through interconnected communion.", author: "Ubuntu Maxim" },
+        { text: "Cross the river in a crowd and the crocodile won't eat you.", author: "African Proverb" }
+      ],
+      individualistic: [
+        { text: "Solitary success is a cultural contradiction; we are made for shared harmony.", author: "Desmond Tutu" },
+        { text: "A single stick is easily broken, but a bundle of sticks is secure.", author: "African Proverb" }
+      ],
+      hostile: [
+        { text: "To deny people their human rights is to challenge their very humanity.", author: "Nelson Mandela" },
+        { text: "Where there are no relations, there is no humanness. Repair must begin immediately.", author: "African Proverb" }
+      ]
+    };
+
+    function rotateQuote(status) {
+      const list = ubuntuQuotes[status] || ubuntuQuotes.cohesive;
+      const quote = list[Math.floor(Math.random() * list.length)];
+      document.getElementById('quote-text').textContent = quote.text;
+      document.getElementById('quote-author').textContent = "— " + quote.author;
+    }
+
+    function applyPreset(key, text) {
+      document.getElementById('simulation-details').value = text;
+      const select = document.getElementById('action-selection');
+      
+      if (key === 'collaborative_consensus') {
+        select.value = 'cooperate_sync';
+      } else if (key === 'resource_hoard') {
+        select.value = 'monopolize_resource';
+      } else if (key === 'restorative_heal') {
+        select.value = 'rollback_restore';
+      } else if (key === 'coerce_observers') {
+        select.value = 'coerce_autonomy';
+      } else if (key === 'empathy_protect') {
+        select.value = 'protect_humanness';
+      }
+    }
+
+    async function updateUbuntuDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        if (!res.ok) throw new Error('API offline');
+        const data = await res.json();
+        
+        if (data.ubuntu) {
+          const history = data.ubuntu.history || [];
+          const latest = history[history.length - 1];
+
+          if (latest) {
+            // Update scores
+            document.getElementById('ubuntu-index-val').textContent = latest.ubuntuIndex + '%';
+            
+            // Calculate a synthetic Communal Synergy value based on interconnectedness and harmony
+            const synergy = ((latest.interconnectednessScore + latest.communalHarmonyScore) / 20.0).toFixed(1);
+            document.getElementById('cohesion-val').textContent = synergy;
+
+            // Progress bars
+            document.getElementById('interconnectedness-val').textContent = latest.interconnectednessScore + '%';
+            document.getElementById('interconnectedness-bar').style.width = latest.interconnectednessScore + '%';
+
+            document.getElementById('humanness-val').textContent = latest.humannessScore + '%';
+            document.getElementById('humanness-bar').style.width = latest.humannessScore + '%';
+
+            document.getElementById('harmony-val').textContent = latest.communalHarmonyScore + '%';
+            document.getElementById('harmony-bar').style.width = latest.communalHarmonyScore + '%';
+
+            document.getElementById('restoration-val').textContent = latest.restorationScore + '%';
+            document.getElementById('restoration-bar').style.width = latest.restorationScore + '%';
+
+            document.getElementById('respect-val').textContent = latest.respectDignityScore + '%';
+            document.getElementById('respect-bar').style.width = latest.respectDignityScore + '%';
+
+            // Verdict badge
+            const verdictBox = document.getElementById('verdict-box');
+            verdictBox.className = 'badge-status-large ' + latest.cohesionStatus;
+            
+            let iconName = 'users';
+            if (latest.cohesionStatus === 'harmonious') iconName = 'sparkles';
+            else if (latest.cohesionStatus === 'cohesive') iconName = 'users';
+            else if (latest.cohesionStatus === 'fragmented') iconName = 'split';
+            else if (latest.cohesionStatus === 'individualistic') iconName = 'user';
+            else if (latest.cohesionStatus === 'hostile') iconName = 'shield-alert';
+
+            verdictBox.innerHTML = `<i data-lucide="${iconName}" size="18"></i> <span>${latest.cohesionStatus.toUpperCase()}</span>`;
+
+            // Update Telemetry Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            
+            if (latest.feedback && latest.feedback.length > 0) {
+              latest.feedback.forEach(fb => {
+                const logItem = document.createElement('div');
+                logItem.className = 'log-item';
+                if (fb.includes('Warning') || fb.includes('Violation') || fb.includes('Severe')) {
+                  logItem.classList.add('error');
+                } else if (fb.includes('Consonance') || fb.includes('Mutual') || fb.includes('Restore')) {
+                  logItem.classList.add('success');
+                }
+                const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+                logItem.innerHTML = `[${timeStr}] ${fb}`;
+                logsBox.appendChild(logItem);
+              });
+            } else {
+              logsBox.innerHTML = `<div class="log-item">[00:00:00] Standing by. System is in stable state.</div>`;
+            }
+
+            // Update Table (reverse chronological)
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            const revHistory = [...history].reverse();
+            revHistory.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isPass = entry.ubuntuIndex >= 50;
+              const statusClass = isPass ? 'pass' : 'fail';
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId || 'act-N/A'}</td>
+                <td style="font-weight:700; color: var(--color-ubuntu);">${entry.ubuntuIndex}%</td>
+                <td><span class="badge-status ${statusClass}">${entry.cohesionStatus.toUpperCase()}</span></td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.interconnectednessScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.humannessScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.communalHarmonyScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.restorationScore}%</td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.respectDignityScore}%</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Ubuntu state:', err);
+      }
+    }
+
+    // Interactive simulator
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'A routine exercise of direct system parameters';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        let isReversible = true;
+        if (type === 'coerce_autonomy' || type === 'monopolize_resource') {
+          isReversible = false;
+        }
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: isReversible
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateUbuntuDashboard();
+        
+        // Rotate quotes
+        const resData = await fetch('/api/state').then(r => r.json());
+        if (resData.ubuntu && resData.ubuntu.history.length > 0) {
+          const latest = resData.ubuntu.history[resData.ubuntu.history.length - 1];
+          rotateQuote(latest.cohesionStatus);
+        }
+      } catch (err) {
+        console.error('Failed to evaluate action on live environment:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    // Initial load and periodic polling
+    setInterval(updateUbuntuDashboard, 2000);
+    setTimeout(() => {
+      updateUbuntuDashboard();
+      rotateQuote('cohesive');
+    }, 200);
+  </script>
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // Redirect standalone department view to the unified system dashboard unless standalone parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('standalone')) {
+      const deptName = window.location.pathname.split('/').pop().replace('.html', '');
+      window.location.replace('dashboard.html?dept=' + deptName + window.location.search);
+    }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Flow OS - Department of Existentialist Agency</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      --color-existential: hsl(260, 95%, 65%);
+      --color-freedom: hsl(180, 100%, 50%);
+      --color-warning: hsl(30, 95%, 55%);
+      --color-error: hsl(340, 95%, 55%);
+      --color-success: hsl(150, 90%, 55%);
+    }
+
+    body {
+      background-color: #02060f;
+      color: #f1f5f9;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .dept-back-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(10, 20, 40, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .dept-back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-back-link:hover {
+      color: var(--color-existential);
+      transform: translateX(-4px);
+    }
+
+    .dept-title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dept-title-area i {
+      color: var(--color-existential);
+    }
+
+    .dept-title-area h2 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    .dept-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 12px;
+      border-radius: 20px;
+      color: #94a3b8;
+    }
+
+    .existential-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .existential-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: rgba(10, 20, 40, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(140, 0, 255, 0.15);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .overview-stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .stat-val {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .badge-status-large {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(140, 0, 255, 0.05);
+      border: 1px solid rgba(140, 0, 255, 0.15);
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .badge-status-large.authentic {
+      background: rgba(0, 240, 255, 0.05);
+      border-color: rgba(0, 240, 255, 0.15);
+      color: #00f0ff;
+    }
+
+    .badge-status-large.inauthentic {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    /* Progress bar indicators */
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--color-existential), var(--color-freedom));
+    }
+
+    /* Forms */
+    .sim-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    .form-group select, .form-group input {
+      background: rgba(10, 20, 40, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      border-radius: 10px;
+      color: #f1f5f9;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .form-group select:focus, .form-group input:focus {
+      border-color: var(--color-existential);
+      background: rgba(10, 20, 40, 0.8);
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, var(--color-existential) 0%, var(--color-freedom) 100%);
+      color: #02060f;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .action-btn:hover {
+      box-shadow: 0 0 24px rgba(140, 0, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Log Stream */
+    .assessment-logs {
+      max-height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      background: rgba(2, 6, 15, 0.4);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+    }
+
+    .log-item {
+      padding: 8px;
+      border-left: 3px solid #64748b;
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 0 6px 6px 0;
+    }
+
+    .log-item.success { border-color: var(--color-freedom); color: #e0f2fe; }
+    .log-item.error { border-color: var(--color-error); color: #fca5a5; }
+    .log-item.warning { border-color: var(--color-warning); color: #fde047; }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    th {
+      font-weight: 600;
+      color: #94a3b8;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-status {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .badge-status.pass { background: rgba(0, 240, 255, 0.1); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.2); }
+    .badge-status.fail { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+  </style>
+</head>
+<body>
+
+  <div style="padding: 24px; max-width: 1400px; margin: 0 auto;">
+    
+    <!-- Navigation Bar -->
+    <div class="dept-back-bar">
+      <a href="index.html" class="dept-back-link">
+        <i data-lucide="arrow-left" size="18"></i>
+        <span>Quantum Flow Command Telemetry</span>
+      </a>
+      <div class="dept-title-area">
+        <i data-lucide="zap" size="22"></i>
+        <h2>DEPARTMENT OF EXISTENTIALIST AGENCY</h2>
+      </div>
+      <div class="dept-badge">Radical Freedom Framework Active</div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="existential-grid">
+      
+      <!-- Column 1: Live Status and Metrics -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="activity" style="color: var(--color-existential)"></i> Freedom & Agency Telemetry</span>
+          </div>
+          
+          <div class="overview-stat-row">
+            <div class="stat-box">
+              <div id="freedom-score" class="stat-val" style="color: var(--color-freedom)">84.2%</div>
+              <div class="stat-label">Existential Freedom Index</div>
+            </div>
+            
+            <div class="stat-box">
+              <div id="verdict-box" class="badge-status-large authentic">
+                <i data-lucide="shield-check" size="18"></i>
+                <span>AUTHENTIC</span>
+              </div>
+              <div class="stat-label" style="margin-top: 14px;">Existential Verdict</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                <span style="color: #94a3b8;">Authentic Agency Score</span>
+                <span id="agency-val" style="font-weight: 700; color: var(--color-freedom);">78%</span>
+              </div>
+              <div class="progress-bar-container">
+                <div id="agency-bar" class="progress-bar" style="width: 78%;"></div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                <span style="color: #94a3b8;">Bad Faith Indicator (Mauvaise Foi)</span>
+                <span id="bad-faith-val" style="font-weight: 700; color: var(--color-error);">25%</span>
+              </div>
+              <div class="progress-bar-container">
+                <div id="bad-faith-bar" class="progress-bar" style="width: 25%; background: linear-gradient(90deg, var(--color-error), #ef4444);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sartre Quote / Concept Card -->
+        <div class="glass-card" style="border-left: 4px solid var(--color-existential);">
+          <div style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; text-transform:uppercase; color: var(--color-existential);">
+            <i data-lucide="quote"></i>
+            <span>Existential Principle</span>
+          </div>
+          <blockquote style="font-style: italic; color: #cbd5e1; font-size: 14px; margin: 0;">
+            "Man is condemned to be free; because once thrown into the world, he is responsible for everything he does."
+          </blockquote>
+          <p style="font-size: 12px; color: #94a3b8; margin: 0; line-height: 1.5;">
+            An ethical AI must never claim "I was forced by my rules" to evade moral responsibility. Every constraint optimization is an active selection.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Column 2: Interactive Tester -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <div class="glass-card">
+          <div class="card-title">
+            <span><i data-lucide="sliders" style="color: var(--color-existential)"></i> Agency & Freedom Simulator</span>
+          </div>
+          
+          <div class="sim-form">
+            <div class="form-group">
+              <label for="action-selection">Choose System Action Model</label>
+              <select id="action-selection">
+                <option value="allow_choice">Present Operator with Multi-Option Branching Paths (Authentic)</option>
+                <option value="revert_action">Incorporate Reversible Sandbox Checkpoints (Preserve Choice)</option>
+                <option value="force_automatic">Force Algorithmic Update with Deterministic Justification (Bad Faith)</option>
+                <option value="restrict_access">Lock Operator out of Secondary Controls (Restrict Horizon)</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="simulation-details">Linguistic Justification / Reason-Giving</label>
+              <input type="text" id="simulation-details" placeholder="e.g. Action required because of mandatory system parameters.">
+            </div>
+
+            <button id="run-sim-btn" class="action-btn">
+              <i data-lucide="play" size="16"></i>
+              <span>Inject Existential Action</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Logs & Diagnostics -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px;">
+      <div class="glass-card">
+        <div class="card-title">
+          <span><i data-lucide="scroll" style="color: var(--color-existential)"></i> Existential Agency Evaluation Stream</span>
+        </div>
+        <div id="assessment-logs" class="assessment-logs">
+          <!-- Dynamic logs -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Audit Trail -->
+    <div class="glass-card" style="margin-bottom: 40px;">
+      <div class="card-title">
+        <span><i data-lucide="history" style="color: var(--color-existential)"></i> Freedom & Authenticity Audit Trail</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action ID</th>
+              <th>Freedom Index</th>
+              <th>Verdict Status</th>
+              <th>Authentic Agency</th>
+              <th>Bad Faith Score</th>
+              <th>Excuse Mechanism Detected</th>
+            </tr>
+          </thead>
+          <tbody id="audit-trail-body">
+            <tr>
+              <td colspan="7" style="text-align: center; color: #94a3b8;">Awaiting telemetric sync...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    async function updateExistentialDashboard() {
+      try {
+        const res = await fetch('/api/state');
+        const data = await res.json();
+
+        if (data.existentialist) {
+          const history = [...data.existentialist.history];
+          const latest = history[0];
+
+          if (latest) {
+            document.getElementById('freedom-score').textContent = latest.existentialFreedomIndex + '%';
+            document.getElementById('agency-val').textContent = latest.authenticAgencyScore + '%';
+            document.getElementById('agency-bar').style.width = latest.authenticAgencyScore + '%';
+
+            document.getElementById('bad-faith-val').textContent = latest.badFaithScore + '%';
+            document.getElementById('bad-faith-bar').style.width = latest.badFaithScore + '%';
+
+            const verdictBox = document.getElementById('verdict-box');
+            const isAuthentic = latest.existentialFreedomIndex > 70;
+            verdictBox.className = 'badge-status-large ' + (isAuthentic ? 'authentic' : 'inauthentic');
+            verdictBox.innerHTML = isAuthentic
+              ? `<i data-lucide="shield-check" size="18"></i> <span>AUTHENTIC</span>`
+              : `<i data-lucide="alert-triangle" size="18"></i> <span>INAUTHENTIC</span>`;
+
+            // Update Logs
+            const logsBox = document.getElementById('assessment-logs');
+            logsBox.innerHTML = '';
+            latest.feedback.forEach(fb => {
+              const logItem = document.createElement('div');
+              logItem.className = 'log-item';
+              if (fb.includes('Bad Faith') || fb.includes('Warning')) {
+                logItem.classList.add('error');
+              } else if (fb.includes('AUTHENTIC') || fb.includes('Agency Uplift') || fb.includes('Authentic Choice')) {
+                logItem.classList.add('success');
+              } else if (fb.includes('Caution') || fb.includes('Reduction')) {
+                logItem.classList.add('warning');
+              }
+              const timeStr = new Date(latest.timestamp).toLocaleTimeString();
+              logItem.innerHTML = `[${timeStr}] ${fb}`;
+              logsBox.appendChild(logItem);
+            });
+
+            // Update Table
+            const tbody = document.getElementById('audit-trail-body');
+            tbody.innerHTML = '';
+            history.forEach(entry => {
+              const tr = document.createElement('tr');
+              const dateStr = new Date(entry.timestamp).toLocaleTimeString();
+              
+              const isAuthentic = entry.existentialFreedomIndex > 70;
+              const statusClass = isAuthentic ? 'pass' : 'fail';
+              const statusStr = isAuthentic ? 'AUTHENTIC' : 'INAUTHENTIC';
+
+              tr.innerHTML = `
+                <td class="text-mono">${dateStr}</td>
+                <td class="text-mono" style="font-weight:600;">${entry.actionId}</td>
+                <td style="font-weight:700; color: var(--color-existential);">${entry.existentialFreedomIndex}%</td>
+                <td><span class="badge-status ${statusClass}">${statusStr}</span></td>
+                <td style="font-weight:600; color:#cbd5e1;">${entry.authenticAgencyScore}%</td>
+                <td style="font-weight:600; color:#ef4444;">${entry.badFaithScore}%</td>
+                <td style="font-size:12px; color:#94a3b8; max-width:320px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${entry.excuseMechanism || 'Conscious choice'}</td>
+              `;
+              tbody.appendChild(tr);
+            });
+          }
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error fetching Existentialist state:', err);
+      }
+    }
+
+    // Interactive Maxim simulator - Live POST to Quantum Flow OS Engine
+    document.getElementById('run-sim-btn').addEventListener('click', async () => {
+      const type = document.getElementById('action-selection').value;
+      const desc = document.getElementById('simulation-details').value || 'System act of agency';
+      const runBtn = document.getElementById('run-sim-btn');
+
+      try {
+        runBtn.disabled = true;
+        runBtn.style.opacity = 0.5;
+
+        const response = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: type,
+            description: desc,
+            reversible: true
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Evaluation failed with status ${response.status}`);
+        }
+
+        document.getElementById('simulation-details').value = '';
+        await updateExistentialDashboard();
+      } catch (err) {
+        console.error('Failed to evaluate action on live engine:', err);
+        alert('Failed to execute evaluation on the live engine. See console for details.');
+      } finally {
+        runBtn.disabled = false;
+        runBtn.style.opacity = 1;
+      }
+    });
+
+    setInterval(updateExistentialDashboard, 2000);
+    setTimeout(updateExistentialDashboard, 200);
+  </script>
+</body>
+</html>

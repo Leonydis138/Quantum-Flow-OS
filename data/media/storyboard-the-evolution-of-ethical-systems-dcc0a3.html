@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Evolution of Ethical Systems — Interactive HD Visual Storyboard Player</title>
+  <style>
+    :root {
+      --bg-color: #05070c;
+      --surface-color: rgba(10, 15, 28, 0.85);
+      --accent-glow: #00f2fe;
+      --accent-success: #00ff87;
+      --accent-magenta: #ff007f;
+      --text-main: #f3f4f6;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #matrix-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.15;
+    }
+    .player-container {
+      position: relative;
+      z-index: 2;
+      width: 960px;
+      height: 640px;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(0, 242, 254, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+    }
+    .video-viewport {
+      position: relative;
+      flex: 1;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #video-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 2;
+    }
+    .hud-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: monospace;
+      font-size: 11px;
+      color: rgba(0, 242, 254, 0.65);
+      text-shadow: 0 0 4px rgba(0, 242, 254, 0.4);
+    }
+    .hud-header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .hud-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 100%;
+    }
+    .hud-box {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      padding: 6px 12px;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+    .rec-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: red;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: blink 1s infinite alternate;
+    }
+    @keyframes blink {
+      0% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+    .scene-meta-box {
+      background: rgba(5, 7, 15, 0.8);
+      border-left: 3px solid var(--accent-glow);
+      padding: 16px 24px;
+      border-radius: 0 8px 8px 0;
+      max-width: 600px;
+      backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 4;
+      pointer-events: auto;
+      transition: all 0.5s ease;
+      margin-bottom: 80px;
+    }
+    .scene-title {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .scene-desc {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .narration-subtitles {
+      position: absolute;
+      bottom: 20px;
+      left: 5%;
+      width: 90%;
+      text-align: center;
+      background: rgba(5, 7, 15, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 3px solid var(--accent-success);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 500;
+      color: #f3f4f6;
+      box-sizing: border-box;
+      z-index: 5;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .controls-bar {
+      height: 100px;
+      background: rgba(7, 10, 20, 0.95);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 12px 24px;
+      box-sizing: border-box;
+    }
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-glow), var(--accent-success));
+      border-radius: 3px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: width 0.1s linear;
+    }
+    .buttons-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .left-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .control-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    .play-btn {
+      background: linear-gradient(135deg, var(--accent-glow), var(--accent-success));
+      border: none;
+      color: #05070c;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.35);
+    }
+    .play-btn:hover {
+      background: linear-gradient(135deg, #00f2fe, #00ff87);
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.55);
+    }
+    .export-btn {
+      background: linear-gradient(135deg, var(--accent-magenta), #9b51e0);
+      border: none;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.35);
+    }
+    .export-btn:hover {
+      box-shadow: 0 0 25px rgba(255, 0, 127, 0.55);
+    }
+    .time-readout {
+      font-family: monospace;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-left: 8px;
+    }
+    .right-directives {
+      font-size: 11px;
+      color: #9ca3af;
+      text-align: right;
+      font-family: monospace;
+      max-width: 320px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="matrix-canvas"></canvas>
+
+  <div class="player-container">
+    <div class="video-viewport">
+      
+      <!-- High Definition Cinematic Video Canvas -->
+      <canvas id="video-canvas"></canvas>
+
+      <!-- Advanced Futuristic HUD Overlay -->
+      <div class="hud-overlay">
+        <div class="hud-header">
+          <div class="hud-box">
+            <span class="rec-dot" id="rec-dot" style="display:none;"></span>
+            <span id="hud-mode-text">STUDIO PLAYER : ACTIVE</span>
+          </div>
+          <div class="hud-box">
+            <span>RES: 1920x1080 (1080P HD)</span> | <span>60 FPS</span>
+          </div>
+        </div>
+
+        <!-- Middle details -->
+        <div class="scene-meta-box" id="info-overlay">
+          <div class="scene-title" id="scene-title">The Birth of the Infosphere</div>
+          <div class="scene-desc" id="scene-desc">... compiling canvas buffers ...</div>
+        </div>
+
+        <div class="hud-footer">
+          <div class="hud-box">
+            <span>MOTION LEVEL: 5/10</span> | <span>STYLE: 3D Ken Burns Zoom</span>
+          </div>
+          <div class="hud-box">
+            <span>ETHICAL COMPLIANCE: 100% SECURE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subtitles -->
+      <div class="narration-subtitles" id="subtitles">
+        Compiling cinematic frames...
+      </div>
+    </div>
+
+    <!-- Interactive Control Bar -->
+    <div class="controls-bar">
+      <div class="progress-track" id="progress-track" onclick="seek(event)">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="buttons-row">
+        <div class="left-controls">
+          <button class="control-btn play-btn" id="play-btn" onclick="togglePlay()">PLAY</button>
+          <button class="control-btn export-btn" id="export-btn" onclick="startExport()">🎥 EXPORT HD VIDEO (.WEBM)</button>
+          <button class="control-btn" id="sound-btn" onclick="toggleSound()">🔊 SOUND: ON</button>
+          <div class="time-readout" id="time-readout">00:00 / 00:00</div>
+        </div>
+        <div class="right-directives" id="camera-readout">
+          DIRECTIVE: BOOTING SYSTEM
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const videoTitle = "The Evolution of Ethical Systems";
+    const scenes = [
+  {
+    "sceneNumber": 1,
+    "title": "The Birth of the Infosphere",
+    "duration": 10,
+    "visualDescription": "Futuristic digital matrix nodes glow intensely against a sleek obsidian canvas, rendering cascading streams of crystalline data.",
+    "narrationTrack": "In the quietude of early digital systems, Luciano Floridi observed that we are not mere users, but informational organisms inhabiting a flourishing infosphere.",
+    "audioTrack": "Sleek low-frequency synthesized drone rising into high-pitched string resonance.",
+    "cameraDirectives": "Slow dolly zoom tracking forwards into a singular glowing matrix cluster."
+  },
+  {
+    "sceneNumber": 2,
+    "title": "The Threat of Ontological Decay",
+    "duration": 10,
+    "visualDescription": "Fading node structures decay into entropic grey fog as a violent glitch ripples across the geometric grids, representing structural flattening.",
+    "narrationTrack": "But with systemic expansion comes the risk of Ontological Entropy. Data deletion, unverified noise, and cybernetic decay threaten semantic richness.",
+    "audioTrack": "Deep industrial mechanical bass drops coupled with high-frequency electronic glitch sparks.",
+    "cameraDirectives": "Panning shake tracking horizontally across the deteriorating data grid."
+  },
+  {
+    "sceneNumber": 3,
+    "title": "The Homeostasis Synthesis",
+    "duration": 10,
+    "visualDescription": "Glowing emerald restorative links reconnect broken nodes, sealing the infosphere inside a vibrant crystalline shielding ring of homeostasis.",
+    "narrationTrack": "Proactive restoration and preventative integrity emerge to heal the infosphere, aligning deontology and utility into permanent homeostasis.",
+    "audioTrack": "Uplifting organic orchestral chords with shimmering celestial synthesizer hums.",
+    "cameraDirectives": "Sweeping crane arc rotating around the fully restored, shimmering node network."
+  }
+];
+    let currentSceneIdx = 0;
+    let isPlaying = false;
+    let timeElapsed = 0;
+    const totalDuration = 30;
+    let intervalId = null;
+    let soundEnabled = true;
+
+    // Background matrix particle animation
+    const bgCanvas = document.getElementById('matrix-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+    const bgParticles = [];
+    for(let i=0; i<50; i++) {
+      bgParticles.push({
+        x: Math.random() * bgCanvas.width,
+        y: Math.random() * bgCanvas.height,
+        r: Math.random() * 2 + 1,
+        vy: Math.random() * 0.5 + 0.1
+      });
+    }
+    function drawBgParticles() {
+      bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+      bgCtx.fillStyle = '#00f2fe';
+      bgParticles.forEach(p => {
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        bgCtx.fill();
+        p.y += p.vy;
+        if(p.y > bgCanvas.height) p.y = 0;
+      });
+      requestAnimationFrame(drawBgParticles);
+    }
+    drawBgParticles();
+
+    // High Definition Video Canvas setup
+    const canvas = document.getElementById('video-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1920;
+    canvas.height = 1080;
+
+    // Load Source Image
+    const sourceImg = new Image();
+    let hasImage = false;
+    const imageUrl = '';
+    if (imageUrl) {
+      sourceImg.crossOrigin = 'anonymous';
+      sourceImg.src = imageUrl;
+      sourceImg.onload = () => {
+        hasImage = true;
+        renderFrame();
+      };
+      sourceImg.onerror = () => {
+        console.warn("Failed to load source image, falling back to neural plexus rendering.");
+      };
+    }
+
+    // Procedural Particle System & Plexus generator for fallback/overlays
+    const plexusNodes = [];
+    for (let i = 0; i < 70; i++) {
+      plexusNodes.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        r: Math.random() * 4 + 2,
+        color: '#00f2fe',
+        pulseSpeed: 0.02 + Math.random() * 0.03,
+        pulseVal: Math.random() * Math.PI
+      });
+    }
+
+    // Atmospheric cinematic dust particles overlay
+    const dustParticles = [];
+    for(let i=0; i<60; i++) {
+      dustParticles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.2) * 0.4,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 3 + 1,
+        alpha: Math.random() * 0.5 + 0.1,
+        fadeSpeed: 0.005 + Math.random() * 0.01
+      });
+    }
+
+    // Web Audio Synthesizer Engine
+    let audioCtx = null;
+    function initAudio() {
+      if (audioCtx) return;
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      } catch (e) {
+        console.error("Web Audio API not supported", e);
+      }
+    }
+
+    function playSynthSound(sceneIdx) {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      if (sceneIdx === 0) {
+        // Scene 1: Harmonic smooth drone
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(110, now); // A2 Chord
+        osc.frequency.exponentialRampToValueAtTime(220, now + 4);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.12, now + 1.0);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 4.5);
+        osc.start(now);
+        osc.stop(now + 4.5);
+      } else if (sceneIdx === 1) {
+        // Scene 2: Sub-bass decay sweep
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(55, now); // A1 bass
+        osc.frequency.linearRampToValueAtTime(40, now + 3);
+        
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(120, now);
+        filter.frequency.exponentialRampToValueAtTime(500, now + 1.0);
+        filter.frequency.exponentialRampToValueAtTime(60, now + 3.0);
+        
+        osc.disconnect(gain);
+        osc.connect(filter);
+        filter.connect(gain);
+        
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.20, now + 0.2);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
+        
+        osc.start(now);
+        osc.stop(now + 3.0);
+      } else {
+        // Scene 3: Resolving high harmonic chime
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(165, now); // E3 chord root
+        osc.frequency.exponentialRampToValueAtTime(330, now + 5);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.15, now + 1.0);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 5.0);
+        
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(220, now); // A3 fifth
+        osc2.frequency.exponentialRampToValueAtTime(440, now + 5);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        gain2.gain.setValueAtTime(0, now);
+        gain2.gain.linearRampToValueAtTime(0.08, now + 1.5);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 5.0);
+        
+        osc.start(now);
+        osc.stop(now + 5.0);
+        osc2.start(now);
+        osc2.stop(now + 5.0);
+      }
+    }
+
+    // Main frame renderer loop
+    let lastTime = 0;
+    function renderFrame(timestamp = 0) {
+      const delta = timestamp - lastTime;
+      lastTime = timestamp;
+
+      ctx.fillStyle = '#02040a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const intensity = 5;
+      const cleanStyle = '3D Ken Burns Zoom';
+      
+      // Determine camera transform depending on time and intensity
+      const sceneProgress = (timeElapsed % (totalDuration / 3)) / (totalDuration / 3);
+      const zoomFactor = 1.0 + (sceneProgress * 0.15 * (intensity / 5));
+      const panX = Math.sin(timestamp * 0.0005) * 20 * (intensity / 5);
+      const panY = Math.cos(timestamp * 0.0003) * 10 * (intensity / 5);
+
+      if (hasImage) {
+        // STYLE-SPECIFIC IMAGE RENDERING PIPELINES
+        if (cleanStyle === 'Fluid Wave Ripple' || (currentSceneIdx === 1 && !imageUrl)) {
+          // sinusoidal wave horizontal slicing effect
+          const slices = 90;
+          const sliceH = canvas.height / slices;
+          const amp = 14 * (intensity / 5);
+          const speed = timestamp * 0.004;
+
+          for (let i = 0; i < slices; i++) {
+            const sy = i * sliceH;
+            const waveX = Math.sin(i * 0.06 + speed) * amp;
+            
+            ctx.drawImage(
+              sourceImg,
+              0, sy, sourceImg.width, sourceImg.height / slices,
+              waveX, sy, canvas.width, sliceH
+            );
+          }
+        } else if (cleanStyle === 'Cyberpunk Glitch Matrix' || (currentSceneIdx === 1 && imageUrl)) {
+          // Cyberpunk split chromatic aberration & noise shearing
+          const glitchChance = 0.25;
+          const splitOffset = 8 * (intensity / 5);
+          
+          if (isPlaying && Math.random() < glitchChance) {
+            // Draw red channel offset
+            ctx.globalAlpha = 0.85;
+            ctx.drawImage(sourceImg, -splitOffset, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255, 0, 128, 0.15)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+
+            // Draw cyan channel offset
+            ctx.globalAlpha = 0.85;
+            ctx.drawImage(sourceImg, splitOffset, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 242, 254, 0.15)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.globalAlpha = 1.0;
+
+            // Horizontal slice glitches
+            const slices = 4;
+            for(let j=0; j<slices; j++) {
+              const sy = Math.random() * canvas.height;
+              const sh = 15 + Math.random() * 50;
+              const dx = (Math.random() - 0.5) * 50 * (intensity / 5);
+              ctx.drawImage(canvas, 0, sy, canvas.width, sh, dx, sy, canvas.width, sh);
+            }
+          } else {
+            // Smooth zoom-pan Default
+            ctx.save();
+            ctx.translate(canvas.width/2 + panX, canvas.height/2 + panY);
+            ctx.scale(zoomFactor, zoomFactor);
+            ctx.drawImage(sourceImg, -canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+            ctx.restore();
+          }
+        } else {
+          // Default: 3D Ken Burns Zoom and Pan
+          ctx.save();
+          ctx.translate(canvas.width/2 + panX, canvas.height/2 + panY);
+          ctx.scale(zoomFactor, zoomFactor);
+          ctx.drawImage(sourceImg, -canvas.width/2, -canvas.height/2, canvas.width, canvas.height);
+          ctx.restore();
+        }
+      } else {
+        // PROCEDURAL PLEXUS NODE NETWORK (When prompt-to-video, or fallback)
+        // Draw gorgeous animated network lines representing structural data flows
+        const activeNodes = plexusNodes;
+        
+        ctx.strokeStyle = 'rgba(0, 242, 254, 0.08)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < activeNodes.length; i++) {
+          for (let j = i + 1; j < activeNodes.length; j++) {
+            const dist = Math.hypot(activeNodes[i].x - activeNodes[j].x, activeNodes[i].y - activeNodes[j].y);
+            if (dist < 150) {
+              const alpha = (1.0 - dist / 150) * 0.25;
+              ctx.strokeStyle = currentSceneIdx === 1 
+                ? 'rgba(150, 150, 150, ' + (alpha * 0.3) + ')'  // grey entropic decay
+                : 'rgba(0, 242, 254, ' + alpha + ')';         // glowing cyan
+              ctx.beginPath();
+              ctx.moveTo(activeNodes[i].x, activeNodes[i].y);
+              ctx.lineTo(activeNodes[j].x, activeNodes[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw nodes themselves
+        activeNodes.forEach(n => {
+          n.pulseVal += n.pulseSpeed;
+          const pRadius = n.r * (1.0 + Math.sin(n.pulseVal) * 0.25);
+          
+          let color = '#00f2fe';
+          if (currentSceneIdx === 1) {
+            color = '#6b7280'; // graying decaying nodes
+          } else if (currentSceneIdx === 2) {
+            color = '#00ff87'; // emerald restorative links
+          }
+          
+          ctx.fillStyle = color;
+          ctx.shadowBlur = currentSceneIdx === 1 ? 0 : 15;
+          ctx.shadowColor = color;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, pRadius, 0, Math.PI*2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Motion updates
+          if (isPlaying) {
+            n.x += n.vx * (isPlaying ? 1 : 0.2);
+            n.y += n.vy * (isPlaying ? 1 : 0.2);
+            if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+            if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+          }
+        });
+
+        // Scene 3: Draw a gorgeous restorative emerald circular matrix ring
+        if (currentSceneIdx === 2) {
+          ctx.strokeStyle = '#00ff87';
+          ctx.lineWidth = 4;
+          ctx.shadowBlur = 30;
+          ctx.shadowColor = '#00ff87';
+          ctx.beginPath();
+          ctx.arc(canvas.width/2, canvas.height/2, 280 + Math.sin(timestamp * 0.002) * 15, 0, Math.PI*2);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+          
+          ctx.fillStyle = 'rgba(0, 255, 135, 0.04)';
+          ctx.beginPath();
+          ctx.arc(canvas.width/2, canvas.height/2, 280 + Math.sin(timestamp * 0.002) * 15, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+
+      // Atmospheric floating dust motes overlay
+      dustParticles.forEach(p => {
+        ctx.fillStyle = 'rgba(255, 255, 255, ' + p.alpha + ')';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+
+        if (isPlaying) {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0 || p.x > canvas.width) p.x = Math.random() * canvas.width;
+          if (p.y < 0 || p.y > canvas.height) p.y = Math.random() * canvas.height;
+        }
+      });
+
+      // Ambient lens sweep lighting effect
+      const sweepX = (timestamp * 0.15) % (canvas.width * 2) - canvas.width;
+      const sweepGrad = ctx.createLinearGradient(sweepX, 0, sweepX + 400, canvas.height);
+      sweepGrad.addColorStop(0, 'rgba(0, 242, 254, 0)');
+      sweepGrad.addColorStop(0.5, 'rgba(0, 242, 254, 0.04)');
+      sweepGrad.addColorStop(1, 'rgba(0, 242, 254, 0)');
+      ctx.fillStyle = sweepGrad;
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      // HUD indicators directly burnt on canvas
+      ctx.font = '16px monospace';
+      ctx.fillStyle = 'rgba(0, 242, 254, 0.4)';
+      ctx.fillText('REC ● 1080P HD', 50, 60);
+      
+      const formatTime = (sec) => {
+        const m = Math.floor(sec / 60).toString().padStart(2, '0');
+        const s = Math.floor(sec % 60).toString().padStart(2, '0');
+        return m + ':' + s;
+      };
+      ctx.fillText('TC: ' + formatTime(timeElapsed) + ' / ' + formatTime(totalDuration), 50, 90);
+      ctx.fillText('SCENE: ' + (currentSceneIdx + 1) + ' / ' + scenes.length, 50, 120);
+
+      requestAnimationFrame(renderFrame);
+    }
+
+    // Trigger rendering
+    if (!hasImage) {
+      renderFrame();
+    }
+
+    function renderScene() {
+      let accumTime = 0;
+      let targetIdx = 0;
+      for (let i = 0; i < scenes.length; i++) {
+        accumTime += scenes[i].duration;
+        if (timeElapsed <= accumTime) {
+          targetIdx = i;
+          break;
+        }
+        if (i === scenes.length - 1) {
+          targetIdx = i;
+        }
+      }
+
+      const prevIdx = currentSceneIdx;
+      currentSceneIdx = targetIdx;
+      const scene = scenes[currentSceneIdx];
+
+      // If scene switched, trigger its synthesizer soundscapes!
+      if (prevIdx !== currentSceneIdx && isPlaying) {
+        try { playSynthSound(currentSceneIdx); } catch(e){}
+      }
+
+      document.getElementById('scene-title').innerText = scene.title;
+      document.getElementById('scene-desc').innerText = scene.visualDescription;
+      document.getElementById('subtitles').innerHTML = '<strong>VOICEOVER NARRATION:</strong> ' + scene.narrationTrack + '<br><small style="color:var(--accent-glow)">SOUNDTRACK CAPABILITIES: ' + scene.audioTrack + '</small>';
+      document.getElementById('camera-readout').innerText = 'DIRECTIVE: ' + scene.cameraDirectives.toUpperCase();
+
+      // Fill progress bars
+      const pct = (timeElapsed / totalDuration) * 100;
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('time-readout').innerText = formatTimeReadout(timeElapsed) + ' / ' + formatTimeReadout(totalDuration);
+    }
+
+    function formatTimeReadout(sec) {
+      const min = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = Math.floor(sec % 60).toString().padStart(2, '0');
+      return min + ':' + s;
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        clearInterval(intervalId);
+        isPlaying = false;
+        document.getElementById('play-btn').innerText = 'PLAY';
+      } else {
+        isPlaying = true;
+        document.getElementById('play-btn').innerText = 'PAUSE';
+        
+        // Initial play trigger sound
+        try { playSynthSound(currentSceneIdx); } catch(e){}
+        
+        intervalId = setInterval(() => {
+          timeElapsed += 1;
+          if (timeElapsed > totalDuration) {
+            timeElapsed = 0;
+            togglePlay();
+          }
+          renderScene();
+        }, 1000);
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-btn').innerText = 'SOUND: ' + (soundEnabled ? 'ON' : 'OFF');
+    }
+
+    function seek(event) {
+      const rect = document.getElementById('progress-track').getBoundingClientRect();
+      const pct = (event.clientX - rect.left) / rect.width;
+      timeElapsed = Math.round(pct * totalDuration);
+      renderScene();
+    }
+
+    // MediaRecorder High Definition Video Export
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isExporting = false;
+
+    function startExport() {
+      if (isExporting) return;
+      isExporting = true;
+      isPlaying = false;
+      clearInterval(intervalId);
+      
+      const exportBtn = document.getElementById('export-btn');
+      const recDot = document.getElementById('rec-dot');
+      const playBtn = document.getElementById('play-btn');
+      
+      exportBtn.innerText = '🎥 RENDERING: 0%';
+      exportBtn.disabled = true;
+      exportBtn.style.opacity = '0.7';
+      playBtn.disabled = true;
+      recDot.style.display = 'inline-block';
+      document.getElementById('hud-mode-text').innerText = 'STUDIO PLAYER : RECORDING DIRECT-TO-DISK';
+
+      timeElapsed = 0;
+      recordedChunks = [];
+      
+      // Capture High Definition stream at 60 FPS
+      const stream = canvas.captureStream(60);
+      
+      // Select best MIME type
+      let options = { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 6000000 };
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: 'video/webm;codecs=vp8', videoBitsPerSecond: 4000000 };
+      }
+      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: 'video/webm', videoBitsPerSecond: 4000000 };
+      }
+
+      mediaRecorder = new MediaRecorder(stream, options);
+      
+      mediaRecorder.ondataavailable = function(e) {
+        if (e.data && e.data.size > 0) {
+          recordedChunks.push(e.data);
+        }
+      };
+      
+      mediaRecorder.onstop = function() {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = videoTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-hd-1080p.webm";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        exportBtn.innerText = '🎥 EXPORT HD VIDEO (.WEBM)';
+        exportBtn.disabled = false;
+        exportBtn.style.opacity = '1.0';
+        playBtn.disabled = false;
+        recDot.style.display = 'none';
+        document.getElementById('hud-mode-text').innerText = 'STUDIO PLAYER : ACTIVE';
+        isExporting = false;
+        
+        alert('🎉 HD 1080p Video creation successful! Your video download has started.');
+      };
+      
+      // Start recording
+      mediaRecorder.start();
+      
+      intervalId = setInterval(() => {
+        timeElapsed += 1;
+        const pct = Math.floor((timeElapsed / totalDuration) * 100);
+        exportBtn.innerText = '🎥 RENDERING: ' + pct + '%';
+        
+        if (timeElapsed > totalDuration) {
+          clearInterval(intervalId);
+          mediaRecorder.stop();
+        } else {
+          renderScene();
+          if (timeElapsed % Math.round(totalDuration / 3) === 0 || timeElapsed === 1) {
+            try { playSynthSound(currentSceneIdx); } catch(e){}
+          }
+        }
+      }, 1000);
+    }
+
+    // Initialize scenes details
+    renderScene();
+  </script>
+</body>
+</html>

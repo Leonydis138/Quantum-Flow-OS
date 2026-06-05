@@ -1,12 +1,12 @@
 /**
  * Reversibility Engine
- * 
+ *
  * Provides comprehensive rollback capabilities for all operations.
  * Ensures ethical compliance through state tracking and recovery mechanisms.
  */
 
-import { EventEmitter } from 'eventemitter3';
-import { v4 as uuidv4 } from 'uuid';
+import { EventEmitter } from "eventemitter3";
+import { v4 as uuidv4 } from "uuid";
 
 export interface ReversibleAction<T = unknown> {
   id: string;
@@ -51,8 +51,11 @@ export class ReversibilityEngine extends EventEmitter {
    * Execute an action with automatic rollback capability
    */
   public async executeWithRollback<T>(
-    action: Omit<ReversibleAction<T>, 'id' | 'timestamp' | 'completed' | 'rolledBack'>,
-    options: RollbackOptions = {}
+    action: Omit<
+      ReversibleAction<T>,
+      "id" | "timestamp" | "completed" | "rolledBack"
+    >,
+    options: RollbackOptions = {},
   ): Promise<ExecutionResult<T>> {
     const actionId = uuidv4();
     const reversibleAction: ReversibleAction<T> = {
@@ -77,15 +80,17 @@ export class ReversibilityEngine extends EventEmitter {
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
+        reversibleAction.rolledBack = false;
+        reversibleAction.completed = false;
         // Execute with timeout
         result = await this.executeWithTimeout(
           reversibleAction.execute,
-          timeoutMs
+          timeoutMs,
         );
 
         // Mark as completed
         reversibleAction.completed = true;
-        this.emit('action_completed', { actionId, result });
+        this.emit("action_completed", { actionId, result });
 
         return {
           success: true,
@@ -95,7 +100,7 @@ export class ReversibilityEngine extends EventEmitter {
         };
       } catch (error) {
         lastError = error as Error;
-        this.emit('action_error', { actionId, error, attempt });
+        this.emit("action_error", { actionId, error, attempt });
 
         if (onError) {
           onError(lastError);
@@ -103,7 +108,8 @@ export class ReversibilityEngine extends EventEmitter {
 
         // Attempt rollback if not the last attempt
         if (attempt < maxAttempts) {
-          const rollbackOpts: Pick<RollbackOptions, 'validateBeforeRollback'> = {};
+          const rollbackOpts: Pick<RollbackOptions, "validateBeforeRollback"> =
+            {};
           if (validateBeforeRollback !== undefined) {
             rollbackOpts.validateBeforeRollback = validateBeforeRollback;
           }
@@ -113,7 +119,7 @@ export class ReversibilityEngine extends EventEmitter {
     }
 
     // All attempts failed - perform final rollback
-    const rollbackOpts: Pick<RollbackOptions, 'validateBeforeRollback'> = {};
+    const rollbackOpts: Pick<RollbackOptions, "validateBeforeRollback"> = {};
     if (validateBeforeRollback !== undefined) {
       rollbackOpts.validateBeforeRollback = validateBeforeRollback;
     }
@@ -122,7 +128,7 @@ export class ReversibilityEngine extends EventEmitter {
     return {
       success: false,
       actionId,
-      error: lastError ?? new Error('Unknown error'),
+      error: lastError ?? new Error("Unknown error"),
       attempts: maxAttempts,
     };
   }
@@ -132,14 +138,20 @@ export class ReversibilityEngine extends EventEmitter {
    */
   private async executeWithTimeout<T>(
     fn: () => Promise<T>,
-    timeoutMs: number
+    timeoutMs: number,
   ): Promise<T> {
-    return Promise.race([
-      fn(),
-      new Promise<T>((_, reject) =>
-        setTimeout(() => reject(new Error('Operation timeout')), timeoutMs)
-      ),
-    ]);
+    let timeoutId: NodeJS.Timeout | undefined;
+    const timeoutPromise = new Promise<T>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error("Operation timeout")), timeoutMs);
+    });
+
+    try {
+      return await Promise.race([fn(), timeoutPromise]);
+    } finally {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    }
   }
 
   /**
@@ -154,7 +166,7 @@ export class ReversibilityEngine extends EventEmitter {
     };
 
     this.snapshots.set(actionId, snapshot);
-    this.emit('snapshot_created', snapshot);
+    this.emit("snapshot_created", snapshot);
   }
 
   /**
@@ -164,7 +176,7 @@ export class ReversibilityEngine extends EventEmitter {
     const snapshot = this.snapshots.get(actionId);
     if (snapshot) {
       snapshot.afterState = afterState;
-      this.emit('snapshot_updated', snapshot);
+      this.emit("snapshot_updated", snapshot);
     }
   }
 
@@ -173,7 +185,7 @@ export class ReversibilityEngine extends EventEmitter {
    */
   public async rollbackAction(
     actionId: string,
-    options: Pick<RollbackOptions, 'validateBeforeRollback'> = {}
+    options: Pick<RollbackOptions, "validateBeforeRollback"> = {},
   ): Promise<boolean> {
     const action = this.actions.get(actionId);
     if (!action) {
@@ -190,15 +202,15 @@ export class ReversibilityEngine extends EventEmitter {
     if (options.validateBeforeRollback) {
       const snapshot = this.snapshots.get(actionId);
       if (snapshot && !options.validateBeforeRollback(snapshot)) {
-        console.error('Rollback validation failed');
+        console.error("Rollback validation failed");
         return false;
       }
     }
 
     try {
-      this.emit('rollback_started', actionId);
+      this.emit("rollback_started", actionId);
       await action.rollback();
-      
+
       action.rolledBack = true;
       action.completed = false;
 
@@ -212,7 +224,7 @@ export class ReversibilityEngine extends EventEmitter {
       };
 
       this.addRollbackRecord(record);
-      this.emit('rollback_completed', record);
+      this.emit("rollback_completed", record);
 
       return true;
     } catch (error) {
@@ -226,7 +238,7 @@ export class ReversibilityEngine extends EventEmitter {
       };
 
       this.addRollbackRecord(record);
-      this.emit('rollback_failed', record);
+      this.emit("rollback_failed", record);
 
       return false;
     }
@@ -237,7 +249,7 @@ export class ReversibilityEngine extends EventEmitter {
    */
   public async rollbackActions(
     actionIds: string[],
-    options: RollbackOptions = {}
+    options: RollbackOptions = {},
   ): Promise<RollbackBatchResult> {
     const results: { actionId: string; success: boolean }[] = [];
 
@@ -251,7 +263,7 @@ export class ReversibilityEngine extends EventEmitter {
       }
     }
 
-    const successCount = results.filter(r => r.success).length;
+    const successCount = results.filter((r) => r.success).length;
 
     return {
       total: actionIds.length,
@@ -266,11 +278,11 @@ export class ReversibilityEngine extends EventEmitter {
    */
   public async rollbackSince(
     timestamp: Date,
-    options: RollbackOptions = {}
+    options: RollbackOptions = {},
   ): Promise<RollbackBatchResult> {
     const actionsToRollback = Array.from(this.actions.values())
-      .filter(action => action.timestamp >= timestamp && !action.rolledBack)
-      .map(action => action.id);
+      .filter((action) => action.timestamp >= timestamp && !action.rolledBack)
+      .map((action) => action.id);
 
     return this.rollbackActions(actionsToRollback, options);
   }
@@ -298,15 +310,15 @@ export class ReversibilityEngine extends EventEmitter {
     let filtered = [...this.rollbackHistory];
 
     if (filter?.since) {
-      filtered = filtered.filter(r => r.timestamp >= filter.since!);
+      filtered = filtered.filter((r) => r.timestamp >= filter.since!);
     }
 
     if (filter?.successOnly) {
-      filtered = filtered.filter(r => r.success);
+      filtered = filtered.filter((r) => r.success);
     }
 
     if (filter?.actionId) {
-      filtered = filtered.filter(r => r.actionId === filter.actionId);
+      filtered = filtered.filter((r) => r.actionId === filter.actionId);
     }
 
     return filtered;
@@ -317,15 +329,20 @@ export class ReversibilityEngine extends EventEmitter {
    */
   public getReversibilityStatus(): ReversibilityStatus {
     const allActions = Array.from(this.actions.values());
-    const completed = allActions.filter(a => a.completed && !a.rolledBack).length;
-    const rolledBack = allActions.filter(a => a.rolledBack).length;
-    const pending = allActions.filter(a => !a.completed && !a.rolledBack).length;
+    const completed = allActions.filter(
+      (a) => a.completed && !a.rolledBack,
+    ).length;
+    const rolledBack = allActions.filter((a) => a.rolledBack).length;
+    const pending = allActions.filter(
+      (a) => !a.completed && !a.rolledBack,
+    ).length;
 
     const totalRollbacks = this.rollbackHistory.length;
-    const successfulRollbacks = this.rollbackHistory.filter(r => r.success).length;
-    const rollbackSuccessRate = totalRollbacks > 0
-      ? (successfulRollbacks / totalRollbacks) * 100
-      : 100;
+    const successfulRollbacks = this.rollbackHistory.filter(
+      (r) => r.success,
+    ).length;
+    const rollbackSuccessRate =
+      totalRollbacks > 0 ? (successfulRollbacks / totalRollbacks) * 100 : 100;
 
     return {
       totalActions: allActions.length,
@@ -348,14 +365,17 @@ export class ReversibilityEngine extends EventEmitter {
 
     // Clean actions
     for (const [id, action] of this.actions) {
-      if (action.timestamp < olderThan && (action.completed || action.rolledBack)) {
+      if (
+        action.timestamp < olderThan &&
+        (action.completed || action.rolledBack)
+      ) {
         this.actions.delete(id);
         this.snapshots.delete(id);
         cleaned++;
       }
     }
 
-    this.emit('cleanup_completed', { cleaned, olderThan });
+    this.emit("cleanup_completed", { cleaned, olderThan });
     return cleaned;
   }
 
