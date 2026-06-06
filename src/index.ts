@@ -100,6 +100,14 @@ export { AutonomousFlowDaemon, type DaemonState } from "./core/AutonomousFlowDae
 export { QuantumFlowSDK, type SDKOptions, type AlignmentResult } from "./sdk/QuantumFlowSDK";
 export { ActiveDefenseEngine, type DefenseScanResult } from "./protection/ActiveDefenseEngine";
 
+// Teleological Resonance
+export {
+  TeleologicalResonanceEngine,
+  type StressTestScenario,
+  type StressTestResult,
+  type ResonanceHarmonyResult,
+} from "./core/TeleologicalResonanceEngine";
+
 // Virtue Ethics
 export {
   VirtueEthicsEngine,
@@ -317,6 +325,7 @@ import { GrandUnifiedEthicsEngine } from "./core/GrandUnifiedEthicsEngine";
 import { MachiavellianEthicsEngine } from "./core/MachiavellianEthicsEngine";
 import { InformationEthicsEngine } from "./core/InformationEthicsEngine";
 import { UniformedBrainKernel } from "./core/UniformedBrainKernel";
+import { TeleologicalResonanceEngine } from "./core/TeleologicalResonanceEngine";
 
 
 
@@ -365,6 +374,7 @@ export class QuantumFlowOS {
   public readonly machiavellianEthicsEngine: MachiavellianEthicsEngine;
   public readonly informationEthicsEngine: InformationEthicsEngine;
   public readonly brainKernel: UniformedBrainKernel;
+  public readonly resonanceEngine: TeleologicalResonanceEngine;
 
 
   public readonly strictMode: boolean;
@@ -420,6 +430,7 @@ export class QuantumFlowOS {
     this.machiavellianEthicsEngine = new MachiavellianEthicsEngine();
     this.informationEthicsEngine = new InformationEthicsEngine();
     this.brainKernel = new UniformedBrainKernel(this);
+    this.resonanceEngine = new TeleologicalResonanceEngine();
 
 
 
@@ -440,6 +451,20 @@ export class QuantumFlowOS {
       this.constraintDamping,
       this.recursionLimit,
     );
+
+    // Retrocausal Safety Check (Leading Edge Prevention)
+    const retrocausalResult = this.resonanceEngine.evaluateRetrocausalSafety(this, action);
+    if (!retrocausalResult.safe) {
+      supervisionResult.allowed = false;
+      supervisionResult.collapsedState = EthicalBasisState.VIOLATING;
+      supervisionResult.confidenceCoefficient *= 0.4;
+      supervisionResult.finalSuperposition = {
+        [EthicalBasisState.BENIGN]: 0,
+        [EthicalBasisState.INDETERMINATE]: 0,
+        [EthicalBasisState.SUSPECT]: 0,
+        [EthicalBasisState.VIOLATING]: 1.0,
+      };
+    }
 
     // Rawlsian Justice check:
     // If we have registered observers, run Veil of Ignorance simulation
