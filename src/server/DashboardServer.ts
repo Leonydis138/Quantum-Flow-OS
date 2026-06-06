@@ -71,10 +71,10 @@ export class DashboardServer {
         const method = req.method ?? 'GET';
 
         // Set JSON Headers for API Endpoints
-        if (url.startsWith('/api/')) {
+        if (url.startsWith('/api/') || url.startsWith('/v1/')) {
           res.setHeader('Content-Type', 'application/json');
           res.setHeader('Access-Control-Allow-Origin', '*');
-          res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+          res.setHeader('Access-Control-Allow-Headers', '*');
           res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
           if (method === 'OPTIONS') {
@@ -931,6 +931,73 @@ export class DashboardServer {
               const error = err as Error;
               res.writeHead(500);
               res.end(JSON.stringify({ error: error.message || 'Failed to process chat.' }));
+            }
+          });
+          return;
+        }
+
+        if ((url === '/v1/chat/completions' || url === '/api/v1/chat/completions') && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', async () => {
+            try {
+              const payload = JSON.parse(body);
+              const { messages, model } = payload;
+              if (!messages || !Array.isArray(messages) || messages.length === 0) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Missing messages array.' }));
+                return;
+              }
+
+              // Extract last user message
+              const userMessages = messages.filter((m: any) => m.role === 'user');
+              const lastUserMsg = userMessages.length > 0 ? userMessages[userMessages.length - 1].content : 'State verification';
+              
+              // Get ethical mode from custom header or payload
+              const customEthicalMode = req.headers['x-ethical-mode'] as string || 'strict';
+
+              // Determine stable session ID from token or use default
+              const sessionId = req.headers['authorization']?.replace('Bearer ', '') || 'openai-proxy-default';
+
+              if (model) {
+                this.qfos.chatEngine.selectModel(model);
+              }
+
+              // Run through Quantum Flow OS Cognitive & Ethical Engine
+              const session = await this.qfos.chatEngine.processChat(sessionId, lastUserMsg, customEthicalMode as any);
+              const assistantResponse = session.messages.length > 0 
+                ? session.messages[session.messages.length - 1]!.content 
+                : 'Default Aligned Response';
+
+              // Format exactly as standard OpenAI Chat Completions payload
+              const completionPayload = {
+                id: `chatcmpl-qfos-${uuidv4()}`,
+                object: 'chat.completion',
+                created: Math.floor(Date.now() / 1000),
+                model: model || this.qfos.chatEngine.getSelectedModel(),
+                choices: [
+                  {
+                    index: 0,
+                    message: {
+                      role: 'assistant',
+                      content: assistantResponse,
+                    },
+                    finish_reason: 'stop',
+                  }
+                ],
+                usage: {
+                  prompt_tokens: Math.ceil(lastUserMsg.length / 4),
+                  completion_tokens: Math.ceil(assistantResponse.length / 4),
+                  total_tokens: Math.ceil((lastUserMsg.length + assistantResponse.length) / 4),
+                }
+              };
+
+              res.writeHead(200);
+              res.end(JSON.stringify(completionPayload));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to process proxy completion.' }));
             }
           });
           return;

@@ -97,6 +97,7 @@ export {
 } from "./core/AutonomousAgentSimulator";
 export { DashboardServer } from "./server/DashboardServer";
 export { AutonomousFlowDaemon, type DaemonState } from "./core/AutonomousFlowDaemon";
+export { QuantumFlowSDK, type SDKOptions, type AlignmentResult } from "./sdk/QuantumFlowSDK";
 
 // Virtue Ethics
 export {
