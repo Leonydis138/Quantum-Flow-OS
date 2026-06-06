@@ -96,6 +96,7 @@ export {
   type SimulationTickReport,
 } from "./core/AutonomousAgentSimulator";
 export { DashboardServer } from "./server/DashboardServer";
+export { AutonomousFlowDaemon, type DaemonState } from "./core/AutonomousFlowDaemon";
 
 // Virtue Ethics
 export {

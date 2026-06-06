@@ -20,6 +20,8 @@
     "start:ethical": "node dist/index.js --ethical-mode=strict",
     "dashboard": "ts-node src/start-dashboard.ts",
     "start:dashboard": "node dist/start-dashboard.js",
+    "autonomous": "ts-node src/start-autonomous.ts",
+    "start:autonomous": "node dist/start-autonomous.js",
     "validate": "npm run lint && npm run test",
     "deploy": "npm run build:prod && node dist/start-dashboard.js",
     "clean": "rm -rf dist coverage",
