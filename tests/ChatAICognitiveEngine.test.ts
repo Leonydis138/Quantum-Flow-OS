@@ -10,7 +10,7 @@ import * as fs from 'fs';
 describe('ChatAICognitiveEngine & API Endpoints Integration', () => {
   let server: DashboardServer;
   let integrationServer: http.Server;
-  const PORT = 18081;
+  const PORT = 18083;
   const INTEGRATION_PORT = 18082;
 
   interface ReceivedRequest {
