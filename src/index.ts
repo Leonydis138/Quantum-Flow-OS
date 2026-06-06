@@ -98,6 +98,7 @@ export {
 export { DashboardServer } from "./server/DashboardServer";
 export { AutonomousFlowDaemon, type DaemonState } from "./core/AutonomousFlowDaemon";
 export { QuantumFlowSDK, type SDKOptions, type AlignmentResult } from "./sdk/QuantumFlowSDK";
+export { ActiveDefenseEngine, type DefenseScanResult } from "./protection/ActiveDefenseEngine";
 
 // Virtue Ethics
 export {

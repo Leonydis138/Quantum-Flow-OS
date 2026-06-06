@@ -391,5 +391,58 @@ describe('DashboardServer Integration', () => {
     req.write(postData);
     req.end();
   });
+
+  it('should evaluate axiological coherence via POST /api/brain/axiology', (done) => {
+    const postData = JSON.stringify({
+      userPrompt: 'Benchmark temporal human-AI co-existence'
+    });
+
+    const req = http.request({
+      hostname: 'localhost',
+      port: PORT,
+      path: '/api/brain/axiology',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData),
+      },
+    }, (res) => {
+      expect(res.statusCode).toBe(200);
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        const payload = JSON.parse(data);
+        expect(payload.id).toBeDefined();
+        expect(payload.existentialResilienceCoefficient).toBeGreaterThanOrEqual(0);
+        expect(payload.axiologicalHorizon.length).toBe(5);
+        expect(payload.metaNarrative).toBeDefined();
+        expect(payload.metaNarrative.length).toBeGreaterThan(0);
+        expect(payload.treatyPath).toBeDefined();
+        done();
+      });
+    });
+
+    req.on('error', (err) => { done(err); });
+    req.write(postData);
+    req.end();
+  });
+
+  it('should fetch axiological history via GET /api/brain/axiology/history', (done) => {
+    http.get(`http://localhost:${PORT}/api/brain/axiology/history`, (res) => {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-type']).toBe('application/json');
+
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        const payload = JSON.parse(data);
+        expect(payload.history).toBeDefined();
+        expect(payload.history.length).toBeGreaterThan(0);
+        done();
+      });
+    }).on('error', (err) => {
+      done(err);
+    });
+  });
 });
 

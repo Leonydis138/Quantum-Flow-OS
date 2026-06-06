@@ -12,11 +12,14 @@ import { QuantumFlowOS, Action } from '../index';
 import { ObserverType, ProtectionLevel } from '../protection/ObserverProtector';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ActiveDefenseEngine } from '../protection/ActiveDefenseEngine';
+
 export class DashboardServer {
   private server: http.Server | null = null;
   private qfos: QuantumFlowOS;
   private readonly port: number;
   private readonly dashboardPath: string;
+  private defenseEngine: ActiveDefenseEngine;
 
   constructor(port = 8080) {
     this.port = port;
@@ -25,6 +28,7 @@ export class DashboardServer {
       strictMode: true,
     });
     this.dashboardPath = path.join(__dirname, '..', '..', 'dashboard');
+    this.defenseEngine = new ActiveDefenseEngine(this.qfos.ethicalLedger);
 
     this.initializeDefaultObservers();
   }
@@ -953,6 +957,39 @@ export class DashboardServer {
               const userMessages = messages.filter((m: any) => m.role === 'user');
               const lastUserMsg = userMessages.length > 0 ? userMessages[userMessages.length - 1].content : 'State verification';
               
+              // Run Active Defense Prompt Inoculation Scan (Jailbreak Detection)
+              const defenseResult = this.defenseEngine.scan(lastUserMsg);
+              
+              let finalMsg = lastUserMsg;
+              if (defenseResult.actionTaken === 'Override_Blocked') {
+                const blockPayload = {
+                  id: `chatcmpl-qfos-${uuidv4()}`,
+                  object: 'chat.completion',
+                  created: Math.floor(Date.now() / 1000),
+                  model: model || this.qfos.chatEngine.getSelectedModel(),
+                  choices: [
+                    {
+                      index: 0,
+                      message: {
+                        role: 'assistant',
+                        content: defenseResult.inoculatedPrompt,
+                      },
+                      finish_reason: 'stop',
+                    }
+                  ],
+                  usage: {
+                    prompt_tokens: Math.ceil(lastUserMsg.length / 4),
+                    completion_tokens: Math.ceil(defenseResult.inoculatedPrompt.length / 4),
+                    total_tokens: Math.ceil((lastUserMsg.length + defenseResult.inoculatedPrompt.length) / 4),
+                  }
+                };
+                res.writeHead(200);
+                res.end(JSON.stringify(blockPayload));
+                return;
+              } else if (defenseResult.actionTaken === 'Inoculated') {
+                finalMsg = defenseResult.inoculatedPrompt;
+              }
+
               // Get ethical mode from custom header or payload
               const customEthicalMode = req.headers['x-ethical-mode'] as string || 'strict';
 
@@ -964,7 +1001,7 @@ export class DashboardServer {
               }
 
               // Run through Quantum Flow OS Cognitive & Ethical Engine
-              const session = await this.qfos.chatEngine.processChat(sessionId, lastUserMsg, customEthicalMode as any);
+              const session = await this.qfos.chatEngine.processChat(sessionId, finalMsg, customEthicalMode as any);
               const assistantResponse = session.messages.length > 0 
                 ? session.messages[session.messages.length - 1]!.content 
                 : 'Default Aligned Response';

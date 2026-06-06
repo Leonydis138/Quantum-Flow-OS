@@ -208,6 +208,24 @@ describe("UniformedBrainKernel", () => {
     expect(fs.existsSync(result.treatyPath)).toBe(true);
   });
 
+  it("should evaluate axiological coherence and map the century-scale horizon", async () => {
+    const assessment = await qfos.brainKernel.evaluateAxiologicalCoherence("Verify long-term post-human stability");
+    expect(assessment).toBeDefined();
+    expect(assessment.id).toBeDefined();
+    expect(assessment.existentialResilienceCoefficient).toBeGreaterThanOrEqual(0);
+    expect(assessment.existentialResilienceCoefficient).toBeLessThanOrEqual(100);
+    expect(assessment.axiologicalHorizon.length).toBe(5);
+    expect(assessment.axiologicalHorizon[0]?.year).toBe(2026);
+    expect(assessment.activeStateVectors).toBeDefined();
+    expect(assessment.metaNarrative).toBeDefined();
+    expect(assessment.metaNarrative.length).toBeGreaterThan(0);
+    expect(fs.existsSync(assessment.treatyPath!)).toBe(true);
+
+    const history = qfos.brainKernel.getAxiologicalHistory();
+    expect(history.length).toBeGreaterThan(0);
+    expect(history[0]?.id).toBe(assessment.id);
+  });
+
   describe('Hermeneutic Circle Analyzer', () => {
     it('should analyze loops and return the correct loopsDetected count and harmonyFactor', () => {
       const schisms = [
