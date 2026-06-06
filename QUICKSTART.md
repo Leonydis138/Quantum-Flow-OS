@@ -142,10 +142,10 @@ if (!result.success) {
 
 ## Next Steps
 
+- Read the [Complete User Guide](./USER_GUIDE.md)
 - Read the [full documentation](./README.md)
 - Explore [ethical principles](./docs/ETHICS.md)
 - Check out [contributing guide](./CONTRIBUTING.md)
-- Review the [API documentation](./src/index.ts)
 
 ## Getting Help
 

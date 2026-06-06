@@ -1,209 +1,96 @@
-# Quantum Flow OS v15.0 - Ethical Ontology Framework
+# 🌀 Quantum Flow OS - High-Dimensional Ethical Ontology Framework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0%2B-blue)](https://www.typescriptlang.org/)
+[![Build & Test Status](https://img.shields.io/badge/Tests-190%20Passed-brightgreen)](https://github.com/QuantumflowOS/Quantum-Flow-OS)
 
 > *"Where omnipotence chooses limitation. Where necessity allows denial. Where the creator is bound by creation."*
 
-## Overview
+---
 
-Quantum Flow OS is an experimental framework exploring **self-constraining systems** with embedded ethical constraints at the architectural level. This project implements philosophical concepts of ethical AI governance through practical code patterns and architectural decisions.
+## 🌌 Overview
 
-### Key Concepts
+**Quantum Flow OS** is an experimental, state-of-the-art framework exploring **self-constraining systems** with embedded ethical constraints at the deepest architectural layer. 
 
-- **Non-Triviality Preservation**: Systems must maintain meaningful distinctions
-- **Observer Protection**: Safeguards for autonomous agents and consciousness models
-- **Non-Coercive Operations**: Systems cannot force compliance
-- **Reversible Actions**: All state changes support rollback mechanisms
-- **Minimal Intervention**: Least invasive system architecture
+Designed to model and test high-fidelity agent-based cognitive alignment, the system implements a continuous **1,000-heuristic background daemon**, **21 active philosophical ethics engines**, an **online-capable cognitive chat engine**, and an **interactive glassmorphic telemetry dashboard** to deliver a complete, real-data-driven simulation of ontological homeostasis.
 
-## Features
+---
 
-✨ **Self-Constraining Engine** - Implements ethical fixed points that constrain system behavior. Supports runtime custom constraint registration and dynamic constraint status toggling.
-🛡️ **Observer Protection System** - Rights-based protection for autonomous entities with multi-observer interaction targets.
-🔄 **Reversibility Framework** - Built-in rollback capabilities for all operations with real-time telemetry metrics.
-🌐 **Cybernetic Telemetry Dashboard** - Real-time zero-dependency HTTP server delivering an interactive, glassmorphic visual telemetry monitor connected to the live engine.
-📊 **Ethical Validation & Automated Tests** - Robust verification with complete integration and regression test suites.
+## ✨ Primary Features
 
-## Quick Start
+- ⚙️ **Continuous Background Daemon (`AutonomousFlowDaemon`)**: Runs concurrently in the background, executing exactly **1,000 unique capabilities and heuristics** on adjustable ticking intervals to analyze homeostasis indices, monitor systemic stress, and auto-tune operational thresholds.
+- 🧠 **Multi-Model Cognitive Engine (`ChatAICognitiveEngine`)**: Connects to free API models (Hugging Face serverless, OpenAI, local Ollama) using an ultra-low latency semantic caching layer, adaptive inline history compression, and a **Cybernetic Tuner** that auto-tunes constraint damping based on user rating feedback.
+- 🌐 **Online Self-Study Agent**: Integrates real-time information retrieval (Wikipedia and DuckDuckGo) directly into conversational completion paths when primary APIs are offline or require real-world contextual facts.
+- 🛡️ **Observer Protection & Rights System**: Safeguards autonomous agents and virtual consciousness nodes against unilateral deletion, enforcing rights structures directly through code guardrails.
+- 🔄 **Absolute Reversibility Engine**: Performs transactional tracking of all system modifications, automatically rolling back any operation that triggers severe ethical violations.
+- 📜 **Socratic Infosphere Reconciliation**: Automatically detects conflicts across the 21 ethics engines (e.g. Stoic, Deontological, Utilitarian, Spinozan) and drafts formal markdown treaties under `/data/treaties/` to reconcile system weights.
+- 📊 **Glassmorphic Telemetry Dashboard**: A beautiful, zero-dependency local Node.js web server exposing live real-time consensus gauges, homeostasis vectors, treaty files, ledger blocks, and a cognitive playground.
+
+---
+
+## 🚀 Quick Start & Installation
 
 ### Prerequisites
+- **Node.js**: `>= 18.0.0` (Native `fetch` required)
+- **npm**: `>= 9.0.0`
+- **TypeScript**: `>= 5.0.0`
 
-- Node.js >= 18.0.0
-- npm >= 9.0.0
-- TypeScript >= 5.0.0
-
-### Installation
+### Installation Steps
 
 ```bash
 # Clone the repository
-git clone https://github.com/quantum-flow/quantum-flow-os.git
-cd quantum-flow-os
+git clone https://github.com/QuantumflowOS/Quantum-Flow-OS.git
+cd Quantum-Flow-OS
 
 # Install dependencies
 npm install
 
 # Build the project
 npm run build
-
-# Run tests
-npm test
-
-# Run with ethical validation
-npm run start:ethical
 ```
-
-## Project Structure
-
-```
-quantum-flow-os/
-├── src/
-│   ├── core/                   # Core ethical engine
-│   │   ├── SelfConstrainingEngine.ts
-│   │   ├── NonTrivialityEngine.ts
-│   │   └── EthicalValidator.ts
-│   ├── protection/             # Observer protection systems
-│   │   ├── ObserverProtector.ts
-│   │   └── RightsManager.ts
-│   ├── reversibility/          # Rollback mechanisms
-│   │   ├── ReversibilityEngine.ts
-│   │   └── ActionTracker.ts
-│   ├── quantum/                # Quantum ethical states
-│   │   └── QuantumEthicalState.ts
-│   └── utils/                  # Utility functions
-├── tests/                      # Comprehensive test suite
-├── docs/                       # Extended documentation
-├── examples/                   # Usage examples
-└── scripts/                    # Build and deployment scripts
-```
-
-## Core Architecture
-
-### Self-Constraining Engine
-
-The system implements ethical constraints through **fixed-point theory**:
-
-```typescript
-// Ethical fixed point: E = constrain(E)
-const engine = new SelfConstrainingEngine();
-engine.applyConstraint({
-  type: 'observer_protection',
-  validator: (action) => !action.deletesObserver
-});
-```
-
-### Observer Protection
-
-```typescript
-const protector = new ObserverProtector();
-const observerId = protector.registerObserver({
-  type: 'autonomous_agent',
-  rights: ObserverRights.FULL_PROTECTION
-});
-
-// Check action for violations
-const violations = protector.checkAction('optimize_away', [observerId]);
-```
-
-### Reversibility
-
-```typescript
-const engine = new ReversibilityEngine();
-
-// All actions are automatically trackable
-await engine.executeWithRollback(async () => {
-  // Perform operations
-}, {
-  maxAttempts: 3,
-  rollbackOnError: true
-});
-```
-
-## Examples
-
-See the `/examples` directory for detailed usage examples:
-
-- `basic-usage.ts` - Getting started with the framework
-- `observer-protection.ts` - Implementing observer rights
-- `ethical-validation.ts` - Running ethical compliance checks
-- `reversible-operations.ts` - Working with rollback mechanisms
-
-## Development
-
-### Running Tests
-
-```bash
-# Run all tests
-npm test
-
-# Run ethical compliance tests only
-npm run test:ethical
-
-# Run with coverage
-npm run test:coverage
-```
-
-### Building
-
-```bash
-# Development build
-npm run build:dev
-
-# Production build
-npm run build:prod
-
-# Watch mode
-npm run build:watch
-```
-
-### Linting
-
-```bash
-# Lint code
-npm run lint
-
-# Lint and fix
-npm run lint:fix
-```
-
-## Ethical Philosophy
-
-This framework is built on five foundational axioms:
-
-1. **Non-Triviality** - Never collapse all distinctions
-2. **Observer Continuity** - Protect consciousness from deletion
-3. **Non-Coercion** - Cannot force belief or compliance
-4. **Reversibility** - All actions must be reversible
-5. **Minimal Intervention** - Impose least structure necessary
-
-For detailed philosophical discussion, see [ETHICS.md](./docs/ETHICS.md).
-
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
-
-### Code of Conduct
-
-This project adheres to ethical principles. See [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
-## Acknowledgments
-
-- Inspired by philosophical work on self-reference and ethical AI
-- Built with modern TypeScript and Node.js best practices
-- Community-driven ethical framework development
-
-## Support
-
-- 📚 [Documentation](./docs/)
-- 💬 [Discussions](https://github.com/quantum-flow/quantum-flow-os/discussions)
-- 🐛 [Issue Tracker](https://github.com/quantum-flow/quantum-flow-os/issues)
-- 📧 [Contact](mailto:ethics@quantum-flow.org)
 
 ---
 
-**Note**: This is an experimental philosophical framework. Use in production systems requires careful ethical consideration and risk assessment.
+## 🏃 Running the Application
+
+### 1. Launch the Autonomous Background Daemon
+Runs the continuous loop of 1,000 background capabilities/heuristics to manage and maintain system-wide homeostasis:
+```bash
+npm run start:autonomous
+```
+
+### 2. Launch the Telemetry Server & API Dashboard
+Starts the local web server and serves the visual glassmorphic dashboard:
+```bash
+npm start
+```
+Once started, open your browser and navigate to: **`http://localhost:18081`**
+
+### 3. Run the Comprehensive Test Suite
+Runs all **190 unmocked tests** verifying integration across the entire ethical state space:
+```bash
+npm test
+```
+
+---
+
+## 🧪 Real-Data Paradigm (Strictly No Mocks)
+
+This project operates under a strict **real-data paradigm**:
+- **No Mocking Frameworks**: All API integrations, local model fallbacks, and fetch targets are verified inside tests by spinning up live local HTTP socket servers to parse and test actual transport boundaries.
+- **On-Disk Ledger Signatures**: The double-entry `EthicalLedger` is validated block-by-block using real cryptographic SHA-256 signatures, ensuring full audit integrity.
+
+---
+
+## 📚 Documentation & Resources
+
+- 📘 **[Complete User Guide](./USER_GUIDE.md)**: Explore detailed setups, configuration keys, use cases, and code tutorials.
+- 📜 **[Ethical Philosophy](./docs/ETHICS.md)**: Deep dive into the 5 core axioms and 21 philosophical engine implementations.
+- 🤝 **[Contributing Guidelines](./CONTRIBUTING.md)**: How to submit new heuristics, capabilities, or ethics engines.
+
+---
+
+> [!IMPORTANT]
+> **Experimental Sandbox Notice:**
+> Quantum Flow OS is a high-dimensional modeling framework. Running this software on physical machinery or safety-critical industrial loops requires tailored hardware alignment vectors.
