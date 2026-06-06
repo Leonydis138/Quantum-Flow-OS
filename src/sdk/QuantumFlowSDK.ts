@@ -7,6 +7,8 @@
  */
 
 import * as http from 'http';
+import * as https from 'https';
+
 
 export interface SDKOptions {
   endpoint?: string;
@@ -62,7 +64,7 @@ export class QuantumFlowSDK {
           },
         };
 
-        const client = url.protocol === 'https:' ? require('https') : http;
+        const client = url.protocol === 'https:' ? https : http;
         const req = client.request(options, (res: any) => {
           let responseBody = '';
           res.on('data', (chunk: string) => { responseBody += chunk; });

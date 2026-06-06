@@ -113,7 +113,7 @@ export class TeleologicalResonanceEngine {
     let timelineId: string;
     try {
       timelineId = forkingEngine.createFork(`retro-probe-${action.id.substring(0, 8)}`);
-    } catch (err) {
+    } catch {
       // Return safe if parent timeline doesn't exist
       return { safe: true, failureTickProjected: null, offendingDescription: null };
     }

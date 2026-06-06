@@ -887,7 +887,9 @@ export class DashboardServer {
                 try {
                   const payload = JSON.parse(body);
                   userPrompt = payload.userPrompt;
-                } catch {}
+                } catch {
+                  // Fall back to undefined if body parsing fails
+                }
               }
               const result = await this.qfos.brainKernel.evaluateAxiologicalCoherence(userPrompt);
               res.writeHead(200);
