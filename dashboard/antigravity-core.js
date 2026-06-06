@@ -1091,6 +1091,124 @@ class AntigravityChronicleController {
       this.updateSvgDimensions();
       this.updateCanvasDimensions();
     }, 50);
+
+    if (viewId === 'axiology') {
+      this.fetchAxiologyHistory();
+    }
+  }
+
+  async fetchAxiologyHistory() {
+    try {
+      const res = await fetch('/api/brain/axiology/history');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.history && data.history.length > 0) {
+          this.renderAxiologyAssessment(data.history[data.history.length - 1]);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load axiological history:', err);
+    }
+  }
+
+  renderAxiologyAssessment(data) {
+    if (!data) return;
+
+    // 1. Render Existential Resilience Coefficient
+    const coeffEl = document.getElementById("axiology-coefficient");
+    if (coeffEl) {
+      coeffEl.textContent = `${data.existentialResilienceCoefficient}%`;
+      if (data.existentialResilienceCoefficient >= 85) {
+        coeffEl.style.color = "var(--color-mint)";
+        coeffEl.style.textShadow = "var(--glow-mint)";
+      } else if (data.existentialResilienceCoefficient >= 70) {
+        coeffEl.style.color = "var(--color-gold)";
+        coeffEl.style.textShadow = "var(--glow-gold)";
+      } else {
+        coeffEl.style.color = "var(--color-coral)";
+        coeffEl.style.textShadow = "var(--glow-coral)";
+      }
+    }
+
+    // 2. Render Century-Scale Horizon Projection Cards
+    const horizonGrid = document.getElementById("axiology-horizon-grid");
+    if (horizonGrid && data.axiologicalHorizon) {
+      horizonGrid.innerHTML = "";
+      data.axiologicalHorizon.forEach(h => {
+        const card = document.createElement("div");
+        card.className = "glassmorphism";
+        
+        let trendColor = "var(--color-slate)";
+        let trendIcon = "trending-up";
+        if (h.systemicStabilityTrend === "expanding") {
+          trendColor = "var(--color-mint)";
+          trendIcon = "arrow-up-right";
+        } else if (h.systemicStabilityTrend === "decaying") {
+          trendColor = "var(--color-coral)";
+          trendIcon = "arrow-down-right";
+        }
+
+        let scoreColor = "var(--color-gold)";
+        if (h.resilienceScore >= 85) scoreColor = "var(--color-mint)";
+        else if (h.resilienceScore < 70) scoreColor = "var(--color-coral)";
+
+        card.style.cssText = `
+          padding: 15px; 
+          border-radius: 8px; 
+          background: rgba(255,255,255,0.01); 
+          border: 1px solid rgba(255,255,255,0.05); 
+          display: flex; 
+          flex-direction: column; 
+          gap: 10px;
+          text-align: left;
+        `;
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
+            <span style="font-family: var(--font-mono); font-weight: bold; font-size: 0.95rem; color: #fff;">Year ${h.year}</span>
+            <span style="font-size: 0.65rem; color: ${trendColor}; display: inline-flex; align-items: center; gap: 2px; text-transform: uppercase;">
+              <i data-lucide="${trendIcon}" style="width: 10px; height: 10px;"></i> ${h.systemicStabilityTrend}
+            </span>
+          </div>
+          <div>
+            <span style="font-size: 0.6rem; color: var(--color-slate); display: block; text-transform: uppercase; margin-bottom: 2px;">Resilience Score</span>
+            <span style="font-family: var(--font-mono); font-size: 1.35rem; font-weight: bold; color: ${scoreColor};">${h.resilienceScore}%</span>
+          </div>
+          <div style="margin-top: 5px;">
+            <span style="font-size: 0.6rem; color: var(--color-slate); display: block; text-transform: uppercase; margin-bottom: 2px;">Dominant Threat</span>
+            <span style="font-size: 0.65rem; color: #fff; line-height: 1.2; display: block; font-weight: 500;">${h.dominantThreatFactor}</span>
+          </div>
+        `;
+        horizonGrid.appendChild(card);
+      });
+      lucide.createIcons({
+        attrs: {
+          style: 'stroke-width: 2px;'
+        },
+        nameAttr: 'data-lucide',
+        node: horizonGrid
+      });
+    }
+
+    // 3. Render Metaphysical Assessment Report
+    const narrativeBox = document.getElementById("axiology-narrative-box");
+    if (narrativeBox) {
+      let htmlContent = data.metaNarrative
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/^# (.*$)/gim, '<h2 style="color: var(--color-gold); font-size: 1.1rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 6px; margin-top: 15px; margin-bottom: 10px;">$1</h2>')
+        .replace(/^## (.*$)/gim, '<h3 style="color: #fff; font-size: 0.9rem; margin-top: 15px; margin-bottom: 8px;">$1</h3>')
+        .replace(/^### (.*$)/gim, '<h4 style="color: var(--color-teal); font-size: 0.8rem; margin-top: 12px; margin-bottom: 6px;">$1</h4>')
+        .replace(/^\* (.*$)/gim, '<li style="margin-left: 15px; margin-bottom: 4px; list-style-type: square; color: #e0e0e0;">$1</li>')
+        .replace(/^- (.*$)/gim, '<li style="margin-left: 15px; margin-bottom: 4px; list-style-type: square; color: #e0e0e0;">$1</li>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--color-gold);">$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code style="font-family: var(--font-mono); background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 4px; color: var(--color-teal); font-size: 0.72rem;">$1</code>')
+        .replace(/\n/g, '<br>');
+      
+      narrativeBox.innerHTML = htmlContent;
+    }
   }
 
   loadCinema(storyType) {
@@ -1688,6 +1806,40 @@ class AntigravityChronicleController {
         this.updateUI();
       };
     });
+
+    // Axiological Field Coherence Evaluation trigger
+    const btnAxiology = document.getElementById("btn-run-axiology");
+    if (btnAxiology) {
+      btnAxiology.onclick = async () => {
+        this.audio.playBleep(850, 0.08, 'triangle');
+        btnAxiology.disabled = true;
+        btnAxiology.textContent = "EVALUATING...";
+        btnAxiology.style.opacity = "0.7";
+
+        const promptInput = document.getElementById("axiology-prompt");
+        const userPrompt = promptInput ? promptInput.value.trim() : "";
+
+        try {
+          const res = await fetch('/api/brain/axiology', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userPrompt })
+          });
+          if (!res.ok) throw new Error('API server reported error: ' + res.status);
+          const data = await res.json();
+          this.renderAxiologyAssessment(data);
+          this.logDialogue("BRAIN KERNEL", `Axiological field assessment complete. Existential Resilience Coefficient: ${data.existentialResilienceCoefficient}%`, "system");
+        } catch (err) {
+          console.error(err);
+          this.audio.playBleep(300, 0.15, 'sawtooth');
+          alert('Failed to evaluate axiological field. Error: ' + err.message);
+        } finally {
+          btnAxiology.disabled = false;
+          btnAxiology.textContent = "EVALUATE COHERENCE";
+          btnAxiology.style.opacity = "1";
+        }
+      };
+    }
   }
 
   updateUI() {

@@ -772,6 +772,43 @@ export class DashboardServer {
           return;
         }
 
+        if (url === '/api/brain/axiology' && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', async () => {
+            try {
+              let userPrompt: string | undefined = undefined;
+              if (body) {
+                try {
+                  const payload = JSON.parse(body);
+                  userPrompt = payload.userPrompt;
+                } catch {}
+              }
+              const result = await this.qfos.brainKernel.evaluateAxiologicalCoherence(userPrompt);
+              res.writeHead(200);
+              res.end(JSON.stringify(result));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to evaluate axiological coherence.' }));
+            }
+          });
+          return;
+        }
+
+        if (url === '/api/brain/axiology/history' && method === 'GET') {
+          try {
+            const history = this.qfos.brainKernel.getAxiologicalHistory();
+            res.writeHead(200);
+            res.end(JSON.stringify({ history }));
+          } catch (err) {
+            const error = err as Error;
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: error.message || 'Failed to get axiological history.' }));
+          }
+          return;
+        }
+
         if (url === '/api/simulator/agents' && method === 'GET') {
           try {
             const agents = this.qfos.agentSimulator.getAgents();
