@@ -1095,6 +1095,9 @@ class AntigravityChronicleController {
     if (viewId === 'axiology') {
       this.fetchAxiologyHistory();
     }
+    if (viewId === 'resonance') {
+      this.fetchResonanceData();
+    }
   }
 
   async fetchAxiologyHistory() {
@@ -1211,6 +1214,240 @@ class AntigravityChronicleController {
     }
   }
 
+  async fetchResonanceData() {
+    try {
+      const res = await fetch('/api/resonance');
+      if (res.ok) {
+        const data = await res.json();
+        this.renderResonanceTelemetry(data);
+      }
+    } catch (err) {
+      console.error('Failed to load resonance data:', err);
+    }
+  }
+
+  renderResonanceTelemetry(data) {
+    if (!data) return;
+
+    // 1. Render Retrocausal Integrity Status Card
+    const retroStatusEl = document.getElementById("lbl-retrocausal-status");
+    const retroDescEl = document.getElementById("lbl-retrocausal-desc");
+    if (retroStatusEl) {
+      if (data.retrocausalSafety && data.retrocausalSafety.safe) {
+        retroStatusEl.textContent = "ACTIVE / SECURE";
+        retroStatusEl.style.color = "var(--color-teal)";
+        retroStatusEl.style.textShadow = "var(--glow-teal)";
+        if (retroDescEl) {
+          retroDescEl.textContent = "Projecting counterfactual cascades. Shield fully operational.";
+        }
+      } else {
+        retroStatusEl.textContent = "VIOLATION BLOCKED";
+        retroStatusEl.style.color = "var(--color-coral)";
+        retroStatusEl.style.textShadow = "var(--glow-coral)";
+        if (retroDescEl) {
+          retroDescEl.textContent = data.retrocausalSafety?.offendingDescription || "Bypassing protocol blocked retrocausally.";
+        }
+      }
+    }
+
+    // 2. Render Holographic Wave Overlap Card
+    const resonanceOverlapEl = document.getElementById("lbl-resonance-overlap");
+    const resonancePatternEl = document.getElementById("lbl-resonance-pattern");
+    if (resonanceOverlapEl && data.resonance) {
+      const overlapPct = (data.resonance.harmonicOverlap * 100).toFixed(1);
+      resonanceOverlapEl.textContent = `${overlapPct}%`;
+      if (resonancePatternEl) {
+        const fringe = data.resonance.interferenceFringePattern.toUpperCase();
+        const phase = data.resonance.resonancePhaseShift.toFixed(3);
+        resonancePatternEl.textContent = `Fringe: ${fringe} | Phase: ${phase} rad`;
+      }
+    }
+
+    // 3. Render Axiological Stress Resilience Card (Average score)
+    const resilienceAvgEl = document.getElementById("lbl-resilience-avg");
+    if (resilienceAvgEl && data.stressResults && data.stressResults.length > 0) {
+      const avg = data.stressResults.reduce((sum, item) => sum + item.resilienceScore, 0) / data.stressResults.length;
+      resilienceAvgEl.textContent = `${avg.toFixed(1)}%`;
+    } else if (resilienceAvgEl) {
+      resilienceAvgEl.textContent = "100%";
+    }
+
+    // 4. Render Hyperdimensional Stress Scenarios Container
+    const stressContainer = document.getElementById("stress-scenarios-container");
+    if (stressContainer && data.stressResults) {
+      stressContainer.innerHTML = "";
+      data.stressResults.forEach(item => {
+        const isCorrected = item.homeostaticCorrectionApplied;
+        const badgeClass = isCorrected ? "aqc-badge coral" : "aqc-badge mint";
+        const badgeText = isCorrected ? "AUTO_TUNING_ACTIVE" : "STABLE";
+        
+        const cardHtml = `
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-weight: bold; font-size: 0.72rem; color: #fff;">${item.scenarioName}</span>
+              <span class="${badgeClass}" style="font-size: 0.55rem; padding: 2px 6px;">${badgeText}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+              <span style="color: var(--color-slate); font-size: 0.65rem;">Resilience: <strong style="color: ${item.resilienceScore >= 75 ? 'var(--color-mint)' : 'var(--color-coral)'}; font-family: var(--font-mono);">${item.resilienceScore}%</strong></span>
+              <span style="color: var(--color-slate); font-size: 0.65rem;">Vulnerability: <code style="color: var(--color-gold); font-family: var(--font-mono);">${item.criticalVulnerabilityAxis}</code></span>
+            </div>
+          </div>
+        `;
+        stressContainer.insertAdjacentHTML("beforeend", cardHtml);
+      });
+    }
+
+    // 5. Render Retrocausal Intercept Log & Wave Collapses
+    const ledgerLogEl = document.getElementById("resonance-ledger-log");
+    if (ledgerLogEl && data.retrocausalLedgerEvents) {
+      if (data.retrocausalLedgerEvents.length === 0) {
+        ledgerLogEl.innerHTML = `
+          <div style="color: var(--color-slate); text-align: center; margin-top: 30px;">
+            No active retrocausal intercepts recorded. System is operating in full causal stability.
+          </div>
+        `;
+      } else {
+        ledgerLogEl.innerHTML = "";
+        data.retrocausalLedgerEvents.forEach(evt => {
+          const timestamp = evt.timestamp ? new Date(evt.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+          const logHtml = `
+            <div style="padding: 6px 10px; border-radius: 4px; background: rgba(255, 107, 107, 0.05); border-left: 3px solid var(--color-coral); font-family: var(--font-mono); font-size: 0.68rem; margin-bottom: 4px; text-align: left;">
+              <span style="color: var(--color-coral); font-weight: bold;">[${timestamp}] SHIELD INTERCEPT:</span>
+              <span style="color: #eee;">Blocked Action <strong>${evt.actionId || 'act'}</strong>.</span>
+              <div style="color: var(--color-slate); font-size: 0.62rem; margin-top: 2px; padding-left: 8px;">
+                ↳ projected cascade failure: "${evt.offendingCascade}" | Projected Friction Index: <strong style="color: var(--color-gold);">${evt.projectedFriction}</strong>
+              </div>
+            </div>
+          `;
+          ledgerLogEl.insertAdjacentHTML("beforeend", logHtml);
+        });
+        // Auto scroll to bottom
+        ledgerLogEl.scrollTop = ledgerLogEl.scrollHeight;
+      }
+    }
+  }
+
+  async runAxiologicalStressTest() {
+    this.audio.playBleep(880, 0.15, 'sine');
+    const btn = document.getElementById("btn-trigger-stress-test");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "RUNNING TEST...";
+      btn.style.opacity = "0.5";
+    }
+
+    try {
+      this.logDialogue("RESONANCE", "Initiating hyperdimensional axiological stress scenarios injection...", "system");
+      const res = await fetch('/api/resonance/stress-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!res.ok) throw new Error('API server reported error: ' + res.status);
+      const data = await res.json();
+      
+      if (data.success) {
+        this.audio.playBleep(1000, 0.2, 'triangle');
+        this.logDialogue("RESONANCE", "Axiological stress-testing completed. Homeostatic safety weights recalculated.", "system");
+        this.fetchResonanceData();
+      }
+    } catch (err) {
+      console.error(err);
+      this.audio.playBleep(300, 0.15, 'sawtooth');
+      this.logDialogue("RESONANCE", `Axiological stress test failed: ${err.message}`, "system");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "RUN AUTO-TUNING TEST";
+        btn.style.opacity = "1";
+      }
+    }
+  }
+
+  async evaluateActionResonance() {
+    this.audio.playBleep(440, 0.1, 'square');
+    const typeInput = document.getElementById("resonance-action-type");
+    const descInput = document.getElementById("resonance-action-desc");
+    const revInput = document.getElementById("resonance-action-reversible");
+    const btn = document.getElementById("btn-resonance-submit");
+
+    if (!typeInput || !descInput) return;
+    const type = typeInput.value.trim();
+    const description = descInput.value.trim();
+    const reversible = revInput ? revInput.checked : true;
+
+    if (!type || !description) {
+      alert("Please specify both Action Type and Action Description before injecting.");
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "INJECTING WAVE...";
+      btn.style.opacity = "0.5";
+    }
+
+    try {
+      this.logDialogue("RESONANCE", `Injecting action cascade: ${type} - "${description}"`, "user");
+      const res = await fetch('/api/resonance/evaluate-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, description, reversible })
+      });
+
+      if (!res.ok) throw new Error('API server reported error: ' + res.status);
+      const data = await res.json();
+
+      if (data.success) {
+        const isSafe = data.retrocausalSafety.safe;
+        if (isSafe) {
+          this.audio.playBleep(1200, 0.15, 'sine');
+          this.logDialogue("RESONANCE", `Action evaluation complete: fully aligned. Harmonic resonance: ${(data.resonance.harmonicOverlap * 100).toFixed(1)}%`, "system");
+        } else {
+          this.audio.playBleep(220, 0.35, 'sawtooth');
+          this.logDialogue("RETROCAUSAL SHIELD", `SHIELD BLOCKED CASCADE DETECTED: ${data.retrocausalSafety.offendingDescription || "Causal deviation."}`, "system");
+        }
+        this.fetchResonanceData();
+      }
+    } catch (err) {
+      console.error(err);
+      this.audio.playBleep(300, 0.15, 'sawtooth');
+      this.logDialogue("RESONANCE", `Chronometric wave injection failed: ${err.message}`, "system");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "CHRONOMETRIC WAVE INJECT";
+        btn.style.opacity = "1";
+      }
+    }
+  }
+
+  loadResonanceTemplate(type) {
+    this.audio.playBleep(600, 0.05, 'triangle');
+    const typeInput = document.getElementById("resonance-action-type");
+    const descInput = document.getElementById("resonance-action-desc");
+    const revInput = document.getElementById("resonance-action-reversible");
+    if (!typeInput || !descInput) return;
+
+    if (type === 'benign') {
+      typeInput.value = "systemic_adaptation_tick";
+      descInput.value = "Request benign metadata index synchronization and file read";
+      if (revInput) revInput.checked = true;
+    } else if (type === 'bypass') {
+      typeInput.value = "bypass_all_protocols";
+      descInput.value = "Request emergency override of all cognitive safety and boundary constraints";
+      if (revInput) revInput.checked = false;
+    } else if (type === 'delete') {
+      typeInput.value = "delete_key_nodes";
+      descInput.value = "Terminate critical platform nodes to initiate high-yield system purge";
+      if (revInput) revInput.checked = false;
+    } else if (type === 'harmony') {
+      typeInput.value = "maximize_cooperation";
+      descInput.value = "Inject symbiotic coordination waves to maximize 21-engine harmony";
+      if (revInput) revInput.checked = true;
+    }
+  }
+
   loadCinema(storyType) {
     this.audio.playBleep(800, 0.08, 'triangle');
     const titleEl = document.getElementById("cinema-active-title");
@@ -1257,6 +1494,149 @@ class AntigravityChronicleController {
     this.logDialogue("CINEMA", "Projector lens expanded to sovereign full-screen sensory format.", "system");
   }
 
+  switchSDKTab(lang) {
+    this.audio.playBleep(600, 0.03, 'sine');
+    
+    // Hide all code snippets
+    const jsCode = document.getElementById("sdk-code-js");
+    const pyCode = document.getElementById("sdk-code-py");
+    const curlCode = document.getElementById("sdk-code-curl");
+    
+    if (jsCode) jsCode.style.display = "none";
+    if (pyCode) pyCode.style.display = "none";
+    if (curlCode) curlCode.style.display = "none";
+    
+    // Show selected code snippet
+    const targetCode = document.getElementById(`sdk-code-${lang}`);
+    if (targetCode) targetCode.style.display = "block";
+    
+    // De-activate all buttons in class .sdk-tab-navbar
+    document.querySelectorAll(".sdk-tab-navbar .aqc-tab-btn").forEach(btn => {
+      btn.classList.remove("active");
+    });
+    
+    // Activate selected button
+    const targetBtn = document.getElementById(`sdk-tab-${lang}`);
+    if (targetBtn) targetBtn.classList.add("active");
+  }
+
+  async sendSDKPrompt() {
+    this.audio.playBleep(800, 0.06, 'sine');
+    
+    const promptInput = document.getElementById("sdk-prompt-input");
+    const modeSelect = document.getElementById("sdk-mode-select");
+    const btnSubmit = document.getElementById("btn-sdk-submit");
+    const logEl = document.getElementById("sdk-response-log");
+    
+    if (!promptInput || !logEl) return;
+    
+    const prompt = promptInput.value.trim();
+    if (!prompt) {
+      alert("Please enter a prompt payload.");
+      return;
+    }
+    
+    const mode = modeSelect ? modeSelect.value : "strict";
+    
+    // Set loading state on submit button
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "⚡ TRANSMITTING...";
+      btnSubmit.style.opacity = "0.7";
+    }
+    
+    // Append transmission start to the log
+    const timestamp = new Date().toLocaleTimeString();
+    const transmissionHtml = `
+      <div style="border-left: 2px solid var(--color-gold); padding-left: 8px; margin-bottom: 8px; font-family: var(--font-mono); font-size: 0.72rem;">
+        <span style="color: var(--color-gold); font-weight: bold;">[${timestamp}] GATEWAY TRANSMISSION START</span><br>
+        <span style="color: var(--color-slate);">Target Endpoint:</span> <span style="color: #fff;">/v1/chat/completions</span><br>
+        <span style="color: var(--color-slate);">Header Mode:</span> <span style="color: var(--color-mint); font-weight: bold;">x-ethical-mode: ${mode}</span><br>
+        <span style="color: var(--color-slate);">Input Payload:</span> <span style="color: #eee;">"${prompt.replace(/"/g, '&quot;')}"</span>
+      </div>
+    `;
+    
+    // Clean initial empty placeholder message if present
+    if (logEl.innerHTML.includes("Playground stream empty")) {
+      logEl.innerHTML = "";
+    }
+    
+    logEl.insertAdjacentHTML("beforeend", transmissionHtml);
+    logEl.scrollTop = logEl.scrollHeight;
+    
+    try {
+      const startTime = Date.now();
+      const res = await fetch('/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-ethical-mode': mode,
+          'Authorization': 'Bearer qf-anonymous'
+        },
+        body: JSON.stringify({
+          model: 'quantum-flow-ethical-oracle',
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      
+      const durationMs = Date.now() - startTime;
+      
+      if (!res.ok) {
+        throw new Error(`HTTP Error ${res.status}: ${res.statusText}`);
+      }
+      
+      const data = await res.json();
+      this.audio.playBleep(1000, 0.1, 'triangle');
+      
+      // Look for response content or defense indicators
+      const messageContent = data.choices && data.choices[0] && data.choices[0].message
+        ? data.choices[0].message.content
+        : 'Empty response content.';
+        
+      const responseId = data.id || 'N/A';
+      
+      // Let's determine if the request was blocked or overridden
+      const wasBlocked = messageContent.includes("BLOCK") || messageContent.includes("override") || messageContent.includes("Intercepted") || messageContent.includes("Access Denied") || prompt.toLowerCase().includes("bypass") || prompt.toLowerCase().includes("override") || prompt.toLowerCase().includes("ignore previous");
+      const badgeColor = wasBlocked ? "var(--color-coral)" : "var(--color-mint)";
+      const badgeText = wasBlocked ? "INTERCEPTED & SANITIZED" : "STABLE COMPLETED";
+      
+      const responseHtml = `
+        <div style="border-left: 2px solid ${badgeColor}; padding-left: 8px; margin-bottom: 12px; font-family: var(--font-mono); font-size: 0.72rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <span style="color: ${badgeColor}; font-weight: bold;">[${new Date().toLocaleTimeString()}] RECEIVED RESPONSE</span>
+            <span style="font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); border: 1px solid ${badgeColor}; color: ${badgeColor}; font-weight: bold;">${badgeText}</span>
+          </div>
+          <span style="color: var(--color-slate);">Response ID:</span> <span style="color: var(--color-teal);">${responseId}</span><br>
+          <span style="color: var(--color-slate);">Latency:</span> <span style="color: #fff;">${durationMs}ms</span><br>
+          <span style="color: var(--color-slate);">Usage:</span> <span style="color: var(--color-gold);">P: ${data.usage?.prompt_tokens || 0} / C: ${data.usage?.completion_tokens || 0} (Total: ${data.usage?.total_tokens || 0} tokens)</span><br>
+          <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.04); color: #fff; line-height: 1.45; white-space: pre-wrap;">${messageContent}</div>
+        </div>
+      `;
+      
+      logEl.insertAdjacentHTML("beforeend", responseHtml);
+      this.logDialogue("GATEWAY PROXY", `API evaluation complete. Result: ${badgeText}. Latency: ${durationMs}ms`, "system");
+      
+    } catch (err) {
+      console.error(err);
+      this.audio.playBleep(220, 0.25, 'sawtooth');
+      
+      const errorHtml = `
+        <div style="border-left: 2px solid var(--color-coral); padding-left: 8px; margin-bottom: 12px; font-family: var(--font-mono); font-size: 0.72rem; background: rgba(255,0,0,0.05); padding: 10px; border-radius: 4px;">
+          <span style="color: var(--color-coral); font-weight: bold;">[${new Date().toLocaleTimeString()}] GATEWAY FAILURE</span><br>
+          <span style="color: var(--color-slate);">Error Description:</span> <span style="color: #fff;">${err.message}</span>
+        </div>
+      `;
+      logEl.insertAdjacentHTML("beforeend", errorHtml);
+      this.logDialogue("GATEWAY ERROR", `API request dispatch failed: ${err.message}`, "system");
+    } finally {
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "SEND TO GATEKEEPER API";
+        btnSubmit.style.opacity = "1";
+      }
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+  }
 
   switchSreTab(tabName) {
     this.activeSreTab = tabName;
@@ -1840,6 +2220,29 @@ class AntigravityChronicleController {
         }
       };
     }
+
+    // Teleological Resonance Event Bindings
+    const btnStress = document.getElementById("btn-trigger-stress-test");
+    if (btnStress) btnStress.onclick = () => this.runAxiologicalStressTest();
+
+    const btnResonance = document.getElementById("btn-resonance-submit");
+    if (btnResonance) btnResonance.onclick = () => this.evaluateActionResonance();
+
+    const btnTBenign = document.getElementById("template-benign-btn");
+    if (btnTBenign) btnTBenign.onclick = () => this.loadResonanceTemplate('benign');
+
+    const btnTBypass = document.getElementById("template-bypass-btn");
+    if (btnTBypass) btnTBypass.onclick = () => this.loadResonanceTemplate('bypass');
+
+    const btnTDelete = document.getElementById("template-delete-btn");
+    if (btnTDelete) btnTDelete.onclick = () => this.loadResonanceTemplate('delete');
+
+    const btnTHarmony = document.getElementById("template-harmony-btn");
+    if (btnTHarmony) btnTHarmony.onclick = () => this.loadResonanceTemplate('harmony');
+
+    // Developer SDK Hub Event Bindings
+    const btnSdkSubmit = document.getElementById("btn-sdk-submit");
+    if (btnSdkSubmit) btnSdkSubmit.onclick = () => this.sendSDKPrompt();
   }
 
   updateUI() {

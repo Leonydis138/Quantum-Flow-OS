@@ -160,6 +160,107 @@ export class DashboardServer {
           return;
         }
 
+        if (url === '/api/resonance' && method === 'GET') {
+          try {
+            const stressResults = this.qfos.resonanceEngine.runAxiologicalStressTest(this.qfos);
+            const sampleAction = {
+              id: 'telemetry-sample',
+              type: 'systemic_adaptation_tick',
+              description: 'Standard systemic adjustment cascade',
+              reversible: true,
+              timestamp: new Date(),
+              metadata: {},
+            };
+            const resonance = this.qfos.resonanceEngine.calculateHolographicResonance(this.qfos, sampleAction);
+            const retrocausalSafety = this.qfos.resonanceEngine.evaluateRetrocausalSafety(this.qfos, sampleAction);
+
+            const ledgerEntries = this.qfos.ethicalLedger.getChain().flatMap(block => {
+              if (block.type === 'action' && block.data && (block.data as any).type === 'retrocausal_prevention') {
+                return [block.data];
+              }
+              return [];
+            });
+
+            res.writeHead(200);
+            res.end(JSON.stringify({
+              stressResults,
+              resonance,
+              retrocausalSafety,
+              retrocausalLedgerEvents: ledgerEntries,
+              adaptedWeights: stressResults[0]?.adaptedWeights || {},
+            }));
+          } catch (err) {
+            const error = err as Error;
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: error.message || 'Failed to fetch resonance telemetry.' }));
+          }
+          return;
+        }
+
+        if (url === '/api/resonance/stress-test' && method === 'POST') {
+          try {
+            const stressResults = this.qfos.resonanceEngine.runAxiologicalStressTest(this.qfos);
+            res.writeHead(200);
+            res.end(JSON.stringify({
+              success: true,
+              stressResults,
+            }));
+          } catch (err) {
+            const error = err as Error;
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: error.message || 'Failed to trigger stress test.' }));
+          }
+          return;
+        }
+
+        if (url === '/api/resonance/evaluate-action' && method === 'POST') {
+          let body = '';
+          req.on('data', chunk => { body += chunk; });
+          req.on('end', () => {
+            try {
+              const payload = JSON.parse(body);
+              const { type, description, reversible } = payload;
+              if (!type || !description) {
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Missing type or description parameter.' }));
+                return;
+              }
+
+              const action = {
+                id: `act-res-${Date.now()}`,
+                type,
+                description,
+                reversible: reversible !== false,
+                timestamp: new Date(),
+                metadata: {},
+              };
+
+              const retrocausalSafety = this.qfos.resonanceEngine.evaluateRetrocausalSafety(this.qfos, action);
+              const resonance = this.qfos.resonanceEngine.calculateHolographicResonance(this.qfos, action);
+
+              let supervision = null;
+              if (!retrocausalSafety.safe) {
+                supervision = this.qfos.superviseAction(action);
+              }
+
+              res.writeHead(200);
+              res.end(JSON.stringify({
+                success: true,
+                actionId: action.id,
+                retrocausalSafety,
+                resonance,
+                supervision,
+                ledgerChain: this.qfos.ethicalLedger.getChain(),
+              }));
+            } catch (err) {
+              const error = err as Error;
+              res.writeHead(500);
+              res.end(JSON.stringify({ error: error.message || 'Failed to evaluate action resonance.' }));
+            }
+          });
+          return;
+        }
+
         if (url === '/api/optimizer/self-healing' && method === 'GET') {
           res.writeHead(200);
           res.end(JSON.stringify({
