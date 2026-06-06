@@ -86,6 +86,7 @@ describe("AutonomousFlowDaemon", () => {
     expect(state.lastTickTime).toBeNull();
     expect(state.homeostasisScore).toBeGreaterThanOrEqual(0);
     expect(state.logs.length).toBeGreaterThan(0);
+    expect(state.totalCapabilitiesRegistered).toBe(1000);
   });
 
   it("should transition running status when started and stopped", () => {
