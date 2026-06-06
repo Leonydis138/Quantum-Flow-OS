@@ -9,7 +9,17 @@ import * as fs from 'fs';
 
 describe('ChatAICognitiveEngine & API Endpoints Integration', () => {
   let server: DashboardServer;
+  let integrationServer: http.Server;
   const PORT = 18081;
+  const INTEGRATION_PORT = 18082;
+
+  interface ReceivedRequest {
+    url: string | undefined;
+    method: string | undefined;
+    headers: http.IncomingHttpHeaders;
+    body: string;
+  }
+  let lastReceivedRequest: ReceivedRequest | null = null;
 
   beforeAll(async () => {
     // Clean up any stale temporary test data ledger before starting
@@ -25,11 +35,56 @@ describe('ChatAICognitiveEngine & API Endpoints Integration', () => {
     // Start server on separate port
     server = new DashboardServer(PORT);
     await server.start();
+
+    // Start integration HTTP server to handle real-data network requests with zero mocking
+    integrationServer = http.createServer((req, res) => {
+      let body = '';
+      req.on('data', chunk => { body += chunk; });
+      req.on('end', () => {
+        lastReceivedRequest = {
+          url: req.url,
+          method: req.method,
+          headers: req.headers,
+          body
+        };
+
+        if (req.url === '/v1/chat/completions') {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            choices: [
+              {
+                message: {
+                  content: "Aligned response from custom local OpenAI-compatible endpoint"
+                }
+              }
+            ]
+          }));
+        } else if (req.url?.includes('/models/')) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify([
+            {
+              generated_text: "Hugging Face output with Pro Key"
+            }
+          ]));
+        } else {
+          res.writeHead(404);
+          res.end(JSON.stringify({ error: "Not found" }));
+        }
+      });
+    });
+
+    await new Promise<void>((resolve) => {
+      integrationServer.listen(INTEGRATION_PORT, resolve);
+    });
   });
 
   afterAll(async () => {
     await server.stop();
     
+    await new Promise<void>((resolve) => {
+      integrationServer.close(() => resolve());
+    });
+
     // Clean up temporary test data ledger
     const ledgerPath = path.join(__dirname, '..', 'data', 'chat-real-data-ledger.json');
     if (fs.existsSync(ledgerPath)) {
@@ -252,75 +307,43 @@ describe('ChatAICognitiveEngine & API Endpoints Integration', () => {
 
   it('should support custom API endpoint with OpenAI formatting and bearer token', async () => {
     const qfos = new QuantumFlowOS();
-    const mockFetch = jest.spyOn(global, 'fetch').mockImplementation(() => {
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({
-          choices: [
-            {
-              message: {
-                content: "Aligned response from custom local OpenAI-compatible endpoint"
-              }
-            }
-          ]
-        })
-      } as any);
-    });
-
-    qfos.chatEngine.setAPIEndpoint('http://localhost:11434/v1/chat/completions', 'openai');
+    
+    lastReceivedRequest = null;
+    qfos.chatEngine.setAPIEndpoint(`http://localhost:${INTEGRATION_PORT}/v1/chat/completions`, 'openai');
     qfos.chatEngine.setAPIKey('test-secret-jwt-key');
 
     const session = await qfos.chatEngine.processChat('test-custom-api-session', 'What is your status?');
 
-    expect(mockFetch).toHaveBeenCalled();
-    const lastFetchCallArgs = mockFetch.mock.calls[mockFetch.mock.calls.length - 1];
-    expect(lastFetchCallArgs![0]).toBe('http://localhost:11434/v1/chat/completions');
+    expect(lastReceivedRequest).not.toBeNull();
+    expect(lastReceivedRequest!.url).toBe('/v1/chat/completions');
+    expect(lastReceivedRequest!.method).toBe('POST');
+    expect(lastReceivedRequest!.headers['authorization']).toBe('Bearer test-secret-jwt-key');
     
-    const requestOptions = lastFetchCallArgs![1] as any;
-    expect(requestOptions.method).toBe('POST');
-    expect(requestOptions.headers['Authorization']).toBe('Bearer test-secret-jwt-key');
-    
-    const parsedBody = JSON.parse(requestOptions.body);
+    const parsedBody = JSON.parse(lastReceivedRequest!.body);
     expect(parsedBody.messages).toBeDefined();
     expect(parsedBody.messages[0].role).toBe('system');
     expect(parsedBody.messages[1].content).toBe('What is your status?');
 
     expect(session.messages[1]!.content).toBe('Aligned response from custom local OpenAI-compatible endpoint');
-
-    mockFetch.mockRestore();
   });
 
   it('should support custom API key in standard Hugging Face serverless calls', async () => {
     const qfos = new QuantumFlowOS();
-    const mockFetch = jest.spyOn(global, 'fetch').mockImplementation(() => {
-      return Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve([
-          {
-            generated_text: "Hugging Face output with Pro Key"
-          }
-        ])
-      } as any);
-    });
 
-    qfos.chatEngine.setAPIEndpoint(null, 'huggingface');
+    lastReceivedRequest = null;
+    qfos.chatEngine.setAPIEndpoint(`http://localhost:${INTEGRATION_PORT}/models/Qwen/Qwen2.5-Coder-7B-Instruct`, 'huggingface');
     qfos.chatEngine.setAPIKey('hf_pro_authorized_api_key');
 
     const session = await qfos.chatEngine.processChat('test-hf-pro-session', 'Say Hello!');
 
-    expect(mockFetch).toHaveBeenCalled();
-    const lastFetchCallArgs = mockFetch.mock.calls[mockFetch.mock.calls.length - 1];
-    expect(lastFetchCallArgs![0]).toContain('api-inference.huggingface.co');
+    expect(lastReceivedRequest).not.toBeNull();
+    expect(lastReceivedRequest!.url).toContain('models/Qwen/Qwen2.5-Coder-7B-Instruct');
+    expect(lastReceivedRequest!.headers['authorization']).toBe('Bearer hf_pro_authorized_api_key');
     
-    const requestOptions = lastFetchCallArgs![1] as any;
-    expect(requestOptions.headers['Authorization']).toBe('Bearer hf_pro_authorized_api_key');
-    
-    const parsedBody = JSON.parse(requestOptions.body);
+    const parsedBody = JSON.parse(lastReceivedRequest!.body);
     expect(parsedBody.inputs).toContain('Say Hello!');
 
     expect(session.messages[1]!.content).toBe('Hugging Face output with Pro Key');
-
-    mockFetch.mockRestore();
   });
 });
 
